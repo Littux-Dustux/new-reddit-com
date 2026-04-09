@@ -1,0 +1,1052 @@
+import modNoteCountFix from "./modNoteCountFix";
+
+export type OldOperation = (
+	| "UpdateRecommendationPreferences"
+	| "DeleteSubredditMuteSettings"
+	| "FetchEligibleUXExperiences"
+	| "LanguageSelections"
+	| "MutedSubreddits"
+	| "StoreUxTargetingAction"
+	| "UpdateSpokenLanguagesPreference"
+	| "UpdateSubredditMuteAndNotificationLevelSettings"
+	| "UpdateSubredditMuteSettings"
+	| "Frontpage"
+	| "SubredditGeoRecommendationViaFocusVertical"
+	| "RegisterWebPushToken"
+	| "AllUserMultireddits"
+	| "MultiredditListing"
+	| "SubredditTypeaheadSearch"
+	| "GetRelatedCommunityRecommendations"
+	| "ProxyAuthor"
+	| "ModInsightsModQueueEntrypoint"
+	| "CommentsPageExtra"
+	| "OtherDiscussions"
+	| "PostFeedAndOtherDiscussions"
+	| "SubredditPosts"
+	| "SubredditsPosts"
+	| "CancelEconRecurringPayment"
+	| "ConfirmPaypalPayment"
+	| "ConfirmStripePaymentNewCard"
+	| "ConfirmStripePaymentSavedCard"
+	| "CreateEconOrder"
+	| "CreatePaymentIntent"
+	| "CreatePaypalPayment"
+	| "CreateStripePaymentWithProvidedCard"
+	| "CreateStripePaymentWithProvidedNonAuthCard"
+	| "CreateStripePaymentWithSavedCard"
+	| "DeleteSavedStripeCard"
+	| "DeleteSocialLinks"
+	| "GetAccountGender"
+	| "GlobalProductOffers"
+	| "PremiumProductOfferSubscriptions"
+	| "ProductOffers"
+	| "PurchaseCatalogProductOffers"
+	| "SetSocialLinks"
+	| "SocialLinks"
+	| "UpdateAccountGender"
+	| "UpdateSocialLinks"
+	| "UserSavedStripeCards"
+	| "CommentToxicity"
+	| "CreateComment"
+	| "CreateLiveAudioRoomOnProfile"
+	| "CreateLiveAudioRoomOrError"
+	| "GetAvailableAudioRoomTopics"
+	| "GetSubredditAllowedPostTypes"
+	| "GetUserProfileAllowedPostTypes"
+	| "PostGuidanceValidation"
+	| "PrepareLiveAudioRoom"
+	| "PrepareLiveAudioRoomOnProfile"
+	| "ReportTalk"
+	| "StartLiveAudioRoom"
+	| "UpdateComment"
+	| "UpdateCommentFollowState"
+	| "ProfileDownvoted"
+	| "ProfileGivenGildings"
+	| "ProfileHidden"
+	| "ProfileHistoryPosts"
+	| "ProfileReceivedGildings"
+	| "ProfileSaved"
+	| "ProfileUpvoted"
+	| "AddApprovedTalkHost"
+	| "AllModerators"
+	| "DeleteScheduledPost"
+	| "DoesUserHavePostModPermission"
+	| "FetchModerationLogActions"
+	| "FetchSubredditTrafficStats"
+	| "GetSubredditWelcomeMessage"
+	| "HogwartsMutation"
+	| "LastModActionInSubreddit"
+	| "ModActivitySummaryByID"
+	| "ModerationActionCategories"
+	| "RedditorIdByName"
+	| "RedditorNameById"
+	| "RemoveApprovedTalkHost"
+	| "SetSubredditYearInReviewAvailability"
+	| "SingleCommentById"
+	| "SinglePostInfoById"
+	| "SubmitScheduledPost"
+	| "SubredditApprovedTalkHosts"
+	| "SubredditFlairedRedditorByName"
+	| "SubredditFlairedRedditors"
+	| "SubredditWiki"
+	| "SubredditWikiBannedContributors"
+	| "SubredditWikiContributors"
+	| "SubredditWikiPageSettings"
+	| "UpdateSubredditWelcomeMessage"
+	| "WikiComparisonDiff"
+	| "WikiRevisions"
+	| "CompleteCommunityProgressCard"
+	| "CompleteCommunityProgressModule"
+	| "DismissCommunityProgressCard"
+	| "DismissCommunityProgressCardV2"
+	| "SubredditUserAchievements"
+	| "UpdateAchievementFlairPreference"
+	| "AddPredictionDrafts"
+	| "BadgeIndicators"
+	| "BlockAwarder"
+	| "CancelPrediction"
+	| "ChangePrediction"
+	| "ChangePredictionVote"
+	| "ChatTabLiveChats"
+	| "CommentsPageLastAuthorModNotes"
+	| "CreateChatChannelInviteLink"
+	| "CreateLiveChatAssociation"
+	| "CreateMediaUploadLease"
+	| "CreateModUserNote"
+	| "CreatePredictionTournament"
+	| "CreateScheduledPost"
+	| "CreateSubredditTags"
+	| "CrowdControlLevelInfo"
+	| "CustomerSurveyConfig"
+	| "CustomerSurveySteps"
+	| "DeleteInboxNotifications"
+	| "DeleteLiveChatAssociation"
+	| "DeleteModUserNote"
+	| "EndPredictionTournament"
+	| "ExperimentVariants"
+	| "FetchBlockedRedditorsInfo"
+	| "FetchContentControls"
+	| "FetchGlobalTags"
+	| "FetchSubredditTags"
+	| "FetchSubredditUserFlairTemplates"
+	| "FetchSubredditsNotificationSettings"
+	| "GeneralSearch"
+	| "GeneralSearchOptimized"
+	| "GetCommentById"
+	| "GetDevPlatformMetadata"
+	| "GetModUserNotes"
+	| "GetPostReactInfo"
+	| "GetPredictionChipPackages"
+	| "GetPredictionCreationAllowance"
+	| "GetPredictionToken"
+	| "GetSingleDynamicConfig"
+	| "GetSubredditCountrySiteSettings"
+	| "GetSubredditQuestions"
+	| "GetSubredditSettings"
+	| "GetTotalModNoteCount"
+	| "GetTournaments"
+	| "GetTournamentsBaseInfo"
+	| "MaybeDeleteTagsAndUpdateItemTags"
+	| "ModApprove"
+	| "ModQueueItems"
+	| "ModQueueTriggers"
+	| "ModRemove"
+	| "ModeratedSubreddits"
+	| "NotificationInboxFeed"
+	| "NotificationInboxFeedSlimmed"
+	| "NotificationSettingsLayoutByChannel"
+	| "OpenAISubRecWithDetail"
+	| "PollVote"
+	| "PopularFeedElements"
+	| "PostIsTrackingCrossposts"
+	| "PrivacyPreferences"
+	| "ProfileFeed"
+	| "ProfileModHubPage"
+	| "ProfileTrophies"
+	| "RedditorKarma"
+	| "RedditorMultireddits"
+	| "ReportMessage"
+	| "ResolvePrediction"
+	| "RichTextPostContent"
+	| "SendbirdChannels"
+	| "SubmitMediaUpload"
+	| "SubredditAbout"
+	| "SubredditAchievementFlairs"
+	| "SubredditChatChannelRecommendations"
+	| "SubredditCustomEmojis"
+	| "SubredditInfo"
+	| "SubredditPage"
+	| "SubredditPageExtra"
+	| "SubredditPostFlairStyleTemplates"
+	| "SubredditRecommendations"
+	| "SubredditRules"
+	| "SubredditScheduledPosts"
+	| "SubredditStyles"
+	| "SubredditTopContent"
+	| "SubredditTopPredictors"
+	| "SubredditTournamentLeaderboard"
+	| "SubredditsCarousel"
+	| "SubscribedSubreddits"
+	| "TopAwardedPosts"
+	| "TopAwardersLeaderboard"
+	| "TopicBySlug"
+	| "TrendingSearches"
+	| "UpdateChatMessagesAsRead"
+	| "UpdateCommentDistinguishState"
+	| "UpdateCommentStickyState"
+	| "UpdateHatefulContentFilters"
+	| "UpdateInboxActivitySeenState"
+	| "UpdateNotificationPreferences"
+	| "UpdatePostDistinguishState"
+	| "UpdatePostFollowState"
+	| "UpdatePostNsfwState"
+	| "UpdatePostRequirements"
+	| "UpdatePostStickyState"
+	| "UpdatePredictionTournament"
+	| "UpdateReportState"
+	| "UpdateScheduledPost"
+	| "UpdateSensitiveAdsPreferences"
+	| "UpdateSubredditCountrySiteSettings"
+	| "UpdateSubredditNotificationSettings"
+	| "UpdateSubredditPrimaryTag"
+	| "UpdateSubredditSettings"
+	| "UpdateSubredditTagStatesRelevance"
+	| "UpdateVideoContentPermissionsSetting"
+	| "UploadV2Events"
+	| "UserDataExportEligibility"
+	| "UserSubredditsNotificationsLevel"
+	| "ValidateCreateSubreddit"
+	| "VotePrediction"
+	| "WhereToPostSubRec"
+	| "AvatarListingById"
+	| "ChangeStripePaymentMethod"
+	| "ClaimAwardOffer"
+	| "EconAdminPanelQuery"
+	| "FetchSpecialEvents"
+	| "GetArtistById"
+	| "GetDynamicLayout"
+	| "GetIsLiveContentAvailable"
+	| "GiveCoins"
+	| "MatrixChatNotifications"
+	| "PerformEconAdminAction"
+	| "PersonalizedYearInReview"
+	| "RedditorsInfoByIds"
+	| "RemoveCoins"
+	| "SearchTypeahead"
+	| "SearchTypeaheadByType"
+	| "AwardSheetInfo"
+	| "AwardSheetInfoForProfile"
+	| "CreateCommunityAward"
+	| "CreateGlobalAward"
+	| "CreateModAward"
+	| "DisableAwardInCommunity"
+	| "EnableAwardInCommunity"
+	| "GlobalAwards"
+	| "HideAwardOnTarget"
+	| "ManageableAwards"
+	| "ManageableAwardsForProfile"
+	| "RemoveCommunityAward"
+	| "EventPostsBySubredditName"
+	| "SubmitContentRatingSurvey"
+	| "GetNearbySubreddits"
+	| "InterestTopics"
+	| "InterestTopicsByIds"
+	| "UpdateTopicPreferences"
+	| "AppealEligibility"
+	| "RequestAppeal"
+	| "AvailableAwards"
+	| "AwardSideEffectsDetails"
+	| "GildComment"
+	| "GildPost"
+	| "GiveAward"
+	| "RemoveAward"
+	| "SubredditCoins"
+	| "CountrySiteHomeFeed"
+	| "FetchLiveDiscoveryContent"
+	| "UpdateCrowdControlFilter"
+	| "UpdateCrowdControlLevel"
+	| "GeoContributableSubreddits"
+	| "GeoPlaceAutocomplete"
+	| "SetSubredditGeoPlace"
+	| "SuggestSubredditGeoPlace"
+	| "PostSetById"
+	| "ProfileFollowers"
+	| "ReportPost"
+	| "RequestUserDataExport"
+	| "ReportComment"
+	| "ReportForm"
+	| "SubredditsWithAboutInfo"
+	| "RecordCommunityAnswer"
+	| "GetTopKarmaSubreddits"
+	| "CreateCustomEmoji"
+	| "DeleteCustomEmoji"
+	| "GenerateCustomEmojiUploadLease"
+	| "GetModPnSettingsLayout"
+	| "UpdateModPnSettingStatus"
+	| "UpdateModPnSettingThreshold");
+
+type Migrater = {
+	operationName: string;
+	sha256Hash?: string;
+	process?: (vars: Record<string, any>) => Promise<string>;
+	mapVars?: (vars: Record<string, any>) => Record<string, any>;
+	mapResp?: (resp: Record<string, any>) => Record<string, any>;
+	hardcodedResp?: string;
+};
+
+type GqlFedMapping = Partial<Record<OldOperation, Migrater>>;
+
+/* helpers */
+const hardcodedMutation = (name: string) =>
+	JSON.stringify({
+		data: {
+			[name]: {
+				ok: false,
+				errors: [{ message: "Deprecated" }],
+			},
+		},
+	});
+
+const hardcodedQuery = (name: string) =>
+	JSON.stringify({
+		data: {
+			[name]: null,
+		},
+		errors: [
+			{
+				message: "Deprecated",
+				path: [name],
+			},
+		],
+	});
+
+export const gqlFedMap: GqlFedMapping = {
+	AllModerators: {
+		operationName: "GetModeratorList",
+		sha256Hash: "00b15ca6088f3aef8c887f54f4d70bbec5312cfef3a2a54a5efa8dbfb2b9cd83",
+	},
+	AddApprovedTalkHost: {
+		operationName: "<hardcoded>",
+		hardcodedResp: hardcodedMutation("addApprovedHostMember"),
+	},
+	AddPredictionDrafts: {
+		operationName: "<hardcoded>",
+		hardcodedResp: hardcodedMutation("addPredictionDrafts"),
+	},
+	AppealEligibility: {
+		operationName: "AppealEligibility",
+		sha256Hash: "0ac7bd8c4146b1da3f4a9d8c95c6eb0d0317012da9e71d08190c31803c07e29e",
+	},
+	AvailableAwards: {
+		operationName: "AvailableAwards",
+		sha256Hash: "0d748eaa3d03cc4dbb5c6da31cdbd60aa37d3aeebbe40728707baaacd534753c",
+	},
+	BadgeIndicators: {
+		operationName: "BadgeCount",
+		sha256Hash: "6e5b40ea4193a6fcfd6890518f4cdde524e434243d055c33a552af2e42e0a433",
+		mapResp: ({ badgeIndicators: { ...other }}) => ({ badgeIndicators: { ...other, chatUnreadMessages: { count: 0 }}})
+	},
+	BlockAwarder: {
+		operationName: "BlockAwarderByAwardingId",
+		sha256Hash: "d1886b523011ed8bdcd15eda43a7ed7b60baaea42f8bf6a12dcf614fbffd4e7f",
+	},
+	CancelEconRecurringPayment: {
+		operationName: "CancelEconRecurringPayment",
+		sha256Hash: "fbbade9a554ff6ae07f634b2852bc181df809d3721f7f9a7caf52216a47d26bb",
+	},
+	CancelPrediction: {
+		operationName: "<hardcoded>",
+		hardcodedResp: hardcodedMutation("cancelPrediction"),
+	},
+	ChangePrediction: {
+		operationName: "<hardcoded>",
+		hardcodedResp: hardcodedMutation("changePrediction"),
+	},
+	ChangePredictionVote: {
+		operationName: "<hardcoded>",
+		hardcodedResp: hardcodedMutation("changePredictionVote"),
+	},
+	ClaimAwardOffer: {
+		operationName: "ClaimAwardOffer",
+		sha256Hash: "7d96bd46393d7d1699d79c0d0291510462a23fb7d3311997740a50dcd409d466",
+	},
+	CompleteCommunityProgressCard: {
+		operationName: "CompleteCommunityProgressCard",
+		sha256Hash: "2732cfeecbf1c8d2276702a1ccf2a56a18288e76df522a4d2625054af3dd6985",
+	},
+	CompleteCommunityProgressModule: {
+		operationName: "CompleteCommunityProgressModule",
+		sha256Hash: "07d435bed20c9430726d70cc3c791529958868135b9ef193f2cdd3896004cf9e",
+	},
+	CreateChatChannelInviteLink: {
+		operationName: "CreateChannelLink",
+		sha256Hash: "eafd7def47d88d873c057ff850d6b1c0185416dc23458b8f16ad32d047074408",
+	},
+	CreateComment: {
+		operationName: "CreateComment",
+		sha256Hash: "3b5a06e1cb58a48cb9d59c88f150ba491e9c1e9e775b80df938842bc7f828247",
+	},
+	CreateCustomEmoji: {
+		operationName: "CreateCustomEmoji",
+		sha256Hash: "95d93da8f7d9be1847d1e665613a74e2e2448188a967bd179073053f0d41ff13",
+	},
+	CreateEconOrder: {
+		operationName: "CreateEconOrder",
+		sha256Hash: "d0112528e006b811bfcc4dc58e575d007a6f036054ed1eec43bf2106f1d4a630",
+	},
+	CreateLiveAudioRoomOnProfile: {
+		operationName: "<hardcoded>",
+		hardcodedResp: hardcodedMutation("createAudioRoomOnProfile"),
+	},
+	CreateLiveAudioRoomOrError: {
+		operationName: "<hardcoded>",
+		hardcodedResp: hardcodedMutation("createAudioRoomOrError"),
+	},
+	CreateLiveChatAssociation: {
+		operationName: "CreateLiveChatAssociation",
+		sha256Hash: "8d0b08a741d21ce610c517e38a2a95264478dacf4678d5f2157d162db7212eb0",
+	},
+	CreateMediaUploadLease: {
+		operationName: "CreateMediaUploadLease",
+		sha256Hash: "c424ecd285f4cecf3ab5b978829ea035c385bb132c1968407f1f0032e31815fe",
+	},
+	CreateModUserNote: {
+		operationName: "CreateModUserNote",
+		sha256Hash: "563a4b33f42081fd2cc4e974f48806e68a4bd5c0662049eb5d6a4ae3fc01f485",
+	},
+	CreatePredictionTournament: {
+		operationName: "<hardcoded>",
+		hardcodedResp: hardcodedMutation("createPredictionTournament"),
+	},
+	CreateScheduledPost: {
+		operationName: "CreateScheduledPostLink",
+		sha256Hash: "360d996af697c7b0f6ac3435977c7a4a2d9cb6cfc7080df94a9b9fff834bb646",
+	},
+	DeleteCustomEmoji: {
+		operationName: "DeleteCustomEmoji",
+		sha256Hash: "0f8dcacc41a5dc0565847f15f955e5612d94d2f4672bccabbcf344190ba41138",
+	},
+	DeleteInboxNotifications: {
+		operationName: "DeleteInboxNotifications",
+		sha256Hash: "9728f59800f6eff9db01382064d5afffef0ef2c7162523880254e020a2cc798e",
+	},
+	DeleteLiveChatAssociation: {
+		operationName: "DeleteLiveChatAssociation",
+		sha256Hash: "ca3febf488bc7118b942c3c4442f4307a98133e1d8e7d15d5ccab2b189aa3c90",
+	},
+	DeleteModUserNote: {
+		operationName: "DeleteModUserLog",
+		sha256Hash: "b918cff8c862bcf959ff21a69ffafb5d72c865b305c4121c0a0c8c6f363956ca",
+	},
+	DeleteScheduledPost: {
+		operationName: "DeleteScheduledPost",
+		sha256Hash: "54fd5bf6f7869ddb5a1c4422aeef65f325ca2ab9167b5926155cd962fc3f113f",
+	},
+	DeleteSocialLinks: {
+		operationName: "DeleteSocialLinks",
+		sha256Hash: "12ebe553f9e7cadcd167d1942f66e7739271bc2bc33d34714781b76dcf4b8e48",
+	},
+	DeleteSubredditMuteSettings: {
+		operationName: "DeleteSubredditMuteSettings",
+		sha256Hash: "58efe4d8a3214b30e6518bd6bd2fcad5a1e2f152bad494957a33573d4a7b7b02",
+	},
+	DismissCommunityProgressCard: {
+		operationName: "DismissCommunityProgressCard",
+		sha256Hash: "9876b8ed26656650b4f66933a8bcf7dc93bcc1cb885af7a90c3fcf29021043f4",
+	},
+	EndPredictionTournament: {
+		operationName: "<hardcoded>",
+		hardcodedResp: hardcodedMutation("endPredictionTournament"),
+	},
+	FetchBlockedRedditorsInfo: {
+		operationName: "BlockedUsers",
+		sha256Hash: "fa5eb1e1571640206b77152f9f8f104e2aada8c53fdb420ba0202393f0f9ea0d",
+	},
+	FetchEligibleUXExperiences: {
+		operationName: "<hardcoded>",
+		hardcodedResp: hardcodedQuery("eligibleUxExperiences"),
+	},
+	FetchGlobalTags: {
+		operationName: "GlobalTopics",
+		sha256Hash: "5cad3e034a2e891e2c60f58210f51a811dd796204c4446c23b2fedb1f25026f4",
+	},
+	FetchLiveDiscoveryContent: {
+		operationName: "<hardcoded>",
+		hardcodedResp: hardcodedQuery("liveDiscoveryContent"),
+	},
+	FetchModerationLogActions: {
+		operationName: "GetModLog", // not sure if this is the correct mapping
+		sha256Hash: "4b8dadf5786d05bef6375bea1ae1666e5c2033858aad2f02ef5f4bcc86e0e45f",
+	},
+	FetchSpecialEvents: {
+		operationName: "<hardcoded>",
+		hardcodedResp: hardcodedQuery("econSpecialEvents"),
+	},
+	FetchSubredditsNotificationSettings: {
+		operationName: "GetSubredditNotificationSettings",
+		sha256Hash: "93dcfc93eb8ed76c4fb5025ca38bbc470c8fc471246d99f910d55e98b44ee66b",
+	},
+	FetchSubredditTrafficStats: {
+		operationName: "EnhancedInsightsSummary", // got this from the 2026 reddit app. couldn't find one in the 2023 app. everything else here is from the 2023 app.
+		sha256Hash: "75f4ae53a1025e52b9f4dc4e06917a6dcf5a73a3913f303822256d821b052f71",
+	},
+	FetchSubredditUserFlairTemplates: {
+		operationName: "GetCommunityFlairForSelfPickerData",
+		sha256Hash: "17e5b5c12054899fe24a9de98e82a5c139e7d056cd70701f42717c7820ee3e2a",
+	},
+	Frontpage: {
+		operationName: "HomeElements",
+		sha256Hash: "a85f0afccfd8c623355a4ca3b144781eea668836ae02d2bf1bf298f26f74f2f1",
+		mapVars: (vars) => ({
+			...vars,
+			advancedConfiguration: {
+				eligibleExperienceOverrides: [],
+				propertyProviderOverrides: []
+			},
+			experienceInputs: ["REONBOARDING_IN_FEED", "VIRAL_COMMUNITY_XPROMO", "ANNOUNCEMENT_IN_FEED"]
+		}),
+		mapResp: ({ postFeed, ...rest }) => ({ home: postFeed, ...rest }),
+/*
+		operationName: "<FIXME>",
+		hardcodedResp: JSON.stringify({
+			data: {
+				identity: null,
+				home: {
+					posts: null,
+				},
+				trendingSubreddits: null,
+				recentPosts: [],
+				featuredAnnouncement: null,
+				feauredLiveEvent: null,
+			},
+			errors: [
+				{ message: "todo", path: ["home", "posts"] },
+				...["identity", "trendingSubreddits", "recentPosts", "featuredAnnouncement", "feauredLiveEvent"].map((field) => ({
+					message: "todo",
+					path: [field],
+				})),
+			],
+		}),
+*/
+	},
+	GeneralSearch: {
+		operationName: "SearchPosts", // might be correct
+		sha256Hash: "f6a72f7981ccddc228ca5b8cae53321acfe27e84c52b0619ae5d436ccfd1b025",
+	},
+	GeneralSearchOptimized: {
+		operationName: "SearchPosts",
+		sha256Hash: "f6a72f7981ccddc228ca5b8cae53321acfe27e84c52b0619ae5d436ccfd1b025",
+	},
+	GenerateCustomEmojiUploadLease: {
+		operationName: "GenerateCustomEmojiUploadLease",
+		sha256Hash: "1d0167deb7fbc57dce90cfa15c589683e02c6b7967d6645fad7989ddbffeda1e",
+	},
+	GeoContributableSubreddits: {
+		operationName: "GeoContributableSubreddits",
+		sha256Hash: "cf4c82f8450a88f09e02df4f498691982883630809ec23890b2dcb54d8ed30a1",
+	},
+	GeoPlaceAutocomplete: {
+		operationName: "GeoPlaceAutocomplete",
+		sha256Hash: "dbc69fa5be4ed4c95aad4874c579ae057c578c92fba72147f86e008462ed9f27",
+	},
+	GetAccountGender: {
+		operationName: "GetGender",
+		sha256Hash: "cfb010e71a61b85f4eb49294d69fb8e8ed7bdb72b430314d04555b4abd1acfe3",
+	},
+	GetAvailableAudioRoomTopics: {
+		operationName: "<hardcoded>",
+		hardcodedResp: '{"data":{"availableAudioRoomTopics":[]}}',
+	},
+	GetCommentById: {
+		operationName: "GetCommentById",
+		sha256Hash: "2fe82f19f25b77c0298e6d57598f4badbba17a16670f7712b9903bbdfbf376fb",
+	},
+	GetDevPlatformMetadata: {
+		operationName: "GetDevPlatformMetadata",
+		sha256Hash: "856bee1ed839deb100f036656ac530aa67c401554e94bef3c3bae4a57434155f",
+	},
+	GetModPnSettingsLayout: {
+		operationName: "GetModPnSettingsLayout", // used the 2026 one here because it's probably more suitable
+		sha256Hash: "63b8a9fe8b50c8a4f343777fd6703d8dc11de7821ceb088f21eed1e33debc6ea",
+	},
+	GetModUserNotes: {
+		operationName: "GetModUserNotes", // thank you u/RVL-003
+		sha256Hash: "9e56625bc7cad25002dbc418aa878144356cccbd2cd7c6eb64e4ab30f9146f41",
+		mapVars({ subredditId, userId, ...otherVariables }) {
+			return { subredditID: subredditId, userID: userId, ...otherVariables };
+		},
+	},
+	GetNearbySubreddits: {
+		operationName: "<hardcoded>",
+		hardcodedResp: '{"data":{"nearbySubreddits":{"edges":[]}}}',
+	},
+	GetRelatedCommunityRecommendations: {
+		operationName: "RelatedSubreddits",
+		sha256Hash: "d8f3e2d9734263522a46ba5d7ee7c19790cd975e79533753df19f7503ace43e2",
+	},
+	GetSingleDynamicConfig: {
+		operationName: "DynamicConfigsByNames",
+		sha256Hash: "30383254f78b1781a7e755f1cf06c71b10b3de5cf2f8d64a5677b80da02fecb3",
+		// Might be wrong
+		// update: it was wrong
+		mapVars({ name, type }) {
+			return { names: [{ name, type }] };
+		},
+		mapResp({ dynamicConfigsByNames: confs }) {
+			return { dynamicConfigByName: confs[0] ?? null };
+		},
+	},
+	GetSubredditAllowedPostTypes: {
+		operationName: "GetPostTypes", // 2026 app
+		sha256Hash: "11cc8773a678e5367f3927e6fdbfd62b10e52c35aa6ee574374e04e550658890",
+	},
+	GetSubredditCountrySiteSettings: {
+		operationName: "GetSubredditSettings", // inefficient but it's the only way i can find this info
+		sha256Hash: "6dd06f2120bf8ed8abc10095b55744bbf331a9ac8f7dcc02c2cee72938ea5fb0",
+	},
+	GetSubredditQuestions: {
+		operationName: "<hardcoded>",
+		hardcodedResp: hardcodedQuery("subredditInfoByName"),
+	},
+	GetSubredditSettings: {
+		operationName: "GetSubredditSettings",
+		sha256Hash: "6dd06f2120bf8ed8abc10095b55744bbf331a9ac8f7dcc02c2cee72938ea5fb0",
+	},
+	GetSubredditWelcomeMessage: {
+		operationName: "GetWelcomeMessageForSubreddit",
+		sha256Hash: "5696b3e43f8a0cd8ad7bc2df9774baaad2ab780bf971bf24d06ce9a1adbaba55",
+	},
+	GetTopKarmaSubreddits: {
+		operationName: "GetTopKarmaSubreddits",
+		sha256Hash: "4edd4bdf9d6801412173dc5dd18e05ca8812fa54675b1856a2b775b7d47567c2",
+	},
+	GetTotalModNoteCount: {
+		operationName: "GetModUserLogsCounts",
+		process: modNoteCountFix,
+	},
+	GetUserProfileAllowedPostTypes: {
+		operationName: "ProfileDetailsByName", // inefficient, and probably doesn't work
+		sha256Hash: "096ccf5d943485822cb6d3e0dc13f9977da1984514e1d539e1ed38a51158e689",
+	},
+	GildComment: {
+		operationName: "GildComment",
+		sha256Hash: "3c416bba302f0662895c5b2fdfd15e2c2381f202e2808d4af7179216e9b2b705",
+	},
+	GildPost: {
+		operationName: "GildPost",
+		sha256Hash: "bcca11bf6ac7b461d17cc69ac96afd8352c46a11ccd3a239142d122457ec560b",
+	},
+	GiveAward: {
+		operationName: "GiveAward",
+		sha256Hash: "068601e87e0e3e26dbcc389834881e659a86ea369fb445598814423d76c959ee",
+	},
+	GlobalProductOffers: {
+		operationName: "GlobalProductOffers",
+		sha256Hash: "4fab95172d9a6b1c20701ecc61c255aabe26b74017f6cc05e3b296af028e1dbc",
+	},
+	HideAwardOnTarget: {
+		operationName: "HideAwardOnTarget",
+		sha256Hash: "a2325c649e978180f351e47ce83243c4ccfd9d3041e4979f60ce49f38ab1f711",
+	},
+	InterestTopics: {
+		operationName: "InterestTopics",
+		sha256Hash: "766001b296654ad51afe428cbbc5ac2d2f32d57fb1f797354ac7e2de66bad850",
+	},
+	InterestTopicsByIds: {
+		operationName: "InterestTopicsByIds",
+		sha256Hash: "38268395dac1c8c1613665c729a51da18dc21694f8ec417b032abe1004e5ef59",
+	},
+	MatrixChatNotifications: {
+		operationName: "IdentityMatrixNotifications",
+		sha256Hash: "95192e490742fec36721e64002e1913e6f0dfc746b6033f31c37f8b8689595f6",
+	},
+	ModApprove: {
+		operationName: "ModActionApproveContent",
+		sha256Hash: "95308910a099aeec9ab409475bae1ccc6ff46f15ebfba5dcb17c66aec68c6962",
+	},
+	ModeratedSubreddits: {
+		operationName: "ModeratedSubredditsByUserId",
+		sha256Hash: "c8474116f0895add474ecdc4adeab316744f96baded4406c73864825c72f4338",
+	},
+	ModQueueItems: {
+		operationName: "ModQueueItemsWithSort",
+		sha256Hash: "7f6a5858865a3dcf6400438385d3948aa08b456abb7549473863b7771c205efd",
+	},
+	ModRemove: {
+		operationName: "ModActionRemoveContent",
+		sha256Hash: "dc125a9f9aac76d1ca7750b3cb2d4f6199cbae2a2acf55bd78c59ee26625641a",
+	},
+	ModerationActionCategories: {
+		operationName: "GetModActionCategories", // found on the 2026 app
+		sha256Hash: "38d6a325bdc09d7059886b10a28c2008fb9b15c57a6d68254276cdaf9de5dd8f",
+	},
+	MultiredditListing: {
+		operationName: "MultiredditByPath", // found a "MultiredditPosts" too. not sure which one is correct
+		sha256Hash: "bf03e8080191cd9cf427c354f0e4538c75f700f186caff46c55ad346afca32d3",
+	},
+	MutedSubreddits: {
+		operationName: "MutedSubreddits",
+		sha256Hash: "0e440593782e6d97dad30dc4664509f69e78cbadcfdb040f4aff0703243460be",
+	},
+	NotificationInboxFeed: {
+		operationName: "GetInboxNotificationFeed",
+		sha256Hash: "531bb584ee0c17b0c43adf71729afa433ba683d009632406dc9d169a8fa424d0",
+		mapVars: ({ first }) => ({ pageSize: first, subredditIconMaxWidth: 64, includeAnnouncement: false }),
+		mapResp: ({ notificationInbox }) => {
+			notificationInbox.elements.edges = notificationInbox.elements.edges.filter(node => node.__typename === "InboxNotification");
+			return { notificationInbox };
+		}
+	},
+	NotificationInboxFeedSlimmed: {
+		operationName: "GetInboxNotificationFeed",
+		sha256Hash: "531bb584ee0c17b0c43adf71729afa433ba683d009632406dc9d169a8fa424d0",
+		mapVars: ({ first }) => ({ pageSize: first, subredditIconMaxWidth: 64, includeAnnouncement: true }),
+		mapResp: ({ notificationInbox }) => {
+			notificationInbox.elements.edges = notificationInbox.elements.edges.filter(node => node.__typename === "InboxNotification");
+			return { notificationInbox };
+		}
+	},
+	NotificationSettingsLayoutByChannel: {
+		operationName: "GetNotificationSettingsLayoutByChannel",
+		sha256Hash: "cd6a711e246f7226753d204078cd8665b2fef71266269b0505a8667234c8faf0",
+	},
+	OtherDiscussions: {
+		operationName: "GetDuplicatePosts", // found from 2024 reddit app, thankfully
+		sha256Hash: "fd557fdc121760c37dc2957d4cc103dd0eefa95926952c0adf6aad8afea1e54a",
+		mapVars: ({ postId, ...rest }) => ({ id: postId, ...rest })
+	},
+	PersonalizedYearInReview: {
+		operationName: "GetRecap",
+		sha256Hash: "e5a8ea8dd762401004c4d6ffce9827fa1fefe6265308399a8544d6c3dd2e61d0",
+	},
+	PollVote: {
+		operationName: "PollVote",
+		sha256Hash: "4fd0ee0e581d1abb0d3fb583b8fa6fc16d354f855c62aeae2d733c39a6c976db",
+	},
+	PopularFeedElements: {
+		operationName: "PopularFeedElements", // seems like this is the only feed that has a perfect replacement. // update: nevermind
+		sha256Hash: "76dc900970f85958acd52cce3a8bdb8a6d9c04bdece16349aab2774ce9423719",
+		mapVars: (vars) => ({
+			...vars,
+			advancedConfiguration: {
+				eligibleExperienceOverrides: [],
+				propertyProviderOverrides: []
+			},
+			experienceInputs: ["REONBOARDING_IN_FEED", "VIRAL_COMMUNITY_XPROMO", "ANNOUNCEMENT_IN_FEED"]
+		}),
+		mapResp: ({ postFeed }) => ({
+			identity: {},
+			popular: postFeed,
+			recentPosts: [],
+			trendingSubreddits: []
+		})
+	},
+	PostFeedAndOtherDiscussions: {
+		operationName: "GetDuplicatePosts", // found from 2024 reddit app, thankfully
+		sha256Hash: "fd557fdc121760c37dc2957d4cc103dd0eefa95926952c0adf6aad8afea1e54a",
+		mapVars: ({ postId, ...rest }) => ({ id: postId, ...rest })
+	},
+	PostGuidanceValidation: {
+		operationName: "ValidatePostGuidanceRules", // 2024 app
+		sha256Hash: "2c398ea4052e9bc4d02f3f9ff69dc11aa460748de32601b20c6c023cd3442644",
+	},
+	PostSetById: {
+		operationName: "PostSetSharedTo",
+		sha256Hash: "48745aebb9484b8265229bac43421a41f8ae98cac1e99c31ef50a5a23754a078",
+	},
+	ProfileDownvoted: {
+		operationName: "DownvotedPosts",
+		sha256Hash: "bef6215672dd62181aa6290cf13205f01ae35aa1bc8a684cd41dddebcb922bc6",
+	},
+	ProductOffers: {
+		operationName: "GlobalProductOffers",
+		sha256Hash: "4fab95172d9a6b1c20701ecc61c255aabe26b74017f6cc05e3b296af028e1dbc",
+	},
+	ProfileFeed: {
+		operationName: "UserSubmittedPosts",
+		sha256Hash: "78a213c02a340db4a707d4bcd375ce34f733b75893379603acb4ec20388fafe6",
+	},
+	ProfileFollowers: {
+		operationName: "FollowedByRedditors",
+		sha256Hash: "0aa3ae012c3149330ade5eeb181a89588482bfa93fd546503c8fa365447c4cd3",
+	},
+	ProfileHidden: {
+		operationName: "HiddenPosts",
+		sha256Hash: "dd50be43da2e469e529cb4c63c1d0f3c2f54c12d5e8f65a809b90ebaff0aa8e9",
+	},
+	ProfileSaved: {
+		operationName: "SavedPosts",
+		sha256Hash: "b4544bae60315844e871bd541c0e510814f9a4d25d5c3e9d02bf3248878d7aeb",
+	},
+	ProfileTrophies: {
+		operationName: "ProfileTrophies",
+		sha256Hash: "afd499fd984d22dba654280c5a59467a2288a37c6e650648e4cb35fba88960ba",
+	},
+	ProfileUpvoted: {
+		operationName: "UpvotedPosts",
+		sha256Hash: "2576b683a14896be80b6b3b0465a55b7a94ada8f062564d2bdc1e38975bb5837",
+	},
+	RedditorIdByName: {
+		operationName: "GetUserIdByName", // 2026 app
+		sha256Hash: "4535fca1d94dbad56dadb03804346c41117fc4a6abb38417c4821fc7a192ee75",
+	},
+	RedditorKarma: {
+		operationName: "GetUserCakeDayAndKarma", // may not be correct
+		sha256Hash: "898ef784254d30403b62b4d417ae18f9d7a5a3e94ca568e8f61369868ae1b9fb",
+		mapVars: ({ name }) => ({ username: name })
+	},
+	RedditorNameById: {
+		operationName: "GetUserNameById",
+		sha256Hash: "c522051f63d50c7cec3128baf227192187c97191199357b067d8917d98679cd7",
+	},
+	RedditorsInfoByIds: {
+		operationName: "GetRedditUsersByIds", // thank you u/RVL-003
+		sha256Hash: "c4332a3bb82908fc1383b8e44132c2e12e2104f8cf4256f09df96fdf110a6a1f",
+	},
+	RegisterWebPushToken: {
+		operationName: "RegisterMobilePushToken",
+		sha256Hash: "35313b81bfbb621c426b2f2ec276db3db476a5d8362a1ddbeec982a01dc74977",
+		mapResp: ({ registerMobilePushToken }) => ({ registerWebPushToken: registerMobilePushToken }),
+	},
+	RemoveAward: {
+		operationName: "RemoveAward",
+		sha256Hash: "1ceac103d13f36e2b26ccc9a1710bf33bbc98890cb15351ae82da259cda33e03",
+	},
+	ReportComment: {
+		operationName: "ReportComment",
+		sha256Hash: "6b55eb68b0c8cb0d908cba2f9801d393003a41c347e98a4906c12d137532edf9",
+	},
+	ReportPost: {
+		operationName: "ReportPost",
+		sha256Hash: "a16926790a0d91ba97d1bcf25388d78674f4e1533c076609aa0c2861acc96721",
+	},
+	RequestAppeal: {
+		operationName: "RequestAppeal", // from 2026 app
+		sha256Hash: "244f1cdc5e138c1dc1f274824094bd0b88a74d966b3efe7b54b245a4f0a48d58",
+	},
+	SearchTypeahead: {
+		operationName: "SearchTypeahead",
+		sha256Hash: "e57833412d85c454b055573ac2ac5252022458ebbe66de3734a24ad7e3c03d3b",
+	},
+	SearchTypeaheadByType: {
+		operationName: "SearchTypeaheadByType",
+		sha256Hash: "cac956cef6365ab1af09d09d1188025f785de35c1c5a1a11e19f3f20ab8622ca",
+	},
+	SetSocialLinks: {
+		operationName: "SetSocialLinks",
+		sha256Hash: "6a8678396b5a3e1b64a47ec06005223b144a23b175108acc2a90fd78a1398240",
+	},
+	SingleCommentById: {
+		operationName: "GetCommentById",
+		sha256Hash: "2fe82f19f25b77c0298e6d57598f4badbba17a16670f7712b9903bbdfbf376fb",
+	},
+	SinglePostInfoById: {
+		operationName: "PostsByIds",
+		sha256Hash: "0e471495bcba33554b6c540b3cf1cae23dd5432a8b741dddc7fd6717dc2520a7",
+		mapVars: ({ id, ...otherVariables }) => ({ ids: [id], ...otherVariables }),
+		mapResp: ({ postsInfoByIds: posts }) => ({ postInfoById: posts[0] ?? null }),
+	},
+	// SocialLinks: todo
+	SubmitMediaUpload: {
+		operationName: "SubmitMediaUpload",
+		sha256Hash: "059a8313aa6543392de0443c3b0dd4ea42e35d5a83479864804c51c92982ded9",
+	},
+	SubmitScheduledPost: {
+		operationName: "SubmitScheduledPostNow",
+		sha256Hash: "bf27450f5b05acf788d8a27ddae1d3340694408a957232008956e6d83cfe6c13",
+	},
+	SubredditAbout: {
+		operationName: "SubredditInfoByName", // hopefully this works
+		sha256Hash: "2c4e9fcfd57b11c4ca2e00e087aa243891f7e2e251192ad4a9b7b2a63d4b1b8e",
+	},
+	SubredditAchievementFlairs: {
+		operationName: "GetSubredditAchievementFlairs",
+		sha256Hash: "79fd2b41e16051e19210d0fd15c067f47b045a35f107acdd763d255de0836313",
+		mapVars: ({ subredditId }) => ({ subredditName: window.store.getState().subreddits.models[subredditId]?.name ?? 'Littux' })
+	},
+	SubredditInfo: {
+		operationName: "SubredditInfoByName",
+		sha256Hash: "2c4e9fcfd57b11c4ca2e00e087aa243891f7e2e251192ad4a9b7b2a63d4b1b8e",
+	},
+	SubredditPosts: {
+		operationName: "SubredditFeedElements",
+		sha256Hash: "97046e2a48050f10a507db354a8da60955ffccb586dcf63163bdfc6610d5cf7a",
+	},
+	SubredditRecommendations: {
+		operationName: "GetRelatedCommunityRecommendations", // 2026 app
+		sha256Hash: "4ee5adcdb9483c0b16d0b83c7ea6fb985ea1e1321f33b408ff844fd1fc72eafd",
+	},
+	SubredditPostFlairStyleTemplates: {
+		operationName: "GetFlairs",
+		sha256Hash: "f14c4d85da795fe5912abd822173b451d207d358a66ca6ddaea3404009b63ad3",
+	},
+	SubredditRules: {
+		operationName: "GetSubredditRules", // 2026 app
+		sha256Hash: "78fe58aab4e5f0e8dca0dea1c3615aa0d421e9687e12a1d325b59ae36faaefdf",
+	},
+	SubredditScheduledPosts: {
+		operationName: "ScheduledPostsForSubreddit",
+		sha256Hash: "0abbf490ca8eaaa765f6bc048ee654ed895a00f40cd013e9238873fcf89f5647",
+	},
+	SubredditStyles: {
+		operationName: "SubredditStructuredStyle",
+		sha256Hash: "fa8cd73c291468ae65be3798ba08cf76f86f7cd3966d95cf71cb522feca10096",
+	},
+	SubredditsWithAboutInfo: {
+		operationName: "SubredditsInfoByNames",
+		sha256Hash: "38cf1d7790fdba1ce6918664148bb630456d74cb02c7c42e74e8b44be27e23ba",
+	},
+	SubredditTypeaheadSearch: {
+		operationName: "CommunityPickerSearch",
+		sha256Hash: "c70526d35ec6c02115174732b69f992537967b7f5d977d660950f591e2f304b0",
+	},
+	SubredditWiki: {
+		operationName: "SubredditWiki", // 2026 app
+		sha256Hash: "4f446702368bfcd945efe732576160a017ebf73dc24cab7e7d31de91c6bf5dcc",
+	},
+	SubscribedSubreddits: {
+		operationName: "SubscribedSubreddits",
+		sha256Hash: "4980ab5fd2422ab0b785ef1ae116d05a823d3900944dd671edc324e5c74ca250",
+	},
+	SuggestSubredditGeoPlace: {
+		operationName: "SuggestSubredditGeoPlace",
+		sha256Hash: "ca6b7abfb79e49887eb3219f903d3551c455a84c889de5b22e01d4f7d5102c10",
+	},
+	TopicBySlug: {
+		operationName: "TopicBySlug",
+		sha256Hash: "cf66f5722f3307c7f7f3d824440137ce147f1eed6ffd04218af173604cb357dd",
+	},
+	TrendingSearches: {
+		operationName: "SearchTrendingQueries",
+		sha256Hash: "6af8092dc8e4a99808e7fbebd1401a17f2f95f0af8b54964496592473f7f39e5",
+		mapVars: (vars) => ({ ...vars, productSurface: "gql" })
+	},
+	UpdateAccountGender: {
+		operationName: "UpdateAccountGender",
+		sha256Hash: "7c8ca9f840340b9306d8f82622dcba1931b85b7f1141a4091dc3f1104f67c3dd",
+	},
+	UpdateAchievementFlairPreference: {
+		operationName: "UpdateAchievementFlairPreference",
+		sha256Hash: "38f0222f3ed68d776fa36055b471dcf89b427771bd7f66d33520b1d0a191b13a",
+	},
+	UpdateChatMessagesAsRead: {
+		operationName: "UpdateChatMessagesAsRead", // 2026 reddit app
+		sha256Hash: "84392e43642c1dcad041888e9c186109cafced2d2f5f51323a87f3ec2ee95ef0",
+	},
+	UpdateComment: {
+		operationName: "UpdateComment",
+		sha256Hash: "c43517a749d070bc2d19b123fbdb680de815f4b92c7720ccb9010c2eb0a4a4f8",
+	},
+	UpdateCommentDistinguishState: {
+		operationName: "UpdateCommentDistinguishState",
+		sha256Hash: "9f96d8f78f4898bf23e23572d34e64fd4070ed1e9a62e17899d93f815401ddd8",
+	},
+	UpdateCommentFollowState: {
+		operationName: "UpdateCommentFollowState",
+		sha256Hash: "a8dfce970c94c91003ab86c2f95e7ebf68f07ef34578ca83eaaa73d8ae7e56de",
+	},
+	UpdateCommentStickyState: {
+		operationName: "ModActionStickyComment",
+		sha256Hash: "cd968194e3007f1d6bef97ea18c41765927659783382aaa6c81232c31ca3f44e",
+	},
+	UpdateCrowdControlFilter: {
+		operationName: "UpdateCrowdControlFilter",
+		sha256Hash: "1e1104bb153c9e699ee497d2fd3363472ea009dc2f2c7eeac705218b0e1e35fe",
+	},
+	UpdateCrowdControlLevel: {
+		operationName: "UpdatePostCrowdControlLevel",
+		sha256Hash: "af49bd07aba8388a4c1e5d4681e269136cbb1119ffe1ea656f4d3c9dda69ef58",
+	},
+	UpdateHatefulContentFilters: {
+		operationName: "UpdateHarassmentFilterContent", // why do they have to rename everything?
+		sha256Hash: "5fb8925954535d9f7cabce20787b30f6fa28b63418b92a09337201b8e0ac0a29",
+	},
+	UpdateInboxActivitySeenState: {
+		operationName: "UpdateInboxActivitySeenState",
+		sha256Hash: "8a6ec796884e51eedd8c094c322173fe7cceefd33e8e84e48deaaa750bad7772",
+	},
+	UpdateModPnSettingStatus: {
+		operationName: "UpdateModPnSettingStatus",
+		sha256Hash: "148addfd48dfb7c6580b16192805f51eefd7c3d3cbd316fb5dd6d2e753bcb6be",
+	},
+	UpdateModPnSettingThreshold: {
+		operationName: "UpdateModPnSettingThreshold",
+		sha256Hash: "de750fee1e0f912ce9fb55fc4dc2546a930359b5df0cfa4ef7628dda231ba935",
+	},
+	UpdateNotificationPreferences: {
+		operationName: "UpdateNotificationPreferences",
+		sha256Hash: "6e3ef4828728567bc9089ef47b531992f57d9d7ff7de10f0c9cfc0c6f294d610",
+	},
+	UpdatePostDistinguishState: {
+		operationName: "UpdatePostDistinguishState",
+		sha256Hash: "062755281c05b9619fa925c059582fdefde165cda291ff65291b9fc483c1d311",
+	},
+	UpdatePostFollowState: {
+		operationName: "UpdatePostFollowState",
+		sha256Hash: "d3873f18bce9a5c0eb30bee301b610137ef8d5079b81fcf07c895cb625d7c632",
+	},
+	UpdatePostNsfwState: {
+		operationName: "UpdatePostNsfwState",
+		sha256Hash: "cac3f3a414d8a03de1b030af74db9bb1fd691ce23dd9934ce9b8e4279a771b6e",
+	},
+	UpdatePostStickyState: {
+		operationName: "ModActionStickyPost",
+		sha256Hash: "67e377a62a9012b294c040f0e4b1fbd2712b76430b37e6de7e3c5fb6604bf780",
+	},
+	UpdateRecommendationPreferences: {
+		operationName: "UpdateRecommendationPreferences",
+		sha256Hash: "4ed968fd9c5daf9353a8bbdef42d4156b89bc569181866b5e39ebee9b23855af",
+	},
+	UpdateScheduledPost: {
+		operationName: "UpdateScheduledPost",
+		sha256Hash: "01b6cb947f369be707bf3f4482ca5b1b7370884ee175a7a3ac2d31db6d174f84",
+	},
+	UpdateSensitiveAdsPreferences: {
+		operationName: "UpdateSensitiveAdsPreferences", // from 2026 reddit app
+		sha256Hash: "c936ac09a3779be76a1da69d02a77356538fc42e29d9adec51edf16ea6242e3c",
+	},
+	UpdateSocialLinks: {
+		operationName: "UpdateSocialLinks",
+		sha256Hash: "5434179f94bcb7852f24965023f8d5bdd33311d4828755baeb80bee1a95c8507",
+	},
+	UpdateSpokenLanguagesPreference: {
+		operationName: "UpdateSpokenLanguages",
+		sha256Hash: "5d87182f99f5d0eabea85b3739e92e6cc412ea378f019bd0b926d1e4131f63f9",
+	},
+	UpdateSubredditCountrySiteSettings: {
+		operationName: "UpdateSubredditCountrySettings",
+		sha256Hash: "03912e23bc8259ba2592425f9ae7de21c0f8ece8a883e37391503c8b7be998b5",
+	},
+	UpdateSubredditMuteSettings: {
+		operationName: "UpdateSubredditMuteSettings",
+		sha256Hash: "e415f20d6a6f822c26f119aaf2eadad581c74b8469c18afb23e71250a57d9847",
+	},
+	UpdateSubredditNotificationSettings: {
+		operationName: "UpdateSubredditNotificationSettings",
+		sha256Hash: "db00c67b5eaf365e47abcaf1774becccc87d2521b4f386d0354ceae019bbe669",
+	},
+	UpdateSubredditPrimaryTag: {
+		operationName: "UpdateSubredditPrimaryTag",
+		sha256Hash: "414dcc7fc6bbffca01a3c261541bb044c620052e818db706a62c38ccfbbe2117",
+	},
+	UpdateSubredditSettings: {
+		operationName: "UpdateSubredditSettings",
+		sha256Hash: "c601c65ddb7256c45007ae507f951ab70396d046cffb66b8c35f64edf5464bf8",
+	},
+	UpdateTopicPreferences: {
+		operationName: "UpdateTopicPreferences",
+		sha256Hash: "5949e7e1f2eaf523bfe1f8d1c8062fc919ae2a7a59e2241b13dd9a3c092c9545",
+	},
+	UpdateVideoContentPermissionsSetting: {
+		operationName: "UpdateVideoContentPermissionSettings",
+		sha256Hash: "5108d616acd991f06fe191098476c6b6df8831236b6d6892c30c65dde9047e16",
+	},
+	ValidateCreateSubreddit: {
+		operationName: "ValidateCreateSubreddit",
+		sha256Hash: "5b8d2bd47f12d5a6534443957409dd09c0629e7a0502c1576b110d8d839cb66d",
+	},
+	WhereToPostSubRec: {
+		operationName: "WhereToPost", // from 2026 app
+		sha256Hash: "1a28e4b07e38a2151c8a7981d76509593e1b4b835ddd83565fc4d7bf36ecbdc5",
+	},
+};

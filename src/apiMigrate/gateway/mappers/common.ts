@@ -1,0 +1,1 @@
+export const getVoteStateNum = (likes: boolean | null) => (likes === null ? 0 : likes ? 1 : -1);

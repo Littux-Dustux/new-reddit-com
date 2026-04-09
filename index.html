@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en-US" class="theme-beta theme-dark">
+	<head>
+		<script>
+			var __SUPPORTS_TIMING_API = typeof performance === "object" && !!performance.mark && !!performance.measure && !!performance.getEntriesByType;
+			function __perfMark(name) {
+				__SUPPORTS_TIMING_API && performance.mark(name);
+			}
+			var __firstPostLoaded = false;
+			function __markFirstPostVisible() {
+				if (__firstPostLoaded) {
+					return;
+				}
+				__firstPostLoaded = true;
+				__perfMark("first_post_title_image_loaded");
+			}
+			var __firstCommentLoaded = false;
+			function __markFirstCommentVisible() {
+				if (__firstCommentLoaded) {
+					return;
+				}
+				__firstCommentLoaded = true;
+				__perfMark("first_comment_loaded");
+			}
+		</script>
+		<script>
+			__perfMark("head_tag_start");
+		</script>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="referrer" content="origin-when-cross-origin" />
+		<style>
+	/* http://meyerweb.com/eric/tools/css/reset/
+	v2.0 | 20110126
+	License: none (public domain)
+	*/
+
+			html,
+			body,
+			div,
+			span,
+			applet,
+			object,
+			iframe,
+			h1,
+			h2,
+			h3,
+			h4,
+			h5,
+			h6,
+			p,
+			blockquote,
+			pre,
+			a,
+			abbr,
+			acronym,
+			address,
+			big,
+			button,
+			cite,
+			code,
+			del,
+			dfn,
+			em,
+			img,
+			input,
+			ins,
+			kbd,
+			q,
+			s,
+			samp,
+			small,
+			strike,
+			strong,
+			sub,
+			sup,
+			tt,
+			var,
+			b,
+			u,
+			i,
+			center,
+			dl,
+			dt,
+			dd,
+			ol,
+			ul,
+			li,
+			fieldset,
+			form,
+			label,
+			legend,
+			table,
+			caption,
+			tbody,
+			tfoot,
+			thead,
+			tr,
+			th,
+			td,
+			article,
+			aside,
+			canvas,
+			details,
+			embed,
+			figure,
+			figcaption,
+			footer,
+			header,
+			hgroup,
+			menu,
+			nav,
+			output,
+			ruby,
+			section,
+			summary,
+			time,
+			mark,
+			audio,
+			video {
+				margin: 0;
+				padding: 0;
+				border: 0;
+				font-size: 100%;
+				font: inherit;
+				vertical-align: baseline;
+			}
+
+			/* HTML5 display-role reset for older browsers */
+			article,
+			aside,
+			details,
+			figcaption,
+			figure,
+			footer,
+			header,
+			hgroup,
+			menu,
+			nav,
+			section {
+				display: block;
+			}
+			body {
+				line-height: 1;
+				font-family: BentonSans, sans-serif;
+			}
+			ol,
+			ul {
+				list-style: none;
+			}
+			blockquote,
+			q {
+				quotes: none;
+			}
+			blockquote:before,
+			blockquote:after,
+			q:before,
+			q:after {
+				content: "";
+				content: none;
+			}
+			table {
+				border-collapse: collapse;
+				border-spacing: 0;
+			}
+			a {
+				color: inherit;
+				text-decoration: inherit;
+			}
+
+			html,
+			body {
+				width: 100%;
+				margin: 0;
+			}
+
+			/* HTML5 display-role reset for older browsers */
+			article,
+			aside,
+			details,
+			figcaption,
+			figure,
+			footer,
+			header,
+			hgroup,
+			menu,
+			nav,
+			section {
+				display: block;
+			}
+
+			button {
+				background: transparent;
+				border: none;
+				color: inherit;
+				cursor: pointer;
+				padding: initial;
+			}
+
+			body {
+				min-height: calc(100vh - 48px);
+				line-height: 1;
+				font-family: IBMPlexSans, Arial, sans-serif;
+				-webkit-font-smoothing: antialiased;
+			}
+
+			body ::-moz-selection {
+				background-color: #7dbcff99;
+			}
+
+			input,
+			textarea,
+			[contenteditable] {
+				font-family:
+					Noto Sans,
+					Arial,
+					sans-serif;
+				font-size: 14px;
+				font-weight: 400;
+				line-height: 21px;
+
+				font-family: inherit;
+			}
+		</style>
+		<link rel="stylesheet" href="https://www.redditstatic.com/desktop2x/chunkCSS/CommentsPage~Reddit~StandalonePostPage~reddit-components-ClassicPost~reddit-components-CompactPost~r~73d6ba4d.8c84a9a99da41a2f4805_.css" />
+		<link rel="stylesheet" href="https://www.redditstatic.com/desktop2x/chunkCSS/CommentsPage~Reddit~RichTextEditor~reddit-components-LargePost~reddit-components-MediumPost~reddit-c~cad4f428.5569bbcfca5096e59799_.css" />
+		<link rel="stylesheet" href="https://www.redditstatic.com/desktop2x/chunkCSS/Governance~Reddit.4ef37c11447e45d0c69a_.css" />
+		<link rel="stylesheet" href="https://www.redditstatic.com/desktop2x/chunkCSS/Reddit.401bac5158b118bca775_.css" />
+
+		<link as="script" href="https://www.redditstatic.com/desktop2x/runtime~Reddit.a100d33a0552e5fb8823.js" key="https://www.redditstatic.com/desktop2x/runtime~Reddit.a100d33a0552e5fb8823.js" rel="preload" />
+		<link as="script" href="https://www.redditstatic.com/desktop2x/vendors~Governance~Reddit.2f67e72146622b933b15.js" key="https://www.redditstatic.com/desktop2x/vendors~Governance~Reddit.2f67e72146622b933b15.js" rel="preload" />
+		<link as="script" href="https://www.redditstatic.com/desktop2x/vendors~CommentsPage~Reddit.dc3f6fe2c3dec48a6b53.js" key="https://www.redditstatic.com/desktop2x/vendors~CommentsPage~Reddit.dc3f6fe2c3dec48a6b53.js" rel="preload" />
+		<link as="script" href="https://www.redditstatic.com/desktop2x/CommentsPage~Reddit~StandalonePostPage~reddit-components-ClassicPost~reddit-components-CompactPost~r~73d6ba4d.a1b88f10f79e74d48175.js" key="https://www.redditstatic.com/desktop2x/CommentsPage~Reddit~StandalonePostPage~reddit-components-ClassicPost~reddit-components-CompactPost~r~73d6ba4d.a1b88f10f79e74d48175.js" rel="preload" />
+		<link as="script" href="https://www.redditstatic.com/desktop2x/CommentsPage~Reddit~RichTextEditor~reddit-components-LargePost~reddit-components-MediumPost~reddit-c~cad4f428.5d21d02137f1b839cd5c.js" key="https://www.redditstatic.com/desktop2x/CommentsPage~Reddit~RichTextEditor~reddit-components-LargePost~reddit-components-MediumPost~reddit-c~cad4f428.5d21d02137f1b839cd5c.js" rel="preload" />
+		<link as="script" href="https://www.redditstatic.com/desktop2x/ModListing~Reddit~StandalonePostPage~Subreddit.6b55b38c23cebb9c495b.js" key="https://www.redditstatic.com/desktop2x/ModListing~Reddit~StandalonePostPage~Subreddit.6b55b38c23cebb9c495b.js" rel="preload" />
+		<link as="script" href="https://www.redditstatic.com/desktop2x/Governance~Reddit.f38cbc1b092de66bb711.js" key="https://www.redditstatic.com/desktop2x/Governance~Reddit.f38cbc1b092de66bb711.js" rel="preload" />
+		<link as="script" href="https://www.redditstatic.com/desktop2x/Reddit.e6908df657b523d36c19.js" key="https://www.redditstatic.com/desktop2x/Reddit.e6908df657b523d36c19.js" rel="preload" />
+
+		<link rel="apple-touch-icon" sizes="57x57" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-57x57.png" />
+		<link rel="apple-touch-icon" sizes="60x60" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-60x60.png" />
+		<link rel="apple-touch-icon" sizes="72x72" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-72x72.png" />
+		<link rel="apple-touch-icon" sizes="76x76" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-76x76.png" />
+		<link rel="apple-touch-icon" sizes="114x114" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-114x114.png" />
+		<link rel="apple-touch-icon" sizes="120x120" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-120x120.png" />
+		<link rel="apple-touch-icon" sizes="144x144" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-144x144.png" />
+		<link rel="apple-touch-icon" sizes="152x152" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-152x152.png" />
+		<link rel="apple-touch-icon" sizes="180x180" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-180x180.png" />
+		<link rel="icon" type="image/png" sizes="192x192" href="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png" />
+		<link rel="icon" type="image/png" sizes="96x96" href="https://www.redditstatic.com/desktop2x/img/favicon/favicon-96x96.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="https://www.redditstatic.com/desktop2x/img/favicon/favicon-16x16.png" />
+		<link rel="manifest" href="https://www.redditstatic.com/desktop2x/img/favicon/manifest.json?v=2" />
+		<meta name="msapplication-TileColor" content="#ffffff" />
+		<meta name="msapplication-TileImage" content="https://www.redditstatic.com/desktop2x/img/favicon/ms-icon-144x144.png" />
+		<meta name="theme-color" content="#1A1A1B" data-reactroot="" />
+		<meta name="jsapi" />
+
+		<title>Reddit - Dive into anything</title>
+		<meta name="description" content="Reddit is a network of communities where people can dive into their interests, hobbies and passions. There&#x27;s a community for whatever you&#x27;re interested in on Reddit." />
+		<link rel="canonical" href="https://www.reddit.com/" />
+		<link rel="next" href="https://www.reddit.com/?after=t3_1e19h4p" />
+		<meta property="og:ttl" content="600" />
+		<meta property="og:site_name" content="reddit" />
+		<meta property="twitter:site" content="@reddit" />
+		<meta property="twitter:card" content="summary" />
+		<meta property="og:title" content="reddit" />
+		<meta property="twitter:title" content="reddit" />
+		<meta property="twitter:image" content="https://www.redditstatic.com/icon.png" />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://www.reddit.com/" />
+		<meta property="og:image" content="https://www.redditstatic.com/icon.png" />
+		<meta property="og:image:width" content="256" />
+		<meta property="og:image:height" content="256" />
+		<script type="application/ld+json">
+			{ "@context": "https://schema.org", "@type": "WebSite", "url": "https://www.reddit.com/", "potentialAction": { "@type": "SearchAction", "target": "https://www.reddit.com/search?q={search_term_string}\u0026referrer=sitelinks_searchbox", "query-input": "required name=search_term_string" } }
+		</script>
+	</head>
+
+	<body>
+		<script>
+			__perfMark("app_html_start");
+		</script>
+		<div id="2x-container"></div>
+		<script>
+			__perfMark("ads_dot_js_fetch_start");
+		</script>
+		<script src="https://www.redditstatic.com/desktop2x/js/xads.js"></script>
+		<script>
+			__perfMark("redux_json_start");
+		</script>
+		<script id="data" src="/dist/main.js"></script>
+		<script>
+			__perfMark("js_deps_fetch_start");
+		</script>
+		<script id="whitespace__LOADABLE_REQUIRED_CHUNKS__" type="application/json">
+			[
+				"CollectionCommentsPage~CommentsPage~CountryPage~Frontpage~GovernanceReleaseNotesModal~ModListing~Mod~e3d63e32",
+				"CountryPage~Frontpage~ModListing~Multireddit~ProfileComments~ProfileOverview~ProfilePosts~Subreddit",
+				"Frontpage",
+				"reddit-components-InFeedPostCreation",
+				"CollectionCommentsPage~CommentsPage~CountryPage~FramedGild~GildModal~GovernanceReleaseNotesModal~Hap~cb450973",
+				"CollectionCommentsPage~CommentsPage~EconTopAwardersModal~ModQueuePages~ModerationPages~PostCreation~~bca2b657",
+				"CollectionCommentsPage~CommentsPage~GovernanceReleaseNotesModal~ModerationPages~PostCreation~Profile~9a5d9fab",
+				"CollectionCommentsPage~CommentsPage~ModerationPages~PostCreation~ProfileComments~ProfileOverview~Pro~fd7d7cf1",
+				"CollectionCommentsPage~CommentsPage~ModerationPages~ProfileComments~ProfileOverview~ProfilePrivate~S~b1793d14",
+				"CommentsPage~Reddit~StandalonePostPage~reddit-components-ClassicPost~reddit-components-CompactPost~r~73d6ba4d",
+				"CommentsPage~Reddit~RichTextEditor~reddit-components-LargePost~reddit-components-MediumPost~reddit-c~cad4f428",
+				"ModQueuePages~ProfileOverview~reddit-components-LargePost~reddit-components-MediumPost",
+				"reddit-components-LargePost",
+				"IdCard"
+			]
+		</script>
+		<script async="" data-chunk="Reddit" src="https://www.redditstatic.com/desktop2x/runtime~Reddit.a100d33a0552e5fb8823.js"></script>
+		<script async="" data-chunk="Reddit" src="https://www.redditstatic.com/desktop2x/vendors~Governance~Reddit.2f67e72146622b933b15.js"></script>
+		<script async="" data-chunk="Reddit" src="https://www.redditstatic.com/desktop2x/vendors~CommentsPage~Reddit.dc3f6fe2c3dec48a6b53.js"></script>
+		<script async="" data-chunk="Reddit" src="https://www.redditstatic.com/desktop2x/CommentsPage~Reddit~StandalonePostPage~reddit-components-ClassicPost~reddit-components-CompactPost~r~73d6ba4d.a1b88f10f79e74d48175.js"></script>
+		<script async="" data-chunk="Reddit" src="https://www.redditstatic.com/desktop2x/CommentsPage~Reddit~RichTextEditor~reddit-components-LargePost~reddit-components-MediumPost~reddit-c~cad4f428.5d21d02137f1b839cd5c.js"></script>
+		<script async="" data-chunk="Reddit" src="https://www.redditstatic.com/desktop2x/ModListing~Reddit~StandalonePostPage~Subreddit.6b55b38c23cebb9c495b.js"></script>
+		<script async="" data-chunk="Reddit" src="https://www.redditstatic.com/desktop2x/Governance~Reddit.f38cbc1b092de66bb711.js"></script>
+		<!-- <script async="" data-chunk="Reddit" src="https://www.redditstatic.com/desktop2x/Reddit.e6908df657b523d36c19.js"></script> -->
+		<script async="" data-chunk="Frontpage" src="https://www.redditstatic.com/desktop2x/CollectionCommentsPage~CommentsPage~CountryPage~Frontpage~GovernanceReleaseNotesModal~ModListing~Mod~e3d63e32.cbdd8296b580609a45b2.js"></script>
+		<script async="" data-chunk="Frontpage" src="https://www.redditstatic.com/desktop2x/CountryPage~Frontpage~ModListing~Multireddit~ProfileComments~ProfileOverview~ProfilePosts~Subreddit.59bf569c4ee4701902b3.js"></script>
+		<script async="" data-chunk="Frontpage" src="https://www.redditstatic.com/desktop2x/Frontpage.c7f55dad41fbb61f2e0a.js"></script>
+		<script async="" data-chunk="reddit-components-InFeedPostCreation" src="https://www.redditstatic.com/desktop2x/reddit-components-InFeedPostCreation.488946482f3511768c6a.js"></script>
+		<script async="" data-chunk="reddit-components-LargePost" src="https://www.redditstatic.com/desktop2x/CollectionCommentsPage~CommentsPage~CountryPage~FramedGild~GildModal~GovernanceReleaseNotesModal~Hap~cb450973.a62231dcfb7c779207a6.js"></script>
+		<script async="" data-chunk="reddit-components-LargePost" src="https://www.redditstatic.com/desktop2x/CollectionCommentsPage~CommentsPage~EconTopAwardersModal~ModQueuePages~ModerationPages~PostCreation~~bca2b657.40e09ad23b72f2446408.js"></script>
+		<script async="" data-chunk="reddit-components-LargePost" src="https://www.redditstatic.com/desktop2x/CollectionCommentsPage~CommentsPage~GovernanceReleaseNotesModal~ModerationPages~PostCreation~Profile~9a5d9fab.5f4f034a4896ac8ec15c.js"></script>
+		<script async="" data-chunk="reddit-components-LargePost" src="https://www.redditstatic.com/desktop2x/CollectionCommentsPage~CommentsPage~ModerationPages~PostCreation~ProfileComments~ProfileOverview~Pro~fd7d7cf1.c6a804b13c3cba649e84.js"></script>
+		<script async="" data-chunk="reddit-components-LargePost" src="https://www.redditstatic.com/desktop2x/CollectionCommentsPage~CommentsPage~ModerationPages~ProfileComments~ProfileOverview~ProfilePrivate~S~b1793d14.655f6364a2943e627522.js"></script>
+		<script async="" data-chunk="reddit-components-LargePost" src="https://www.redditstatic.com/desktop2x/ModQueuePages~ProfileOverview~reddit-components-LargePost~reddit-components-MediumPost.d198984be50251d0f344.js"></script>
+		<script async="" data-chunk="reddit-components-LargePost" src="https://www.redditstatic.com/desktop2x/reddit-components-LargePost.4eec108702538cf73019.js"></script>
+		<script async="" data-chunk="IdCard" src="https://www.redditstatic.com/desktop2x/IdCard.43e5465b0f5893206d6c.js"></script>
+	</body>
+</html>
