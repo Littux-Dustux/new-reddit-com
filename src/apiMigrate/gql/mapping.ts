@@ -1,4 +1,5 @@
 import modNoteCountFix from "./modNoteCountFix";
+import { processGeneralSearch } from "./search";
 
 export type OldOperation = (
 	| "UpdateRecommendationPreferences"
@@ -531,11 +532,11 @@ export const gqlFedMap: GqlFedMapping = {
 	},
 	GeneralSearch: {
 		operationName: "SearchPosts", // might be correct
-		sha256Hash: "f6a72f7981ccddc228ca5b8cae53321acfe27e84c52b0619ae5d436ccfd1b025",
+		process: processGeneralSearch,
 	},
 	GeneralSearchOptimized: {
-		operationName: "SearchPosts",
-		sha256Hash: "f6a72f7981ccddc228ca5b8cae53321acfe27e84c52b0619ae5d436ccfd1b025",
+		operationName: "SearchPosts:Optimized",
+		process: processGeneralSearch,
 	},
 	GenerateCustomEmojiUploadLease: {
 		operationName: "GenerateCustomEmojiUploadLease",

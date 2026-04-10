@@ -1,0 +1,50 @@
+import { gqlFetch } from "../../api/gql";
+
+export async function processGeneralSearch({ includePosts, postsAfter, includeComments, commentsAfter, includeCommunities, communitiesAfter, communityRows, includeAuthors, authorsAfter, authorRows, ...vars }: Record<string, any>) {
+	console.log({ includePosts, includeComments, includeCommunities, includeAuthors });
+	const searchPromises = [];
+
+	includePosts &&
+		searchPromises.push(
+			gqlFetch("SearchPosts", "f6a72f7981ccddc228ca5b8cae53321acfe27e84c52b0619ae5d436ccfd1b025",
+				{ pageSize: 25, afterCursor: postsAfter, ...vars },
+			),
+		);
+	includeComments &&
+		searchPromises.push(
+			gqlFetch("SearchComments", "9c77ffed05d959bf7ba503a801e77d7e2b83dc7eae286a06c3d21c3abe25df1e", 
+				{ pageSize: 25, afterCursor: commentsAfter, ...vars },
+			),
+		);
+	includeCommunities &&
+		searchPromises.push(
+			gqlFetch("SearchCommunities", "a3333069c1ead3ceec6d9bf4da4185ff584f69d0ba8b586e545b32ea62170932",
+				{ pageSize: communityRows, afterCursor: communitiesAfter, ...vars },
+			).then(({ search }) => {
+				search.general.communities.edges = search.general.communities.edges.map(({ node }) => {
+					node.publicDescription = node.description;
+					return { node }
+				});
+				return { search };
+			});
+		);
+	includeAuthors &&
+		searchPromises.push(
+			gqlFetch("SearchPeople", "d9211ac33f72079f25cb4c8a8e00a2b4889e984f70278ec91283965c7856d33d",
+				{ pageSize: authorRows, afterCursor: authorsAfter, ...vars }
+			),
+		);
+
+	const results = await Promise.all(searchPromises);
+
+	const output = {
+		data: {
+			search: {
+				general: results.reduce((general: Record<string, any>, result: Record<string, any>) =>
+					Object.assign(general, result.search.general), {}),
+			}
+		}
+	};
+	console.debug("Output", output);
+	return JSON.stringify(output);
+}
