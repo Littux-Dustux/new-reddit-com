@@ -112,7 +112,7 @@ export const initialState = {
 	accountManagerModalData: {},
 	activeModal: null,
 	ads: {},
-	adsSignals: { adsSeenCount: 0, totalPostsSeenCount: 25, sessionStartTime: "2024-07-12T12:17:11.946Z" },
+	adsSignals: { adsSeenCount: 0, totalPostsSeenCount: 0, sessionStartTime: new Date().toISOString() },
 	apiRequestState: {},
 	appBadges: { api: { error: null, pending: false }, badges: {} },
 	authorFlair: { inContext: null, models: {} },
@@ -3645,6 +3645,10 @@ export const initialState = {
 					version: "2",
 				},
 				rbl_blinkpilotq3_072024_092024: { id: 13694, name: "rbl_blinkpilotq3_072024_092024", variant: "control_1", version: "2" },
+				d2x_gql_subreddit_page: { id: 0, name: "d2x_gql_subreddit_page", variant: "enabled", version: "1" },
+				d2x_profile_listing_gql_test: { id: 0, name: "d2x_profile_listing_gql_test", variant: "enabled", version: "1" },
+				d2x_gql_modqueues: { id: 0, name: "d2x_gql_modqueues", variant: "enabled", version: "1" }
+
 			},
 			localPersisted: {},
 		},

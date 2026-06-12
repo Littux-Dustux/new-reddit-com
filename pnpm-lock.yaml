@@ -7,11 +7,10 @@ settings:
 importers:
 
   .:
-    dependencies:
+    devDependencies:
       '@types/tampermonkey':
         specifier: ^5.0.5
         version: 5.0.5
-    devDependencies:
       typescript:
         specifier: ^6.0.2
         version: 6.0.2

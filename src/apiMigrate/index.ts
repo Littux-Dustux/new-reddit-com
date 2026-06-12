@@ -10,7 +10,7 @@ const logger = getLogger("apiMigrate");
 
 export function initAPIMigratorInterceptors() {
 	addInterceptor("gql.reddit.com", "POST", gqlMigrationInterceptor);
-	addInterceptor("gateway.reddit.com", "GET", gatewayMigratorInterceptor);
+	addInterceptor("gateway.reddit.com", "*", gatewayMigratorInterceptor);
 	addInterceptor("oauth.reddit.com", "*", oauthPipeInterceptor);
 	addInterceptor("/", "*", async () => "{}");
 

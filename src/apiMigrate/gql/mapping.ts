@@ -1,4 +1,5 @@
 import modNoteCountFix from "./modNoteCountFix";
+import notificationsFix from "./notificationsFix";
 import { processGeneralSearch } from "./search";
 
 export type OldOperation = (
@@ -692,20 +693,12 @@ export const gqlFedMap: GqlFedMapping = {
 	NotificationInboxFeed: {
 		operationName: "GetInboxNotificationFeed",
 		sha256Hash: "531bb584ee0c17b0c43adf71729afa433ba683d009632406dc9d169a8fa424d0",
-		mapVars: ({ first }) => ({ pageSize: first, subredditIconMaxWidth: 64, includeAnnouncement: false }),
-		mapResp: ({ notificationInbox }) => {
-			notificationInbox.elements.edges = notificationInbox.elements.edges.filter(node => node.__typename === "InboxNotification");
-			return { notificationInbox };
-		}
+		...notificationsFix
 	},
 	NotificationInboxFeedSlimmed: {
 		operationName: "GetInboxNotificationFeed",
 		sha256Hash: "531bb584ee0c17b0c43adf71729afa433ba683d009632406dc9d169a8fa424d0",
-		mapVars: ({ first }) => ({ pageSize: first, subredditIconMaxWidth: 64, includeAnnouncement: true }),
-		mapResp: ({ notificationInbox }) => {
-			notificationInbox.elements.edges = notificationInbox.elements.edges.filter(node => node.__typename === "InboxNotification");
-			return { notificationInbox };
-		}
+		...notificationsFix
 	},
 	NotificationSettingsLayoutByChannel: {
 		operationName: "GetNotificationSettingsLayoutByChannel",
@@ -766,6 +759,7 @@ export const gqlFedMap: GqlFedMapping = {
 	ProfileFeed: {
 		operationName: "UserSubmittedPosts",
 		sha256Hash: "78a213c02a340db4a707d4bcd375ce34f733b75893379603acb4ec20388fafe6",
+		mapResp: ({ postFeed }) => ({ redditorInfoByName: postFeed })
 	},
 	ProfileFollowers: {
 		operationName: "FollowedByRedditors",
@@ -863,7 +857,7 @@ export const gqlFedMap: GqlFedMapping = {
 	SubredditAchievementFlairs: {
 		operationName: "GetSubredditAchievementFlairs",
 		sha256Hash: "79fd2b41e16051e19210d0fd15c067f47b045a35f107acdd763d255de0836313",
-		mapVars: ({ subredditId }) => ({ subredditName: window.store.getState().subreddits.models[subredditId]?.name ?? 'Littux' })
+		mapVars: ({ subredditId }) => ({ subredditName: window.store?.getState().subreddits.models[subredditId]?.name ?? 'Littux' })
 	},
 	SubredditInfo: {
 		operationName: "SubredditInfoByName",
@@ -872,6 +866,12 @@ export const gqlFedMap: GqlFedMapping = {
 	SubredditPosts: {
 		operationName: "SubredditFeedElements",
 		sha256Hash: "97046e2a48050f10a507db354a8da60955ffccb586dcf63163bdfc6610d5cf7a",
+	},
+	SubredditPage: {
+		operationName: "SubredditFeedElements",
+		sha256Hash: "97046e2a48050f10a507db354a8da60955ffccb586dcf63163bdfc6610d5cf7a",
+		mapVars: ({ name, ...rest }) => ({ subredditName: name, includeSubredditInPosts: true, ...rest }),
+		mapResp: ({ postFeed }: any) => ({ subredditInfoByName: postFeed })
 	},
 	SubredditRecommendations: {
 		operationName: "GetRelatedCommunityRecommendations", // 2026 app

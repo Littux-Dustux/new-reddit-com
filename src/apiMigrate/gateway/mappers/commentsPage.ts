@@ -4,13 +4,20 @@ import { processAuthorFlair, processSubreddit, processSubredditAboutInfo, proces
 
 type CommentPosition = { id: string; type: string } | null;
 
-const processSingleComment = (comment: any, post: any, { next, prev }: { next: CommentPosition; prev: CommentPosition }) => ({
+const processSingleComment = (comment: any, post: any = {}, { next, prev }: { next: CommentPosition; prev: CommentPosition } = { next: null, prev: null }) => ({
+	approvedAtUTC: comment.approved_at_utc,
+	approvedBy: comment.approved_by,
 	author: comment.author,
 	authorId: comment.author_fullname,
+	bannedAtUTC: comment.banned_at_utc,
+	bannedBy: comment.banned_by,
+	bodyMD: comment.body,
+	body: comment.body_html ?? "",
 	collapsed: comment.collapsed,
 	collapsedReason: comment.collapsed_reason,
 	collapsedBecauseCrowdControl: comment.collapsed_because_crowd_control,
 	collapsedReasonCode: comment.collapsed_reason_code,
+	commentType: comment.comment_type,
 	created: comment.created_utc,
 	depth: comment.depth,
 	deletedBy: comment.banned_by,
@@ -19,34 +26,40 @@ const processSingleComment = (comment: any, post: any, { next, prev }: { next: C
 	gildings: null,
 	goldCount: 0,
 	id: comment.name,
+	ignoreReports: comment.ignore_reports,
 	isAdmin: comment.distinguished === "admin",
+	isAuthorPremium: Boolean(comment.author_premium),
+	isApproved: comment.approved,
 	isDeleted: comment.collapsed_reason_code === "DELETED" || (comment.author === "[deleted]" && comment.body === "[deleted]"),
 	isGildable: true,
 	isLocked: comment.locked,
 	isMod: comment.distinguished === "yes",
 	isOp: comment.is_submitter,
+	isRemoved: comment.removed,
 	isSaved: comment.saved,
 	isStickied: comment.stickied,
 	isScoreHidden: comment.score_hidden,
-	next,
-	parentId: comment.parent_id,
-	permalink: comment.permalink,
-	prev,
-	postAuthor: post.author ?? null,
-	postId: post.name,
-	postTitle: post.title ?? null,
-	score: comment.score,
-	sendReplies: comment.send_replies,
-	subredditId: comment.subreddit_id,
-	voteState: getVoteStateNum(comment.likes),
-	bodyMD: comment.body,
-	body: comment.body_html ?? "",
 	media: {
 		richtextContent: comment.rtjson,
 		type: "rtjson",
 		rteMode: comment.rte_mode,
 		mediaMetadata: comment.media_metadata,
 	},
+	modReports: comment.mod_reports,
+	next,
+	numReports: comment.num_reports,
+	parentId: comment.parent_id,
+	permalink: comment.permalink,
+	prev,
+	postAuthor: post.author ?? comment.link_author ?? null,
+	postId: post.name ?? comment.link_id,
+	postTitle: post.title ?? comment.link_title ?? null,
+	score: comment.score,
+	sendReplies: comment.send_replies,
+	subredditId: comment.subreddit_id,
+	treatmentTags: comment.treatment_tags,
+	userReports: comment.user_reports,
+	voteState: getVoteStateNum(comment.likes),
 });
 
 const processMoreComment = (morecomments: any, post: any, { next, prev }: { next: CommentPosition; prev: CommentPosition }) => ({
@@ -98,17 +111,18 @@ const recursiveProcessComments = (
 
 		authorFlair[comment.data.author] ??= processAuthorFlair(comment.data);
 
-		const prevComment = commentChildren[i - 1];
-		const nextComment = commentChildren[i + 1];
-		const next = getCommentPositionObject(nextComment);
-		const prev = getCommentPositionObject(prevComment);
+		const position = {
+			next: getCommentPositionObject(commentChildren[i + 1]),
+			prev: getCommentPositionObject(commentChildren[i - 1])
+		}
 
 		if (comment.kind === "more") {
 			if (comment.data.count === 0)
-				continueThreads["continueThread-" + comment.data.parent_id] = processContinueThread(comment.data, postData, { next, prev });
-			else moreComments["moreComments-" + comment.data.name] = processMoreComment(comment.data, postData, { next, prev });
+				continueThreads["continueThread-" + comment.data.parent_id] = processContinueThread(comment.data, postData, position);
+			else
+				moreComments["moreComments-" + comment.data.name] = processMoreComment(comment.data, postData, position);
 		} else {
-			comments[comment.data.name] = processSingleComment(comment.data, postData, { next, prev });
+			comments[comment.data.name] = processSingleComment(comment.data, postData, position);
 		}
 
 		/* threaded=false doesn't require recursive processing of comments.
