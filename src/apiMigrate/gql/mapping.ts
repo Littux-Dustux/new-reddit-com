@@ -786,9 +786,9 @@ export const gqlFedMap: GqlFedMapping = {
 		sha256Hash: "4535fca1d94dbad56dadb03804346c41117fc4a6abb38417c4821fc7a192ee75",
 	},
 	RedditorKarma: {
-		operationName: "GetUserCakeDayAndKarma", // may not be correct
-		sha256Hash: "898ef784254d30403b62b4d417ae18f9d7a5a3e94ca568e8f61369868ae1b9fb",
-		mapVars: ({ name }) => ({ username: name })
+		operationName: "Profile",
+		sha256Hash: "3d8c0385d1585b8a0b486f42eed1b2dc3504230f43fd43d136d6d16220ff99dd",
+		mapResp: ({ redditorInfoByName }) => ({ user: redditorInfoByName })
 	},
 	RedditorNameById: {
 		operationName: "GetUserNameById",
@@ -853,6 +853,7 @@ export const gqlFedMap: GqlFedMapping = {
 	SubredditAbout: {
 		operationName: "SubredditInfoByName", // hopefully this works
 		sha256Hash: "2c4e9fcfd57b11c4ca2e00e087aa243891f7e2e251192ad4a9b7b2a63d4b1b8e",
+		mapResp: ({ subredditInfoByName }) => ({ subreddit: subredditInfoByName })
 	},
 	SubredditAchievementFlairs: {
 		operationName: "GetSubredditAchievementFlairs",

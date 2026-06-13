@@ -1,5 +1,5 @@
 import { getVoteStateNum } from "./common";
-import { processPost } from "./postsPage";
+import { processPost } from "./posts";
 import { processAuthorFlair, processSubreddit, processSubredditAboutInfo, processSubredditPostFlair, processSubredditUserFlair } from "./subreddit";
 
 type CommentPosition = { id: string; type: string } | null;
@@ -97,17 +97,22 @@ const getCommentPositionObject = (comment: any): CommentPosition => {
 };
 
 const recursiveProcessComments = (
-	commentChildren: any[],
-	postData: any,
+	commentChildren: Record<string, any>[],
+	postData: Record<string, any>,
 	{
 		authorFlair = {},
 		comments = {},
 		continueThreads = {},
 		moreComments = {},
-	}: { authorFlair?: Record<string, any>; comments?: Record<string, any>; continueThreads?: Record<string, any>; moreComments?: Record<string, any> },
+	}: {
+		authorFlair?: Record<string, any>;
+		comments?: Record<string, any>;
+		continueThreads?: Record<string, any>;
+		moreComments?: Record<string, any>
+	},
 ) => {
 	for (let i = 0; i < commentChildren.length; i++) {
-		const comment = commentChildren[i];
+		const comment = commentChildren[i] as any;
 
 		authorFlair[comment.data.author] ??= processAuthorFlair(comment.data);
 
@@ -134,7 +139,7 @@ const recursiveProcessComments = (
 	return { authorFlair, comments, continueThreads, moreComments };
 };
 
-export function postcomments(postData: any, commentsChildren: any[]) {
+export function postcomments(postData: Record<string, any>, commentsChildren: Record<string, any>[]) {
 	const data: Record<string, any> = {
 		account: null,
 		authorFlair: {
@@ -194,7 +199,7 @@ export function postcomments(postData: any, commentsChildren: any[]) {
 	return data;
 }
 
-export function morecomments(things: any[], postId: string) {
+export function morecomments(things: Record<string, any>[], postId: string) {
 	return {
 		commentLists: {
 			[postId]: {
@@ -202,6 +207,7 @@ export function morecomments(things: any[], postId: string) {
 				tail: getCommentPositionObject(things[things.length - 1]),
 			},
 		},
+		// full post object isn't needed, only post ID is needed
 		...recursiveProcessComments(things, { name: postId }, {}),
 	};
 }
