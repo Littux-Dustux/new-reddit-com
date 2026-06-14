@@ -1,6 +1,7 @@
 import type { InterceptorHandler } from "../../interceptor/xhr";
 import { getLogger } from "../../logging/logger";
 import { moreCommentsResponse, postCommentsResponse } from "./postCommentsPage";
+import { subredditPostsPage } from "./subredditPostsPage";
 
 
 const logger = getLogger("gatewayAPI");
@@ -13,8 +14,10 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 	logger.log("Intercepted request to gateway API: " + operation + " " + url, true);
 	if (data) console.debug("Payload:", data);
 
-
 	switch (operation) {
+		case "subreddit":
+		case "subreddits":
+			return subredditPostsPage(path[0] as string, params);
 		case "postcomments":
 			return postCommentsResponse(path[0] as string, path[1], params);
 		case "morecomments":

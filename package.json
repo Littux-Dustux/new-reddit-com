@@ -12,10 +12,12 @@
   "license": "GPL-3.0-only",
   "packageManager": "pnpm@10.33.0",
   "devDependencies": {
+    "@types/tampermonkey": "^5.0.5",
     "typescript": "^6.0.2",
     "vite": "^8.0.3",
-    "vite-plugin-dts": "^4.5.4",
-    "@types/tampermonkey": "^5.0.5"
+    "vite-plugin-dts": "^4.5.4"
   },
-  "dependencies": {}
+  "dependencies": {
+    "snudown-js": "^4.1.0"
+  }
 }

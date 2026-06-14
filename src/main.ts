@@ -2249,7 +2249,7 @@ export const initialState = {
 				pipedream_one_feed_new_user_rollout: { id: 5961, name: "pipedream_one_feed_new_user_rollout", variant: "enabled", version: "6" },
 				r2_whatsapp_comment_reply: { id: 5974, name: "r2_whatsapp_comment_reply", variant: "enabled", version: "8" },
 				feedex_be_proto_feeds_cell_ids_update: { id: 5976, name: "feedex_be_proto_feeds_cell_ids_update", variant: "enabled", version: "12" },
-				d2x_gql_subreddit_more_posts_2: { id: 5999, name: "d2x_gql_subreddit_more_posts_2", variant: "enabled", version: "8" },
+				// d2x_gql_subreddit_more_posts_2: { id: 5999, name: "d2x_gql_subreddit_more_posts_2", variant: "enabled", version: "8" },
 				ios_dev_platform_enabled: { id: 6034, name: "ios_dev_platform_enabled", variant: "enabled", version: "9" },
 				pipedream_one_feed_new_user_rollout_row: { id: 6035, name: "pipedream_one_feed_new_user_rollout_row", variant: "enabled", version: "3" },
 				onboarding_mod_setting_discovery: { id: 6083, name: "onboarding_mod_setting_discovery", variant: "enabled", version: "7" },
@@ -3645,9 +3645,9 @@ export const initialState = {
 					version: "2",
 				},
 				rbl_blinkpilotq3_072024_092024: { id: 13694, name: "rbl_blinkpilotq3_072024_092024", variant: "control_1", version: "2" },
-				d2x_gql_subreddit_page: { id: 0, name: "d2x_gql_subreddit_page", variant: "enabled", version: "1" },
-				d2x_profile_listing_gql_test: { id: 0, name: "d2x_profile_listing_gql_test", variant: "enabled", version: "1" },
-				d2x_gql_modqueues: { id: 0, name: "d2x_gql_modqueues", variant: "enabled", version: "1" }
+				// d2x_gql_subreddit_page: { id: 0, name: "d2x_gql_subreddit_page", variant: "enabled", version: "1" },
+				// d2x_profile_listing_gql_test: { id: 0, name: "d2x_profile_listing_gql_test", variant: "enabled", version: "1" },
+				// d2x_gql_modqueues: { id: 0, name: "d2x_gql_modqueues", variant: "enabled", version: "1" }
 
 			},
 			localPersisted: {},

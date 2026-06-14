@@ -1,6 +1,6 @@
 import { getVoteStateNum } from "./common";
 import { processPost } from "./posts";
-import { processAuthorFlair, processSubreddit, processSubredditAboutInfo, processSubredditPostFlair, processSubredditUserFlair } from "./subreddit";
+import { getAuthorFlairFromR2Thing, processSubreddit, processSubredditAboutInfo, processSubredditPostFlair, processSubredditUserFlair } from "./subreddit";
 
 type CommentPosition = { id: string; type: string } | null;
 
@@ -114,7 +114,7 @@ const recursiveProcessComments = (
 	for (let i = 0; i < commentChildren.length; i++) {
 		const comment = commentChildren[i] as any;
 
-		authorFlair[comment.data.author] ??= processAuthorFlair(comment.data);
+		authorFlair[comment.data.author] ??= getAuthorFlairFromR2Thing(comment.data);
 
 		const position = {
 			next: getCommentPositionObject(commentChildren[i + 1]),
@@ -143,7 +143,7 @@ export function postcomments(postData: Record<string, any>, commentsChildren: Re
 	const data: Record<string, any> = {
 		account: null,
 		authorFlair: {
-			[postData.author]: processAuthorFlair(postData),
+			[postData.author]: getAuthorFlairFromR2Thing(postData),
 		},
 		commentLists: {
 			[postData.name]: {
