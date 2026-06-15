@@ -33,7 +33,7 @@ export const processSubredditAboutInfoGql = (data: any) => {
 		advertiserCategory: "NoThanks",
 		allOriginalContent: false,
 		contentCategory: "",
-		created: Number(new Date(data.createdAt)),
+		created: Number(new Date(data.createdAt)) / 1000,
 		disableContributorRequests: data.disable_contributor_requests,
 		emojisEnabled: false,
 		hasExternalAccount: false,

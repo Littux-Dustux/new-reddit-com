@@ -139,7 +139,7 @@ const recursiveProcessComments = (
 	return { authorFlair, comments, continueThreads, moreComments };
 };
 
-export function postcomments(postData: Record<string, any>, commentsChildren: Record<string, any>[]) {
+export function postcomments(postData: Record<string, any>, commentsChildren: Record<string, any>[], structuredStyles: any = null) {
 	const data: Record<string, any> = {
 		account: null,
 		authorFlair: {
@@ -170,7 +170,7 @@ export function postcomments(postData: Record<string, any>, commentsChildren: Re
 		subredditAboutInfo: {
 			[postData.subreddit_id]: processSubredditAboutInfo(postData.sr_detail),
 		},
-		structuredStyles: null,
+		structuredStyles,
 		userFlair: {
 			[postData.subreddit_id]: processSubredditUserFlair(postData.sr_detail),
 		},

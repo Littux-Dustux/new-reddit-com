@@ -3,6 +3,9 @@ import { postcomments, morecomments } from "./mappers/comments";
 
 
 export const postCommentsResponse = async (postID: string, commentID: string | undefined, params: Record<string, string>) => {
+	const structuredStyles = params.subredditName && params.include?.includes("structuredStyles")
+		? getREST(`/api/v1/structured_styles/${params.subredditName}.json?raw_json=1`)
+		: null;
 	const [
 		{ data: { children: [{ data: postData }] }},
 		{ data: { children: comments }}
@@ -13,7 +16,7 @@ export const postCommentsResponse = async (postID: string, commentID: string | u
 		raw_json: "1",
 		raw_media_syntax: "1"
 	})}`);
-	return JSON.stringify(postcomments(postData, comments));
+	return JSON.stringify(postcomments(postData, comments, await structuredStyles));
 }
 
 export const moreCommentsResponse = async (postID: string, childrenIDs: string) => {
