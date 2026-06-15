@@ -1,9 +1,12 @@
 import { gqlFetch } from "../../api/gql";
 import { getREST } from "../../api/rest";
+import { getLogger } from "../../logging";
 import { processListing } from "./mappers/listing";
 
+const logger = getLogger("subredditPostsPage");
+
 export async function subredditPostsPage(subreddits: string, params: Record<string, any>) {
-	const isAdhocMulti = subreddits.includes("+");
+	const isAdhocMulti = subreddits.includes("+") || subreddits === "all" || subreddits === "mod" || subreddits === "friends";
 	const shouldFetchSubreddit = !isAdhocMulti && !params.after;
 
 	const subredditInfoGql = !shouldFetchSubreddit ? null : gqlFetch(
@@ -18,23 +21,17 @@ export async function subredditPostsPage(subreddits: string, params: Record<stri
 			includeDevvitData: false,
 		}
 	);
-	
-	const structuredStylesGql = shouldFetchSubreddit && params.include.includes("structuredStyles") ? gqlFetch(
-		"SubredditStructuredStyle",
-		"5a788c93414bd669bf66b02900d1140e86a6e2bdd16fee0ec750e4fa6c60e189",
-		{
-			subredditName: subreddits,
-			includeWidgets: true,
-			includeCustomColors: true
-		}
-	) : null;
-	
+
+	const structuredStyles = shouldFetchSubreddit && params.include.includes("structuredStyles")
+		? getREST("/api/v1/structured_styles/"+subreddits+".json?raw_json=1").catch(e => logger.err(e.message, true, e))
+		: null;
+
 	params.raw_json = '1';
 	params.limit = params.dist || '';
 	const sort = params.sort || '';
 	if (isAdhocMulti) params.sr_detail = "true";
-	
-	console.debug({ isAdhocMulti, shouldFetchSubreddit, subredditInfoGql, structuredStylesGql, params: structuredClone(params) });
+
+	// console.debug({ isAdhocMulti, shouldFetchSubreddit, subredditInfoGql, structuredStylesGql, params: structuredClone(params) });
 
 	delete params.dist;
 	delete params.sort;
@@ -47,7 +44,7 @@ export async function subredditPostsPage(subreddits: string, params: Record<stri
 			listing.data.children,
 			listing.data.after,
 			(await subredditInfoGql)?.subredditInfoByName,
-			(await structuredStylesGql)?.subredditInfoByName
+			await structuredStyles
 		)
 	)
 }

@@ -97,7 +97,7 @@ export const processSubredditGql = (data: any) => ({
 	whitelistStatus: data.whitelistStatus.toLowerCase(),
 	wls: 6,
 	subscribers: data.subscribersCount,
-	url: "/"+data.prefixedName,
+	url: "/"+data.prefixedName+"/",
 	type: data.type.toLowerCase(),
 	icon: data.styles?.legacyIcon ? {
 		url: data.styles.legacyIcon.url,
@@ -177,3 +177,4 @@ export const getAuthorFlairFromR2Thing = (data: any) =>
 				type: data.author_flair_type,
 			}
 		: null;
+		

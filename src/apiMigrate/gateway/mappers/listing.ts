@@ -1,12 +1,11 @@
 import { processPost } from "./posts";
-import { processStructuredStyles } from "./structuredStyles";
 import { getAuthorFlairFromR2Thing, processSubreddit, processSubredditAboutInfo, processSubredditAboutInfoGql, processSubredditGql, processSubredditPostFlair, processSubredditPostFlairGql, processSubredditUserFlair, processSubredditUserFlairGql } from "./subreddit";
 
 export const processListing = (
 	items: Record<string, any>[],
 	afterToken: string,
 	gqlSubredditAboutInfo?: any,
-	gqlSubredditWithStructuredStyles?: any
+	structuredStyles?: any
 ) => {
 	const state: Record<string, any> = {
 		account: null,
@@ -21,9 +20,7 @@ export const processListing = (
 		profiles: {},
 		token: afterToken,
 		postInstances: {},
-		structuredStyles: gqlSubredditAboutInfo && gqlSubredditWithStructuredStyles
-			? processStructuredStyles(gqlSubredditWithStructuredStyles, gqlSubredditAboutInfo)
-			: null,
+		structuredStyles: gqlSubredditAboutInfo && structuredStyles ? structuredStyles : null,
 		userFlair: {},
 		subredditPermissions: null,
 		preferences: null
