@@ -3,10 +3,15 @@ import { gqlFetch } from "../../api/gql";
 import { getLogger } from "../../logging/logger";
 import idMapping from './oldGqlIdNameMap.json';
 import { type OldOperation, gqlFedMap } from "./mapping";
+import svcGqlFetch from "../../api/shredditGql";
+import { RedditAPIError } from "../../api/rest";
 
 const logger = getLogger("gqlMigrate");
 
-const defaultResponse = '{"errors":[{"message":"Unknown operation"}],"data":{}}';
+const defaultResponse = {
+	jsonResponse: '{"errors":[{"message":"Unknown operation"}],"data":{}}',
+	status: 400,
+};
 
 export const gqlMigrationInterceptor: InterceptorHandler = async (_, data: any) => {
 	let { id, variables }: { id: string; variables: any } = JSON.parse(data);
@@ -18,27 +23,49 @@ export const gqlMigrationInterceptor: InterceptorHandler = async (_, data: any) 
 
 	const mapping = gqlFedMap[opName];
 	if (!mapping) {
-		logger.err(opName + " hasn't been ported to gql-fed yet");
+		logger.err(opName + " hasn't been ported to gql-fed yet", undefined, variables);
 		return defaultResponse;
 	}
 
 	if (mapping.hardcodedResp) {
-		logger.wrn("returning hardcoded response for " + opName, true);
-		return mapping.hardcodedResp;
+		logger.dbg("returning hardcoded response for " + opName);
+		return {
+			jsonResponse: mapping.hardcodedResp,
+			status: 200,
+		};
 	}
 
-	if (mapping.process) return mapping.process(variables);
+	if (mapping.process) return {
+		jsonResponse: await mapping.process(variables),
+		status: 200
+	};
 	if (mapping.mapVars) variables = mapping.mapVars(variables);
 
-	if (!mapping.sha256Hash) {
-		logger.err(opName + " doesn't have a sha256Hash, so it can't be fetched. It is a mistake, so report it", true);
-		return defaultResponse;
+	
+	let gqlData;
+
+	try {
+		if (mapping.useShredditGqlProxy) {
+			gqlData = await svcGqlFetch(mapping.operationName, variables, { parseJSON: Boolean(mapping.mapResp) });
+		} else if (!mapping.sha256Hash) {
+			logger.err(opName + " doesn't have a sha256Hash, and uses gql-fed, so it can't be fetched. It is a mistake, so report it", true);
+			return defaultResponse;
+		} else {
+			gqlData = await gqlFetch(mapping.operationName, mapping.sha256Hash, variables, { parseJSON: Boolean(mapping.mapResp) });
+		}
+	} catch (e) {
+		if (e instanceof RedditAPIError) {
+			return {
+				jsonResponse: e.rawPayload,
+				status: e.status,
+			}
+		} else throw e;
 	}
 
-	if (mapping.mapResp) {
-		const originalData = await gqlFetch(mapping.operationName, mapping.sha256Hash, variables);
-		return JSON.stringify({ data: mapping.mapResp(originalData) });
-	} else {
-		return await gqlFetch(mapping.operationName, mapping.sha256Hash, variables, { parseJSON: false });
+	return {
+		jsonResponse: mapping.mapResp
+			? JSON.stringify({ data: mapping.mapResp(gqlData) })
+			: gqlData,
+		status: 200,
 	}
 }

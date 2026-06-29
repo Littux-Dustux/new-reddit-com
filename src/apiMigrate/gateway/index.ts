@@ -11,7 +11,7 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 	const params = Object.fromEntries(url.searchParams.entries());
 	const [operation, ...path] = url.pathname.split("/").slice(3);
 
-	logger.log("Intercepted request to gateway API: " + operation + " " + url, true);
+	logger.dbg("Intercepted request to gateway API: " + operation + " " + url);
 	if (data) console.debug("Payload:", data);
 
 	switch (operation) {
@@ -26,6 +26,9 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 			return moreCommentsResponse(path[0] as string, JSON.parse(data).token);
 		default:
 			logger.wrn("No handler for gateway API endpoint: " + url, true);
-			return "{}";
+			return {
+				jsonResponse: "{}",
+				status: 501
+			};
 	}
 }

@@ -1,7 +1,8 @@
 import { gqlFetch } from "../../api/gql";
-import { getREST } from "../../api/rest";
+import { getREST, RedditAPIError } from "../../api/rest";
 import { getLogger } from "../../logging";
 import { processListing } from "./mappers/listing";
+import { convertUnavailableSubredditToGatewayError, structuredStylesLoadedSubs } from "./mappers/subreddit";
 
 const logger = getLogger("subredditPostsPage");
 
@@ -15,16 +16,24 @@ export async function subredditPostsPage(subreddits: string, params: Record<stri
 		{
 			subredditName: subreddits,
 			loggedOutIsOptedIn: true,
-			filterGated: false,
+			filterGated: true,
 			includeRecapFields: false,
 			includeWelcomePage: false,
 			includeDevvitData: false,
 		}
 	);
 
-	const structuredStyles = shouldFetchSubreddit && params.include.includes("structuredStyles")
-		? getREST("/api/v1/structured_styles/"+subreddits+".json?raw_json=1").catch(e => logger.err(e.message, true, e))
+	const fetchStructuredStyles = shouldFetchSubreddit && (
+		!structuredStylesLoadedSubs.has(subreddits.toLowerCase())
+		|| params.include?.includes("structuredStyles")
+	);
+	const structuredStyles = fetchStructuredStyles
+		? getREST(`/api/v1/structured_styles/${subreddits}.json?raw_json=1`).catch(e => logger.err(e.message, true, e))
 		: null;
+
+	if (fetchStructuredStyles) {
+		structuredStylesLoadedSubs.add(subreddits.toLowerCase());
+	}
 
 	params.raw_json = '1';
 	params.limit = params.dist || '';
@@ -37,14 +46,27 @@ export async function subredditPostsPage(subreddits: string, params: Record<stri
 	delete params.sort;
 	delete params.layout;
 
-	const listing = await getREST(`/r/${subreddits}/${sort}.json?${new URLSearchParams(params)}`);
 
-	return JSON.stringify(
-		processListing(
-			listing.data.children,
-			listing.data.after,
-			(await subredditInfoGql)?.subredditInfoByName,
-			await structuredStyles
-		)
-	)
+	const listingPromise = getREST(`/r/${subreddits}/${sort}.json?${new URLSearchParams(params)}`).catch(
+		e => logger.err(`Error fetching listing: ${e.message}`, true, e)
+	);
+	const subredditInfoByName = (await subredditInfoGql)?.subredditInfoByName;
+	if (shouldFetchSubreddit && (!subredditInfoByName || subredditInfoByName.__typename !== "Subreddit")) {
+		const gatewayError = await convertUnavailableSubredditToGatewayError(subredditInfoByName);
+		logger.dbg("Unavailable subreddit", { shouldFetchSubreddit, subredditInfoByName, gatewayError });
+		return gatewayError;
+	}
+
+	const listing = await listingPromise;
+	return {
+		jsonResponse: JSON.stringify(
+			processListing(
+				listing.data.children,
+				listing.data.after,
+				subredditInfoByName,
+				await structuredStyles
+			)
+		),
+		status: 200
+	}
 }

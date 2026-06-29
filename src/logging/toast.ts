@@ -16,7 +16,7 @@ export enum ToastType {
 }
 
 export type ToastOptions = {
-	type: ToastType;
+	kind: ToastType;
 	id?: string;
 	text: string;
 	buttonText?: string;
@@ -42,18 +42,18 @@ export const multiErrorToast = (messages: any[]) => {
 	if (messages.length < 10) {
 		messages.forEach((message) => {
 			showToast({
-				type: ToastType.Error,
+				kind: ToastType.Error,
 				text: typeof message === "string" ? message : JSON.stringify(message)
-			});
+			}, 10000);
 		});
 	} else {
 		navigator.clipboard
 			.writeText(JSON.stringify(messages))
 			.then(() => {
-				showToast({ type: ToastType.Error, text: "Too many errors (> 10), copied to clipboard" });
+				showToast({ kind: ToastType.Error, text: "Too many errors (> 10), copied to clipboard" }, 10000);
 			})
 			.catch((e) => {
-				showToast({ type: ToastType.Error, text: "Error copying errors to clipboard. See console for details (" + e.message + ")" });
+				showToast({ kind: ToastType.Error, text: "Error copying errors to clipboard. See console for details (" + e.message + ")" }, 10000);
 			});
 	}
 }

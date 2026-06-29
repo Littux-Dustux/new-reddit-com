@@ -3,7 +3,7 @@
 // It is fine now.
 
 import { getCache, setCache } from "./caching";
-import { getLogger } from "../logging";
+import { getLogger, showToast } from "../logging";
 
 const logger = getLogger('api:rest');
 
@@ -17,6 +17,10 @@ export class RedditAPIError extends Error {
 
 	constructor(status: number, message: string, reason: string = "UNKNOWN_ERROR", rawPayload: any = null, fields?: string[]) {
 		super(message);
+		showToast({
+			kind: 4,
+			text: message
+		}, 10000);
 		this.name = "RedditAPIError";
 		this.status = status;
 		this.reason = reason;
@@ -47,8 +51,11 @@ function parseRedditError(status: number, responseText: string, parsed?: any): R
 		parsed = tryParseJson(responseText);
 		if (!parsed) {
 			// Handle <text/html> or empty responses (e.g., 503 Service Unavailable, 502 Bad Gateway)
-			const isHtml = responseText.trim().toLowerCase().startsWith("<!doctype html") || responseText.trim().toLowerCase().startsWith("<html");
-			const message = isHtml ? "Reddit returned an HTML error page (likely 503 or 504)" : responseText.slice(0, 100);
+			const trimmedResponse = responseText.trim().toLowerCase();
+			const isHtml = trimmedResponse.startsWith("<!doctype html") || trimmedResponse.startsWith("<html");
+			const message = isHtml
+				? `Reddit returned an HTML page (status: ${status})`
+				: `Reddit returned a non JSON response (status: ${status}): ${responseText.slice(0, 100)}`;
 			return new RedditAPIError(status, message, "HTML_OR_TEXT_ERROR", responseText);
 		}
 	}
@@ -61,12 +68,16 @@ function parseRedditError(status: number, responseText: string, parsed?: any): R
 		const reason = firstError[0] || "UNKNOWN_REASON";
 		const message = firstError[1] || "An error occurred";
 		const field = firstError[2];
-		return new RedditAPIError(status, message, reason, parsed, field ? [field] : undefined);
+		return new RedditAPIError(status, `${reason}: "${message}" on field "${field}"`, reason, parsed, field ? [field] : undefined);
 	}
 
 	// 2. Format: {"fields": ["subject"], "explanation": "we need something here", "message": "Bad Request", "reason": "NO_TEXT"}
 	if (parsed?.explanation && parsed?.reason) {
-		return new RedditAPIError(status, parsed.explanation, parsed.reason, parsed, parsed.fields);
+		return new RedditAPIError(
+			status,
+			`${status}: ${parsed.message}: ${parsed.reason}: "${parsed.explanation}" on field(s) "${parsed.fields}"`,
+			parsed.reason, parsed, parsed.fields
+		);
 	}
 
 	// 3. Format: { reason: "MAY_NOT_VIEW", message: "Forbidden" }
@@ -75,11 +86,15 @@ function parseRedditError(status: number, responseText: string, parsed?: any): R
 	if (parsed?.message) {
 		const actualStatus = parsed.error && typeof parsed.error === "number" ? parsed.error : status;
 		const reason = parsed.reason || (parsed.error && typeof parsed.error === "string" ? parsed.error : "UNKNOWN_REASON");
-		return new RedditAPIError(actualStatus, parsed.message, reason, parsed);
+		return new RedditAPIError(
+			actualStatus,
+			`${actualStatus}: ${parsed.message}${parsed.reason ? `: ${parsed.reason.replaceAll('_', ' ')}` : ""}`,
+			reason, parsed
+		);
 	}
 
 	// Fallback for unrecognized JSON objects
-	return new RedditAPIError(status, `Reddit API Error: ${status}`, "UNKNOWN_JSON_ERROR", parsed);
+	return new RedditAPIError(status, `${status}: Unknown JSON error`, "UNKNOWN_JSON_ERROR", parsed);
 }
 
 // --- API Client ---
@@ -138,9 +153,10 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 		url,
 		headers,
 		data: (requestData as any),
+		anonymous: true
 	});
 
-	logger.dbg(`${method} ${url} (status: ${response.status}) ${requestData}`);
+	logger.log(`${method} ${url.slice(0, 128)} (status: ${response.status}) ${requestData?.slice(0, 128)}`);
 
 	// Parse response once at the beginning
 	const parsed = tryParseJson(response.responseText);

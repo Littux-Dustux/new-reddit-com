@@ -1,8 +1,13 @@
-import { getVoteStateNum } from "./common";
+import { getGIPHYGifsByIds as getRedditGIPHYGifsByIds } from "../../../api/giphy";
+import { gqlFetch } from "../../../api/gql";
+import { getLogger } from "../../../logging";
+import { getMuxedMP4sDownloadRTJSON, getVideoMediaMetadataGql, getVoteStateNum } from "./common";
 import { processPost } from "./posts";
 import { getAuthorFlairFromR2Thing, processSubreddit, processSubredditAboutInfo, processSubredditPostFlair, processSubredditUserFlair } from "./subreddit";
 
 type CommentPosition = { id: string; type: string } | null;
+
+const logger = getLogger("mapComments");
 
 const processSingleComment = (comment: any, post: any = {}, { next, prev }: { next: CommentPosition; prev: CommentPosition } = { next: null, prev: null }) => ({
 	approvedAtUTC: comment.approved_at_utc,
@@ -51,6 +56,7 @@ const processSingleComment = (comment: any, post: any = {}, { next, prev }: { ne
 	parentId: comment.parent_id,
 	permalink: comment.permalink,
 	prev,
+	profileImage: comment.profile_img,
 	postAuthor: post.author ?? comment.link_author ?? null,
 	postId: post.name ?? comment.link_id,
 	postTitle: post.title ?? comment.link_title ?? null,
@@ -96,7 +102,7 @@ const getCommentPositionObject = (comment: any): CommentPosition => {
 	};
 };
 
-const recursiveProcessComments = (
+const recursiveProcessComments = async (
 	commentChildren: Record<string, any>[],
 	postData: Record<string, any>,
 	{
@@ -111,6 +117,14 @@ const recursiveProcessComments = (
 		moreComments?: Record<string, any>
 	},
 ) => {
+	// some giphy comments don't have the proper metadata, and have {"status":"invalid"}. So we'll fetch it from GIPHY.
+	const brokenGiphyCommentMediaMetadatas: Record<string, any[]> = {};
+	const giphyIdsToFetch: Set<string> = new Set();
+
+	// reddit doesn't include videos in comments on the old API
+	const videoCommentIncompleteMedias: Record<string, any> = {};
+	const videoCommentIdsToFetch: string[] = [];
+
 	for (let i = 0; i < commentChildren.length; i++) {
 		const comment = commentChildren[i] as any;
 
@@ -122,12 +136,25 @@ const recursiveProcessComments = (
 		}
 
 		if (comment.kind === "more") {
-			if (comment.data.count === 0)
+			if (comment.data.count === 0) {
 				continueThreads["continueThread-" + comment.data.parent_id] = processContinueThread(comment.data, postData, position);
-			else
+			} else {
 				moreComments["moreComments-" + comment.data.name] = processMoreComment(comment.data, postData, position);
+			}
 		} else {
-			comments[comment.data.name] = processSingleComment(comment.data, postData, position);
+			const processedComment = processSingleComment(comment.data, postData, position);
+			comments[comment.data.name] = processedComment;
+
+			const [firstMediaKey, firstMedia]: [string, any] = (processedComment.media.mediaMetadata && Object.entries(processedComment.media.mediaMetadata)[0]) ?? [null, null];
+
+			if (firstMedia && firstMedia.status === "invalid" && firstMediaKey.startsWith("giphy|") ) {
+				const giphyId = firstMediaKey.split("|")[1] as string;
+				giphyIdsToFetch.add(giphyId);
+				(brokenGiphyCommentMediaMetadatas[giphyId] ??= []).push(processedComment.media.mediaMetadata);
+			} else if (processedComment.media.richtextContent.document.some((node: any) => node.e === "video")) {
+				videoCommentIdsToFetch.push(processedComment.id);
+				videoCommentIncompleteMedias[processedComment.id] = processedComment.media;
+			}
 		}
 
 		/* threaded=false doesn't require recursive processing of comments.
@@ -136,17 +163,57 @@ const recursiveProcessComments = (
 		} */
 	}
 
+	const commentFixerPromises: Promise<void>[] = [];
+
+	if (giphyIdsToFetch.size > 0)
+		commentFixerPromises.push(
+			getRedditGIPHYGifsByIds(giphyIdsToFetch).then(redditGiphyGifDatas => {
+				for (const giphyId of giphyIdsToFetch) {
+					const gifData = redditGiphyGifDatas[giphyId];
+					const brokenMediaMetadatas = brokenGiphyCommentMediaMetadatas[giphyId];
+
+					if (gifData && brokenMediaMetadatas) {
+						for (const mediaMetadata of brokenMediaMetadatas) {
+							mediaMetadata[gifData.id] = gifData;
+						}
+					}
+				}
+			}).catch(e => {
+				logger.err("Error fetching GIPHY GIF data: " + (e as any).message);
+			})
+		);
+
+	if (videoCommentIdsToFetch.length > 0)
+		commentFixerPromises.push(
+			gqlFetch("CommentMediaDetails", "4228949b61fb4a9c17aed04edc4be641a7c48a12fbd506151afde1ce0e335857", { ids: videoCommentIdsToFetch })
+			.then(({ commentsByIds }) => {
+				for (const comment of commentsByIds) {
+					const incompleteMedia = videoCommentIncompleteMedias[comment.id];
+					const videoAsset = comment.content?.richtextMedia?.[0];
+
+					if (incompleteMedia && videoAsset?.status === "VALID") {
+						incompleteMedia.mediaMetadata = {
+							[videoAsset.id]: getVideoMediaMetadataGql(videoAsset)
+						};
+						const muxedMp4s = videoAsset.packagedMedia?.muxedMp4s;
+						if (muxedMp4s) {
+							incompleteMedia.richtextContent.document.push(...getMuxedMP4sDownloadRTJSON(muxedMp4s))
+						}
+					}
+				}
+			})
+		);
+
+	await Promise.all(commentFixerPromises);
 	return { authorFlair, comments, continueThreads, moreComments };
 };
 
-export function postcomments(postData: Record<string, any>, commentsChildren: Record<string, any>[], structuredStyles: any = null) {
-	const data: Record<string, any> = {
+export async function postcomments(post: Record<string, any>, commentsChildren: Record<string, any>[], structuredStyles: any = null) {
+	const state: Record<string, any> = {
 		account: null,
-		authorFlair: {
-			[postData.author]: getAuthorFlairFromR2Thing(postData),
-		},
+		authorFlair: {},
 		commentLists: {
-			[postData.name]: {
+			[post.name]: {
 				head: null,
 				tail: null,
 			},
@@ -154,52 +221,72 @@ export function postcomments(postData: Record<string, any>, commentsChildren: Re
 		comments: {},
 		features: null,
 		moreComments: {},
-		postFlair: {
-			[postData.subreddit_id]: processSubredditPostFlair(postData.sr_detail),
-		},
+		postFlair: {},
 		postMeta: null,
-		posts: {
-			[postData.name]: processPost(postData),
-		},
+		posts: {},
 		profiles: {},
-		subreddits: {
-			[postData.subreddit_id]: processSubreddit(postData.sr_detail),
-		},
+		subreddits: {},
 		preferences: null,
 		continueThreads: {},
-		subredditAboutInfo: {
-			[postData.subreddit_id]: processSubredditAboutInfo(postData.sr_detail),
-		},
+		subredditAboutInfo: {},
 		structuredStyles,
-		userFlair: {
-			[postData.subreddit_id]: processSubredditUserFlair(postData.sr_detail),
-		},
+		userFlair: {},
 		subredditPermissions: null,
 	};
 
+	const posts = state.posts;
+	posts[post.name] = processPost(post);
+
+	if (post.crosspost_parent_list?.[0]) {
+		const crossPost = post.crosspost_parent_list[0];
+		const subId = crossPost.subreddit_id || "";
+		posts[crossPost.name] = processPost(crossPost);
+
+		state.authorFlair[subId] ??= {};
+		state.authorFlair[subId][crossPost.author] = getAuthorFlairFromR2Thing(crossPost);
+
+		if (crossPost.sr_detail) {
+			state.subredditAboutInfo[subId] ??= processSubredditAboutInfo(crossPost.sr_detail);
+			state.subreddits[subId] ??= processSubreddit(crossPost.sr_detail);
+			state.postFlair[subId] ??= processSubredditPostFlair(crossPost.sr_detail);
+			state.userFlair[subId] ??= processSubredditUserFlair(crossPost.sr_detail);
+		}
+	}
+
+	const subId = post.subreddit_id || "";
+	state.authorFlair[subId] ??= {};
+	state.authorFlair[subId][post.author] = getAuthorFlairFromR2Thing(post);
+
+	if (post.sr_detail) {
+		state.subredditAboutInfo[subId] ??= processSubredditAboutInfo(post.sr_detail);
+		state.subreddits[subId] ??= processSubreddit(post.sr_detail);
+		state.postFlair[subId] ??= processSubredditPostFlair(post.sr_detail);
+		state.userFlair[subId] ??= processSubredditUserFlair(post.sr_detail);
+	}
+
 	if (commentsChildren.length === 0) {
-		return data;
+		return state;
 	}
 
 	const firstComment = commentsChildren[0];
 	const lastComment = /* commentsChildren.length <= 1 ? null : */ commentsChildren[commentsChildren.length - 1];
 
-	data.commentLists[postData.name] = {
+	state.commentLists[post.name] = {
 		head: getCommentPositionObject(firstComment),
 		tail: getCommentPositionObject(lastComment),
 	};
 
-	recursiveProcessComments(commentsChildren, postData, {
-		authorFlair: data.authorFlair,
-		comments: data.comments,
-		continueThreads: data.continueThreads,
-		moreComments: data.moreComments,
+	await recursiveProcessComments(commentsChildren, post, {
+		authorFlair: state.authorFlair,
+		comments: state.comments,
+		continueThreads: state.continueThreads,
+		moreComments: state.moreComments,
 	});
 
-	return data;
+	return state;
 }
 
-export function morecomments(things: Record<string, any>[], postId: string) {
+export async function morecomments(things: Record<string, any>[], postId: string) {
 	return {
 		commentLists: {
 			[postId]: {
@@ -208,6 +295,6 @@ export function morecomments(things: Record<string, any>[], postId: string) {
 			},
 		},
 		// full post object isn't needed, only post ID is needed
-		...recursiveProcessComments(things, { name: postId }, {}),
+		...(await recursiveProcessComments(things, { name: postId }, {})),
 	};
 }

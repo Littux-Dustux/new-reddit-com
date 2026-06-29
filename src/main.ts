@@ -1,5 +1,6 @@
 import { getLogger } from "./logging";
 import { initAPIMigratorInterceptors } from "./apiMigrate";
+import { gqlFetch } from "./api/gql";
 
 const logger = getLogger('init');
 
@@ -301,8 +302,8 @@ export const initialState = {
 			scheduledPosts: null,
 			adminCommunityTopics: null,
 			rteVideoPoster: null,
-			devAndStagingWatermark: null,
-			fpsMeter: null,
+			devAndStagingWatermark: true,
+			fpsMeter: true,
 			rabbitHole: null,
 			measureScrollFPS: null,
 			showVerboseErrors: true,
@@ -320,7 +321,7 @@ export const initialState = {
 			snoovatar30: null,
 			geoSubredditRecommendationDULoggedIn: null,
 			geoSubredditRecommendationDULoggedOut: null,
-			subredditInlineEditing: null,
+			subredditInlineEditing: true,
 			modToMemberShare: null,
 			subredditMentionD2xExperiment: null,
 			reCaptchaEnterprise: false,
@@ -592,7 +593,7 @@ export const initialState = {
 	reportPage: { reportPageApi: { error: null, pending: false, success: false }, reportPageRules: [], initialReason: null },
 	reportRules: { sitewideRules: [] },
 	requestHost: "reddit-desktop-external.kubernetes.ue1.snooguts.net",
-	runTimeEnvVars: { staging: false, startTimeInMillis: 1720534529852 },
+	runTimeEnvVars: { staging: true, startTimeInMillis: 1720534529852 },
 	search: {
 		appliedSort: {},
 		isDropdownOpen: false,
@@ -1299,7 +1300,7 @@ export const initialState = {
 			inboxCount: 1630,
 			inRedesignBeta: true,
 			isEmployee: true,
-			isFPR: true,
+			isFPR: false,
 			isNameEditable: false,
 			isMod: true,
 			isPasswordSet: true,
@@ -3647,7 +3648,7 @@ export const initialState = {
 				rbl_blinkpilotq3_072024_092024: { id: 13694, name: "rbl_blinkpilotq3_072024_092024", variant: "control_1", version: "2" },
 				// d2x_gql_subreddit_page: { id: 0, name: "d2x_gql_subreddit_page", variant: "enabled", version: "1" },
 				// d2x_profile_listing_gql_test: { id: 0, name: "d2x_profile_listing_gql_test", variant: "enabled", version: "1" },
-				// d2x_gql_modqueues: { id: 0, name: "d2x_gql_modqueues", variant: "enabled", version: "1" }
+				d2x_gql_modqueues: { id: 0, name: "d2x_gql_modqueues", variant: "enabled", version: "1" }
 
 			},
 			localPersisted: {},
@@ -3698,13 +3699,13 @@ export const initialState = {
 			allowClickTracking: false,
 			autoplayVideo: false,
 			collapsedTraySections: { favorites: false, multis: false, moderating: false, subscriptions: false, profiles: false },
-			commentMode: "richtext",
+			commentMode: "markdown",
 			countryCode: "XZ",
 			badCommentAutocollapse: "OFF",
-			layout: "classic",
+			layout: "card",
 			rememberCommunityLayout: true,
 			defaultCommentSort: "top",
-			editorMode: "richtext",
+			editorMode: "markdown",
 			enableFollowers: true,
 			geopopular: "",
 			globalTheme: "REDDIT",
@@ -3714,8 +3715,8 @@ export const initialState = {
 			labelNSFW: true,
 			liveBarRecommendationsEnabled: false,
 			loginOtpEnabled: false,
-			markMessagesRead: true,
-			nightmode: true,
+			markMessagesRead: false,
+			nightmode: false,
 			openPostInNewTab: false,
 			over18: true,
 			reduceAnimationsFromAwards: false,
@@ -3739,7 +3740,7 @@ export const initialState = {
 			topContentDismissalTime: null,
 			topContentTimesDismissed: 0,
 			rememberCommunitySort: true,
-			useMarkdown: false,
+			useMarkdown: true,
 			gatedSubredditOptIn: false,
 			quarantineOptIn: false,
 			sensitiveAdsPreferences: {
@@ -4021,6 +4022,43 @@ async function main() {
 		if (!window.store) throw new Error("Timed out trying to capture redux store. (>5 seconds)");
 		clearInterval(timer);
 	}, 5000);
+
+
+	const redditDomains = new Set(['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com', 'np.reddit.com', /* window.location.host */ ]);
+
+	document.addEventListener('click', async (e: any) => {
+		const anchor = e.target?.closest('a');
+		if (!anchor || !anchor.href) return;
+
+		const url = new URL(anchor.href);
+
+		if (anchor.classList.contains("_3t5uN8xUmg0TOwRCOGQEcU") || redditDomains.has(url.host) && (url.pathname.includes("/s/") || url.pathname.includes("/comments/"))) {
+			e.preventDefault();
+
+			let fullPath;
+			
+			if (url.pathname.includes("/s/")) {
+				fullPath = new URL((await gqlFetch(
+					"ShareUrl", "424a761fb3d80ef2ec18a7dfaa867a9a1acf44df218e526c4538850dc7415c86", { shortUrl: url.toString() }
+				)).shareUrl.url).pathname;
+			} else {
+				fullPath = url.pathname + url.search + url.hash
+			}
+
+			logger.log(`Redirecting link to internal route: ${fullPath}`);
+			//window.history.pushState(null, '', fullPath);
+			window.store.dispatch({
+				type: "@@router/CALL_HISTORY_METHOD",
+				payload: {
+					method: "push",
+					args: [fullPath]
+				}
+			});
+
+			// Tell React to re-render the view
+			window.dispatchEvent(new PopStateEvent('popstate'));
+		}
+	}, true);
 };
 
 main();

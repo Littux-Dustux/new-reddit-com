@@ -1,8 +1,13 @@
+import { markdown } from "snudown-js";
 import modNoteCountFix from "./modNoteCountFix";
 import notificationsFix from "./notificationsFix";
 import { processGeneralSearch } from "./search";
+import { getREST } from "../../api/rest";
+import { getState } from "../../main";
+import { subredditNameToId } from "../gateway/mappers/subreddit";
 
 export type OldOperation = (
+	| "CreatorStats"
 	| "UpdateRecommendationPreferences"
 	| "DeleteSubredditMuteSettings"
 	| "FetchEligibleUXExperiences"
@@ -294,6 +299,7 @@ type Migrater = {
 	mapVars?: (vars: Record<string, any>) => Record<string, any>;
 	mapResp?: (resp: Record<string, any>) => Record<string, any>;
 	hardcodedResp?: string;
+	useShredditGqlProxy?: boolean;
 };
 
 type GqlFedMapping = Partial<Record<OldOperation, Migrater>>;
@@ -344,9 +350,16 @@ export const gqlFedMap: GqlFedMapping = {
 		sha256Hash: "0d748eaa3d03cc4dbb5c6da31cdbd60aa37d3aeebbe40728707baaacd534753c",
 	},
 	BadgeIndicators: {
-		operationName: "BadgeCount",
-		sha256Hash: "6e5b40ea4193a6fcfd6890518f4cdde524e434243d055c33a552af2e42e0a433",
-		mapResp: ({ badgeIndicators: { ...other }}) => ({ badgeIndicators: { ...other, chatUnreadMessages: { count: 0 }}})
+		//operationName: "BadgeCount",
+		//sha256Hash: "6e5b40ea4193a6fcfd6890518f4cdde524e434243d055c33a552af2e42e0a433",
+		operationName: "BadgeCountV2",
+		sha256Hash: "73bcdf5b9296d1a6dbd344d4fd1989a2f50428d45bdb98a498e05e81879cc979",
+		mapResp: ({ badgeIndicators }) => ({
+			badgeIndicators: {
+				chatUnreadMessages: { count: badgeIndicators.chatInboxTab.count },
+				inboxBadgeCount: badgeIndicators.notificationInboxTab.count,
+			}
+		})
 	},
 	BlockAwarder: {
 		operationName: "BlockAwarderByAwardingId",
@@ -424,6 +437,14 @@ export const gqlFedMap: GqlFedMapping = {
 		operationName: "CreateScheduledPostLink",
 		sha256Hash: "360d996af697c7b0f6ac3435977c7a4a2d9cb6cfc7080df94a9b9fff834bb646",
 	},
+	CreatorStats: {
+		operationName: "CreatorStats",
+		sha256Hash: "1967e4edfd77d0e37d7d384c7f4e67307a0b91e31e87569e3d8d31a4f461df7d"
+	},
+	CustomerSurveyConfig: {
+		operationName: "<hardcoded>",
+		hardcodedResp: hardcodedQuery('customerSurveyConfig')
+	},
 	DeleteCustomEmoji: {
 		operationName: "DeleteCustomEmoji",
 		sha256Hash: "0f8dcacc41a5dc0565847f15f955e5612d94d2f4672bccabbcf344190ba41138",
@@ -487,6 +508,11 @@ export const gqlFedMap: GqlFedMapping = {
 	FetchSubredditsNotificationSettings: {
 		operationName: "GetSubredditNotificationSettings",
 		sha256Hash: "93dcfc93eb8ed76c4fb5025ca38bbc470c8fc471246d99f910d55e98b44ee66b",
+		mapVars: ({ subredditIds }) => ({ ids: subredditIds })
+	},
+	FetchSubredditTags: {
+		operationName: "<hardcoded>",
+		hardcodedResp: '{"data":{"subredditInfoById":{"secondaryTags":{"edges":[]},"availableTags":{"edges":[]},"suggestedTags":{"edges":[]}}}}'
 	},
 	FetchSubredditTrafficStats: {
 		operationName: "EnhancedInsightsSummary", // got this from the 2026 reddit app. couldn't find one in the 2023 app. everything else here is from the 2023 app.
@@ -498,7 +524,8 @@ export const gqlFedMap: GqlFedMapping = {
 	},
 	Frontpage: {
 		operationName: "HomeElements",
-		sha256Hash: "a85f0afccfd8c623355a4ca3b144781eea668836ae02d2bf1bf298f26f74f2f1",
+		//sha256Hash: "a85f0afccfd8c623355a4ca3b144781eea668836ae02d2bf1bf298f26f74f2f1", // 2023 android app
+		sha256Hash: "60f2737fad67382ef010e4e65f9c921f85f767ff8a3426a17157a70ed6a1ee41", // 2024 android app
 		mapVars: (vars) => ({
 			...vars,
 			advancedConfiguration: {
@@ -566,6 +593,7 @@ export const gqlFedMap: GqlFedMapping = {
 	GetDevPlatformMetadata: {
 		operationName: "GetDevPlatformMetadata",
 		sha256Hash: "856bee1ed839deb100f036656ac530aa67c401554e94bef3c3bae4a57434155f",
+		hardcodedResp: '{"data":{"subredditInfoByName":{"__typename":"Subreddit","devPlatformMetadata":"e30="}}}'
 	},
 	GetModPnSettingsLayout: {
 		operationName: "GetModPnSettingsLayout", // used the 2026 one here because it's probably more suitable
@@ -586,6 +614,7 @@ export const gqlFedMap: GqlFedMapping = {
 		operationName: "RelatedSubreddits",
 		sha256Hash: "d8f3e2d9734263522a46ba5d7ee7c19790cd975e79533753df19f7503ace43e2",
 	},
+	/*
 	GetSingleDynamicConfig: {
 		operationName: "DynamicConfigsByNames",
 		sha256Hash: "30383254f78b1781a7e755f1cf06c71b10b3de5cf2f8d64a5677b80da02fecb3",
@@ -598,6 +627,11 @@ export const gqlFedMap: GqlFedMapping = {
 			return { dynamicConfigByName: confs[0] ?? null };
 		},
 	},
+	*/
+	GetSingleDynamicConfig: {
+		operationName: "",
+		hardcodedResp: hardcodedQuery("dynamicConfigByName")
+	},
 	GetSubredditAllowedPostTypes: {
 		operationName: "GetPostTypes", // 2026 app
 		sha256Hash: "11cc8773a678e5367f3927e6fdbfd62b10e52c35aa6ee574374e04e550658890",
@@ -605,6 +639,7 @@ export const gqlFedMap: GqlFedMapping = {
 	GetSubredditCountrySiteSettings: {
 		operationName: "GetSubredditSettings", // inefficient but it's the only way i can find this info
 		sha256Hash: "6dd06f2120bf8ed8abc10095b55744bbf331a9ac8f7dcc02c2cee72938ea5fb0",
+		mapVars: ({ subredditId }) => ({ id: subredditId })
 	},
 	GetSubredditQuestions: {
 		operationName: "<hardcoded>",
@@ -613,6 +648,7 @@ export const gqlFedMap: GqlFedMapping = {
 	GetSubredditSettings: {
 		operationName: "GetSubredditSettings",
 		sha256Hash: "6dd06f2120bf8ed8abc10095b55744bbf331a9ac8f7dcc02c2cee72938ea5fb0",
+		mapVars: ({ subredditName }) => ({ id: subredditNameToId[subredditName] })
 	},
 	GetSubredditWelcomeMessage: {
 		operationName: "GetWelcomeMessageForSubreddit",
@@ -682,6 +718,10 @@ export const gqlFedMap: GqlFedMapping = {
 		operationName: "GetModActionCategories", // found on the 2026 app
 		sha256Hash: "38d6a325bdc09d7059886b10a28c2008fb9b15c57a6d68254276cdaf9de5dd8f",
 	},
+	ModInsightsModQueueEntrypoint: {
+		operationName: "ModInsightsModQueueEntrypoint",
+		useShredditGqlProxy: true
+	},
 	MultiredditListing: {
 		operationName: "MultiredditByPath", // found a "MultiredditPosts" too. not sure which one is correct
 		sha256Hash: "bf03e8080191cd9cf427c354f0e4538c75f700f186caff46c55ad346afca32d3",
@@ -735,10 +775,16 @@ export const gqlFedMap: GqlFedMapping = {
 			trendingSubreddits: []
 		})
 	},
+	/*
 	PostFeedAndOtherDiscussions: {
 		operationName: "GetDuplicatePosts", // found from 2024 reddit app, thankfully
 		sha256Hash: "fd557fdc121760c37dc2957d4cc103dd0eefa95926952c0adf6aad8afea1e54a",
 		mapVars: ({ postId, ...rest }) => ({ id: postId, ...rest })
+	},
+	*/
+	PostFeedAndOtherDiscussions: {
+		operationName: "<hardcoded>",
+		hardcodedResp: '{"data":{}}'
 	},
 	PostGuidanceValidation: {
 		operationName: "ValidatePostGuidanceRules", // 2024 app
@@ -774,8 +820,27 @@ export const gqlFedMap: GqlFedMapping = {
 		sha256Hash: "b4544bae60315844e871bd541c0e510814f9a4d25d5c3e9d02bf3248878d7aeb",
 	},
 	ProfileTrophies: {
-		operationName: "ProfileTrophies",
-		sha256Hash: "afd499fd984d22dba654280c5a59467a2288a37c6e650648e4cb35fba88960ba",
+		//operationName: "ProfileTrophies",
+		//sha256Hash: "afd499fd984d22dba654280c5a59467a2288a37c6e650648e4cb35fba88960ba",
+		operationName: "/user/{name}/trophies",
+		process: async ({ profileName }) => JSON.stringify({
+			data: {
+				redditor: {
+					__typename: "Redditor",
+					trophies: (
+						await getREST(`/user/${profileName}/trophies.json?raw_json=1`)
+					).data.trophies.map(
+						({ data }: any) => ({
+							icon40Url: data.icon_70,
+							grantedAt: data.granted_at,
+							name: data.name,
+							awardId: "t6_"+data.award_id,
+							trophyId: "rd_"+data.id,
+						})
+					)
+				}
+			}
+		})
 	},
 	ProfileUpvoted: {
 		operationName: "UpvotedPosts",
@@ -787,8 +852,9 @@ export const gqlFedMap: GqlFedMapping = {
 	},
 	RedditorKarma: {
 		operationName: "Profile",
-		sha256Hash: "3d8c0385d1585b8a0b486f42eed1b2dc3504230f43fd43d136d6d16220ff99dd",
-		mapResp: ({ redditorInfoByName }) => ({ user: redditorInfoByName })
+		hardcodedResp: hardcodedQuery('redditorInfoByName')
+		//sha256Hash: "3d8c0385d1585b8a0b486f42eed1b2dc3504230f43fd43d136d6d16220ff99dd",
+		//mapResp: ({ redditorInfoByName }) => ({ user: redditorInfoByName })
 	},
 	RedditorNameById: {
 		operationName: "GetUserNameById",
@@ -853,16 +919,36 @@ export const gqlFedMap: GqlFedMapping = {
 	SubredditAbout: {
 		operationName: "SubredditInfoByName", // hopefully this works
 		sha256Hash: "2c4e9fcfd57b11c4ca2e00e087aa243891f7e2e251192ad4a9b7b2a63d4b1b8e",
-		mapResp: ({ subredditInfoByName }) => ({ subreddit: subredditInfoByName })
+		mapResp: ({ subredditInfoByName }) => ({
+			subreddit: {
+				publicDescription: {
+					markdown: subredditInfoByName?.publicDescriptionText
+				},
+				...subredditInfoByName
+			}
+		})
 	},
 	SubredditAchievementFlairs: {
 		operationName: "GetSubredditAchievementFlairs",
 		sha256Hash: "79fd2b41e16051e19210d0fd15c067f47b045a35f107acdd763d255de0836313",
-		mapVars: ({ subredditId }) => ({ subredditName: window.store?.getState().subreddits.models[subredditId]?.name ?? 'Littux' })
+		hardcodedResp: '{"data":{"subredditInfoById":{"__typename":"Subreddit","subredditAchievementFlairs":[]}}}',
+		//mapVars: ({ subredditId }) => ({ subredditName: window.store?.getState().subreddits.models[subredditId]?.name ?? 'Littux' })
+	},
+	SubredditCustomEmojis: {
+		operationName: "<hardcoded>",
+		hardcodedResp: '{"data":{}}'
 	},
 	SubredditInfo: {
 		operationName: "SubredditInfoByName",
 		sha256Hash: "2c4e9fcfd57b11c4ca2e00e087aa243891f7e2e251192ad4a9b7b2a63d4b1b8e",
+		mapResp: ({ subredditInfoByName }) => ({
+			subreddit: {
+				publicDescription: {
+					markdown: subredditInfoByName?.publicDescriptionText
+				},
+				...subredditInfoByName
+			}
+		})
 	},
 	SubredditPosts: {
 		operationName: "SubredditFeedElements",
@@ -885,6 +971,7 @@ export const gqlFedMap: GqlFedMapping = {
 	SubredditRules: {
 		operationName: "GetSubredditRules", // 2026 app
 		sha256Hash: "78fe58aab4e5f0e8dca0dea1c3615aa0d421e9687e12a1d325b59ae36faaefdf",
+		mapVars: ({ subredditName }) => ({ name: subredditName })
 	},
 	SubredditScheduledPosts: {
 		operationName: "ScheduledPostsForSubreddit",
@@ -901,6 +988,7 @@ export const gqlFedMap: GqlFedMapping = {
 	SubredditTypeaheadSearch: {
 		operationName: "CommunityPickerSearch",
 		sha256Hash: "c70526d35ec6c02115174732b69f992537967b7f5d977d660950f591e2f304b0",
+		mapVars: ({ query, includeNsfw }) => ({ query, isNsfwIncluded: includeNsfw })
 	},
 	SubredditWiki: {
 		operationName: "SubredditWiki", // 2026 app
@@ -909,6 +997,50 @@ export const gqlFedMap: GqlFedMapping = {
 	SubscribedSubreddits: {
 		operationName: "SubscribedSubreddits",
 		sha256Hash: "4980ab5fd2422ab0b785ef1ae116d05a823d3900944dd671edc324e5c74ca250",
+		mapVars: (vars) => ({ first: 5000, ...vars }),
+		mapResp: ({ identity }) => ({
+			identity: {
+				followedRedditorsInfo: {
+					pageInfo: identity.followedRedditorsInfo.pageInfo,
+					edges: identity.followedRedditorsInfo.edges.map(({ node: { __typename, profile } }: any) => ({
+						node: {
+							__typename,
+							profile: !profile ? null : {
+								...profile,
+								styles: {
+									...profile.styles,
+									legacyIcon: profile.styles.legacyIcon ? {
+										url: profile.styles.legacyIcon.url,
+										dimensions: {
+											width: 256,
+											height: 256
+										}
+									} : null
+								}
+							}
+						}
+					}))
+				},
+				subscribedSubreddits: {
+					pageInfo: identity.subscribedSubreddits.pageInfo,
+					edges: identity.subscribedSubreddits.edges.map(({ node }: any) => ({
+						node: {
+							...node,
+							styles: {
+								...node.styles,
+								legacyIcon: node.styles.legacyIcon ? {
+									url: node.styles.legacyIcon.url,
+									dimensions: {
+										width: 256,
+										height: 256
+									}
+								} : null
+							}
+						}
+					}))
+				}
+			}
+		})
 	},
 	SuggestSubredditGeoPlace: {
 		operationName: "SuggestSubredditGeoPlace",
@@ -1042,6 +1174,10 @@ export const gqlFedMap: GqlFedMapping = {
 	UpdateVideoContentPermissionsSetting: {
 		operationName: "UpdateVideoContentPermissionSettings",
 		sha256Hash: "5108d616acd991f06fe191098476c6b6df8831236b6d6892c30c65dde9047e16",
+	},
+	UploadV2Events: {
+		operationName: "<hardcoded>",
+		hardcodedResp: hardcodedMutation('uploadV2Events')
 	},
 	ValidateCreateSubreddit: {
 		operationName: "ValidateCreateSubreddit",

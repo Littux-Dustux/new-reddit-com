@@ -1,4 +1,10 @@
-export type InterceptorHandler = (requestDetails: { url: string, method: string }, data: any) => Promise<string>;
+export type InterceptorHandler = (
+	requestDetails: { url: string, domain: string, method: string, headers: Record<string, any> }, data: any
+) => Promise<{
+	jsonResponse: string,
+	status: number,
+	headers?: Record<string, string>
+}>;
 
 
 const interceptorRegistry = new Map<string, Map<string, InterceptorHandler>>();
@@ -15,14 +21,25 @@ export function addInterceptor(domain: string, method: string, handler: Intercep
 
 
 async function createFakeXHR(xhr: XMLHttpRequest, data: any, handler: InterceptorHandler): Promise<void> {
-	const jsonResponse = await handler(
-		{ url: (xhr as any)._url, method: (xhr as any)._method },
+	const {
+		jsonResponse,
+		status,
+		headers = {
+			"content-type": "application/json; charset=utf-8",
+		}
+	} = await handler(
+		{
+			url: (xhr as any)._url,
+			domain: (xhr as any)._domain,
+			method: (xhr as any)._method,
+			headers: (xhr as any)._headers
+		},
 		data
 	);
 
 	// Superagent checks these specifically
 	Object.defineProperties(xhr, {
-		status: { value: 200 },
+		status: { value: status || 200 },
 		statusText: { value: "OK" },
 		readyState: { value: 4 },
 		responseText: { value: jsonResponse },
@@ -34,10 +51,7 @@ async function createFakeXHR(xhr: XMLHttpRequest, data: any, handler: Intercepto
 
 	// Superagent won't parse the body unless it sees this header
 	xhr.getResponseHeader = function (header: string): string | null {
-		if (header.toLowerCase() === "content-type") {
-			return "application/json; charset=utf-8";
-		}
-		return null;
+		return headers[header.toLowerCase()] || null;
 	};
 
 	xhr.getAllResponseHeaders = function (): string {
@@ -57,12 +71,26 @@ const OldXHR = window.XMLHttpRequest;
 
 function NewXHR(): XMLHttpRequest {
 	const xhr = new OldXHR();
+	(xhr as any)._headers = {};
+
+	const setRequestHeader = xhr.setRequestHeader.bind(xhr);
+	xhr.setRequestHeader = function (header: string, value: string): void {
+		(xhr as any)._headers[header] = value;
+		return setRequestHeader(header, value);
+	}
 
 	const send = xhr.send.bind(xhr);
 	xhr.send = function (data: any): void {
 		if ((this as any)._url) {
 			const isAbsolute = (this as any)._url.startsWith('http');
-			const domain = isAbsolute ? new URL((this as any)._url).hostname : '/';
+			const domain = isAbsolute
+				? new URL((this as any)._url).hostname
+				: (this as any)._url.startsWith('//')
+					? new URL("https:"+(this as any)._url).hostname
+					: "/";
+
+			(xhr as any)._domain = domain;
+
 			const domainMap = interceptorRegistry.get(domain);
 			if (domainMap) {
 				let handler = domainMap.get((this as any)._method);

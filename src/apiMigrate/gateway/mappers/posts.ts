@@ -40,6 +40,30 @@ const getMedia = (data: any) => {
 		}
 	}
 
+	// 0. Gallery posts
+	if (data.is_gallery || data.gallery_data) {
+		const galleryData = data.gallery_data || { items: [] };
+
+		return {
+			type: "gallery",
+			obfuscated: obfuscatedUrl,
+			gallery: {
+				items: (galleryData.items || []).map((it: any) => ({
+					caption: it.caption || null,
+					id: null,
+					mediaId: it.media_id,
+					adEvents: [],
+				})),
+			},
+			mediaMetadata: data.media_metadata,
+			crossPostRootId: data.cross_post_root_id || null,
+			crossPostParentId: data.cross_post_parent_id || null,
+			numCrossposts: data.num_crossposts || 0,
+			isCrosspostable: data.is_crosspostable,
+			richtextContent: data.rtjson,
+		};
+	}
+
 	// 1. Text/Self Post
 	if (data.is_self) {
 		return {
@@ -61,10 +85,11 @@ const getMedia = (data: any) => {
 		return {
 			content: data.secure_media_embed?.media_domain_url,
 			type: "embed",
-			width: data.secure_media?.oembed?.width || 0,
-			height: data.secure_media?.oembed?.height || 0,
+			width: data.secure_media?.oembed?.width || 640,
+			height: data.secure_media?.oembed?.height || 480,
 			obfuscated: obfuscatedUrl,
 			provider: data.secure_media?.oembed?.provider_name || "",
+			richtextContent: data.rtjson
 		};
 	}
 
@@ -77,10 +102,11 @@ const getMedia = (data: any) => {
 			isGif: v.is_gif,
 			scrubberThumbSource: v.scrubber_media_url,
 			obfuscated: obfuscatedUrl,
-			posterUrl: v.url,
+			posterUrl: data.preview?.images?.[0]?.source?.url || data.thumbnail,
 			width: v.width,
 			height: v.height,
 			type: "video",
+			richtextContent: data.rtjson
 		};
 	}
 
@@ -99,6 +125,7 @@ const getMedia = (data: any) => {
 				gifBackgroundResolutions: images.resolutions,
 				obfuscated: obfuscatedUrl,
 				resolutions: variants.mp4.resolutions,
+				richtextContent: data.rtjson
 			};
 		}
 
@@ -109,6 +136,7 @@ const getMedia = (data: any) => {
 			height: images.source.height,
 			obfuscated: obfuscatedUrl,
 			resolutions: variants.gif ? variants.gif.resolutions : images.resolutions,
+			richtextContent: data.rtjson
 		};
 	}
 
@@ -131,6 +159,27 @@ const getSource = (data: any) => {
 	return null;
 };
 
+const normalizeR2Poll = (data: any) => ({
+	isPrediction: data.is_prediction,
+	predictionStatus: data.prediction_status?.toUpperCase(),
+	options: data.options.map(
+		(opt: any) => ({
+			text: opt.text,
+			voteCount: opt.vote_count,
+			id: opt.id,
+			userStakeAmount: data.user_stake_amount
+		})
+	),
+	totalVoteCount: data.total_vote_count,
+	userSelection: data.user_selection,
+	voteUpdatesRemained: data.vote_updates_remained,
+	votingEndTimestamp: data.voting_end_timestamp,
+	totalStakeAmount: data.total_stake_amount,
+	tournamentId: data.tournament_id,
+	userWonAmount: data.user_won_amount,
+	resolvedOptionId: data.resolved_option_id,
+});
+
 export const processPost = (data: any) => ({
 	adPromotedUserPostIds: [],
 	adSupplementaryText: null,
@@ -148,10 +197,10 @@ export const processPost = (data: any) => ({
 	callToAction: data.call_to_action || null,
 	contestMode: data.contest_mode,
 	created: data.created_utc * 1000, // Reddit API returns seconds, UI usually needs ms
-	crosspostParentId: data.cross_post_parent_id || null,
-	crosspostRootId: data.cross_post_root_id || null,
+	crosspostParentId: data.cross_post_parent_id || data.crosspost_parent_list?.[0]?.name || null,
+	crosspostRootId: data.cross_post_root_id || data.crosspost_parent_list?.[0]?.name || null,
 	discussionType: data.discussion_type || null,
-	distinguishType: data.distinguish_type || null,
+	distinguishType: data.distinguished || null,
 	domain: data.domain,
 	domainOverride: data.domain_override || null,
 	events: data.events || [],
@@ -187,6 +236,7 @@ export const processPost = (data: any) => ({
 	numDuplicates: data.num_duplicates,
 	numReports: data.num_reports || 0,
 	permalink: data.permalink,
+	pollData: data.poll_data ? normalizeR2Poll(data.poll_data) : null,
 	postCategories:
 		data.post_categories?.map((c: any) => ({
 			categoryId: c.category_id,

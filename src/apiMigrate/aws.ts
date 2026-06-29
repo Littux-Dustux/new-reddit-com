@@ -1,27 +1,29 @@
 import type { InterceptorHandler } from "../interceptor/xhr";
 import { getLogger } from "../logging/logger";
 
-const logger = getLogger("oauthPipe");
+const logger = getLogger("s3UploadPipe");
 
-// Pipe the oauth.reddit.com requests through gmFetch
-export const oauthPipeInterceptor: InterceptorHandler = async ({ url, method, headers }, data = null) => {
+// Pipe the s3.amazon-aws.com requests through gmFetch
+export const s3UploadPipeInterceptor: InterceptorHandler = async ({ url, method, headers }, data: FormData) => {
 	//data: typeof data === "string" ? data : data && JSON.stringify(data);
 
 	const response = await window.gmFetch({
-		method: (method as any) || "GET",
+		method: method as any,
 		url,
 		headers: {
 			...headers,
-			Authorization: `Bearer ${await window.getToken()}`,
 			Origin: "new.reddit.com",
 			Referer: "https://new.reddit.com/r/ReturnNewReddit/",
 		},
-		data: data ?? undefined,
-		anonymous: true
+		data: data,
+		anonymous: false
 	});
-	logger.log(`${method} ${url.slice(0, 128)} (status: ${response.status}) ${data?.slice(0, 128)}`);
+	logger.log(`${method} ${url} (status: ${response.status})}`);
 	return {
 		jsonResponse: response.responseText,
 		status: response.status,
+		headers: {
+			"content-type": "application/xml; charset=utf-8",
+		}
 	};
 }

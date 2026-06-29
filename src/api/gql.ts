@@ -1,6 +1,7 @@
 import { getLogger } from "../logging/logger";
-import { multiErrorToast, showToast, ToastType } from "../logging/toast";
+import { multiErrorToast } from "../logging/toast";
 import { getCache, setCache } from "./caching";
+import { RedditAPIError } from "./rest";
 
 const logger = getLogger("api:gql");
 
@@ -28,16 +29,18 @@ export async function gqlFetch(
 		}
 	}
 
-	logger.dbg(`${operationName}: ${payload}`);
+	logger.log(`${operationName}: ${payload?.slice(0, 160)}`);
 
 	const resp = await window.gmFetch({
 		method: "POST",
 		url: "https://gql-fed.reddit.com?" + operationName,
 		headers: {
-			Authorization: "Bearer " + (await window.getToken()),
+			"Accept": "application/json",
+			"Authorization": "Bearer " + (await window.getToken()),
 			"Content-Type": "application/json",
-			Origin: "https://new.reddit.com",
-			Referer: "https://new.reddit.com/",
+			"Origin": "https://new.reddit.com",
+			"Referer": "https://new.reddit.com/",
+			"X-Reddit-Loid": window.loid
 		},
 		data: JSON.stringify({
 			operationName,
@@ -60,6 +63,9 @@ export async function gqlFetch(
 		if (data.errors) {
 			logger.err(data.errors.length + " errors for " + operationName, true, data.errors);
 			multiErrorToast(data.errors);
+		}
+		if (resp.status !== 200) {
+			throw new RedditAPIError(resp.status, `Error fetching gql operation ${operationName} (status: ${resp.status})`, "GQL_ERROR", data);
 		}
 	}
 

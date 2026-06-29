@@ -1,5 +1,5 @@
 import { processPost } from "./posts";
-import { getAuthorFlairFromR2Thing, processSubreddit, processSubredditAboutInfo, processSubredditAboutInfoGql, processSubredditGql, processSubredditPostFlair, processSubredditPostFlairGql, processSubredditUserFlair, processSubredditUserFlairGql } from "./subreddit";
+import { getAuthorFlairFromR2Thing, processModPermissionsGql, processSubreddit, processSubredditAboutInfo, processSubredditAboutInfoGql, processSubredditGql, processSubredditPostFlair, processSubredditPostFlairGql, processSubredditUserFlair, processSubredditUserFlairGql } from "./subreddit";
 
 export const processListing = (
 	items: Record<string, any>[],
@@ -32,7 +32,7 @@ export const processListing = (
 		state.subreddits[id] = processSubredditGql(gqlSubredditAboutInfo);
 		state.postFlair[id] = processSubredditPostFlairGql(gqlSubredditAboutInfo);
 		state.userFlair[id] = processSubredditUserFlairGql(gqlSubredditAboutInfo);
-		state.subredditPermissions = gqlSubredditAboutInfo.modPermissions;
+		state.subredditPermissions = processModPermissionsGql(gqlSubredditAboutInfo);
 	}
 
 	const posts = state.posts;
@@ -41,6 +41,22 @@ export const processListing = (
 	for (const { data: post } of items) {
 		postIds.push(post.name);
 		posts[post.name] = processPost(post);
+
+		if (post.crosspost_parent_list?.[0]) {
+			const crossPost = post.crosspost_parent_list[0];
+			const subId = crossPost.subreddit_id || "";
+			posts[crossPost.name] = processPost(crossPost);
+
+			state.authorFlair[subId] ??= {};
+			state.authorFlair[subId][crossPost.author] = getAuthorFlairFromR2Thing(crossPost);
+
+			if (crossPost.sr_detail) {
+				state.subredditAboutInfo[subId] ??= processSubredditAboutInfo(crossPost.sr_detail);
+				state.subreddits[subId] ??= processSubreddit(crossPost.sr_detail);
+				state.postFlair[subId] ??= processSubredditPostFlair(crossPost.sr_detail);
+				state.userFlair[subId] ??= processSubredditUserFlair(crossPost.sr_detail);
+			}
+		}
 
 		const subId = post.subreddit_id || "";
 		state.authorFlair[subId] ??= {};
