@@ -150,7 +150,10 @@ const recursiveProcessComments = async (
 			if (firstMedia && firstMedia.status === "invalid" && firstMediaKey.startsWith("giphy|") ) {
 				const giphyId = firstMediaKey.split("|")[1] as string;
 				giphyIdsToFetch.add(giphyId);
-				(brokenGiphyCommentMediaMetadatas[giphyId] ??= []).push(processedComment.media.mediaMetadata);
+				(brokenGiphyCommentMediaMetadatas[giphyId] ??= []).push({
+					key: firstMediaKey,
+					mediaMetadata: processedComment.media.mediaMetadata
+				});
 			} else if (processedComment.media.richtextContent.document.some((node: any) => node.e === "video")) {
 				videoCommentIdsToFetch.push(processedComment.id);
 				videoCommentIncompleteMedias[processedComment.id] = processedComment.media;
@@ -173,8 +176,9 @@ const recursiveProcessComments = async (
 					const brokenMediaMetadatas = brokenGiphyCommentMediaMetadatas[giphyId];
 
 					if (gifData && brokenMediaMetadatas) {
-						for (const mediaMetadata of brokenMediaMetadatas) {
-							mediaMetadata[gifData.id] = gifData;
+						for (const { key, mediaMetadata } of brokenMediaMetadatas) {
+							gifData.id ??= key;
+							mediaMetadata[key] = gifData;
 						}
 					}
 				}

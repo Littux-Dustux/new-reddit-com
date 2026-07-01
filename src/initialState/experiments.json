@@ -1,0 +1,6464 @@
+{
+    "abuse_validate_comment_text_edited_rollout": {
+        "id": 11201,
+        "name": "abuse_validate_comment_text_edited_rollout",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "abuse_validate_link_text_edited_rollout": {
+        "id": 11194,
+        "name": "abuse_validate_link_text_edited_rollout",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "abuse_validate_new_account_rollout": {
+        "id": 11169,
+        "name": "abuse_validate_new_account_rollout",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "abuse_validate_new_comment_media_rollout": {
+        "id": 11199,
+        "name": "abuse_validate_new_comment_media_rollout",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "abuse_validate_new_comment_rollout": {
+        "id": 11171,
+        "name": "abuse_validate_new_comment_rollout",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "abuse_validate_new_link_rollout": {
+        "id": 11170,
+        "name": "abuse_validate_new_link_rollout",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "abuse_validate_new_message_rollout": {
+        "id": 11166,
+        "name": "abuse_validate_new_message_rollout",
+        "variant": "enabled",
+        "version": "13"
+    },
+    "abuse_validate_new_report_rollout": {
+        "id": 11245,
+        "name": "abuse_validate_new_report_rollout",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "abuse_validate_new_subreddit_rollout": {
+        "id": 11168,
+        "name": "abuse_validate_new_subreddit_rollout",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "abuse_validate_remove_comment_rollout": {
+        "id": 11198,
+        "name": "abuse_validate_remove_comment_rollout",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "abuse_validate_remove_link_rollout": {
+        "id": 11192,
+        "name": "abuse_validate_remove_link_rollout",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "abuse_validate_remove_moderator_rollout": {
+        "id": 11196,
+        "name": "abuse_validate_remove_moderator_rollout",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "abuse_validate_subreddit_text_edited_rollout": {
+        "id": 11191,
+        "name": "abuse_validate_subreddit_text_edited_rollout",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "active_sales": {
+        "id": 700,
+        "name": "active_sales",
+        "variant": "variant_1",
+        "version": "56"
+    },
+    "ad_account_deconstruction": {
+        "id": 8444,
+        "name": "ad_account_deconstruction",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "ad_account_test_flag": {
+        "id": 8157,
+        "name": "ad_account_test_flag",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ad_formats_service_r2_writes": {
+        "id": 6580,
+        "name": "ad_formats_service_r2_writes",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "ad_level_format_filtering": {
+        "id": 9277,
+        "name": "ad_level_format_filtering",
+        "variant": "enabled",
+        "version": "21"
+    },
+    "ad_pred_gis": {
+        "id": 11395,
+        "name": "ad_pred_gis",
+        "variant": "pred_poc_var",
+        "version": "140"
+    },
+    "add_ads_injection_stage_in_pipeline": {
+        "id": 10682,
+        "name": "add_ads_injection_stage_in_pipeline",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "admin_modmail_ui_distinct_shreddit": {
+        "id": 11290,
+        "name": "admin_modmail_ui_distinct_shreddit",
+        "variant": "treatment",
+        "version": "8"
+    },
+    "adrel_alo_clicks_ga": {
+        "id": 4984,
+        "name": "adrel_alo_clicks_ga",
+        "variant": "test_1",
+        "version": "32"
+    },
+    "adrel_alo_conversions_ga": {
+        "id": 4986,
+        "name": "adrel_alo_conversions_ga",
+        "variant": "test_1",
+        "version": "16"
+    },
+    "adrel_alo_installs_ga": {
+        "id": 4985,
+        "name": "adrel_alo_installs_ga",
+        "variant": "control_model",
+        "version": "4"
+    },
+    "adrel_alo_video_ga": {
+        "id": 4850,
+        "name": "adrel_alo_video_ga",
+        "variant": "control_model",
+        "version": "7"
+    },
+    "adrel_cpc_v3_iterations_q2": {
+        "id": 4148,
+        "name": "adrel_cpc_v3_iterations_q2",
+        "variant": "test_1",
+        "version": "292"
+    },
+    "adrel_cpcpc_v1": {
+        "id": 4286,
+        "name": "adrel_cpcpc_v1",
+        "variant": "control_1",
+        "version": "45"
+    },
+    "adrel_cpv_ddg_migration": {
+        "id": 1731,
+        "name": "adrel_cpv_ddg_migration",
+        "variant": "control_model",
+        "version": "3"
+    },
+    "adrel_cpv_iterations": {
+        "id": 5893,
+        "name": "adrel_cpv_iterations",
+        "variant": "test_1",
+        "version": "17"
+    },
+    "adrel_dpa_v1": {
+        "id": 9791,
+        "name": "adrel_dpa_v1",
+        "variant": "test_1",
+        "version": "15"
+    },
+    "adrel_long_click_bidmod": {
+        "id": 12799,
+        "name": "adrel_long_click_bidmod",
+        "variant": "test_1",
+        "version": "4"
+    },
+    "adrel_opt_out": {
+        "id": 5060,
+        "name": "adrel_opt_out",
+        "variant": "control_1",
+        "version": "36"
+    },
+    "adrel_pcvr_rollout": {
+        "id": 3105,
+        "name": "adrel_pcvr_rollout",
+        "variant": "control_model",
+        "version": "8"
+    },
+    "ads_ad_group_ios_targeting_min": {
+        "id": 8011,
+        "name": "ads_ad_group_ios_targeting_min",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ads_add_sales_phone_number": {
+        "id": 7710,
+        "name": "ads_add_sales_phone_number",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ads_afs_product_catalog_grpc_migration": {
+        "id": 12760,
+        "name": "ads_afs_product_catalog_grpc_migration",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "ads_amq_project_firestarter_clicky_boost": {
+        "id": 7400,
+        "name": "ads_amq_project_firestarter_clicky_boost",
+        "variant": "auto_refresh",
+        "version": "30"
+    },
+    "ads_ann_retrieval_model": {
+        "id": 13364,
+        "name": "ads_ann_retrieval_model",
+        "variant": "control_1",
+        "version": "13"
+    },
+    "ads_api_allowlist_v2": {
+        "id": 9411,
+        "name": "ads_api_allowlist_v2",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "ads_api_openapi_validation": {
+        "id": 13174,
+        "name": "ads_api_openapi_validation",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "ads_budget_user_experiments_group_prod": {
+        "id": 5397,
+        "name": "ads_budget_user_experiments_group_prod",
+        "variant": "ads_bus_exp_batch_2024_07_07",
+        "version": "77"
+    },
+    "ads_bus_exp_batch_2024_07_07": {
+        "id": 13527,
+        "name": "ads_bus_exp_batch_2024_07_07",
+        "variant": "10_minute_f_cap",
+        "version": "3"
+    },
+    "ads_business_invitations": {
+        "id": 9878,
+        "name": "ads_business_invitations",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ads_business_name_tooltip": {
+        "id": 10006,
+        "name": "ads_business_name_tooltip",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "ads_catalogs_use_media_downloader": {
+        "id": 9247,
+        "name": "ads_catalogs_use_media_downloader",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "ads_catalogs_use_new_services": {
+        "id": 10034,
+        "name": "ads_catalogs_use_new_services",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ads_cm_pydantic_account_create": {
+        "id": 10724,
+        "name": "ads_cm_pydantic_account_create",
+        "variant": "enabled",
+        "version": "20"
+    },
+    "ads_custom_audience_sizing_fix_1": {
+        "id": 7700,
+        "name": "ads_custom_audience_sizing_fix_1",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "ads_dashboard_custom_column": {
+        "id": 9944,
+        "name": "ads_dashboard_custom_column",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ads_dashboard_filter_refresh": {
+        "id": 8957,
+        "name": "ads_dashboard_filter_refresh",
+        "variant": "enabled",
+        "version": "17"
+    },
+    "ads_dashboard_graph_selector": {
+        "id": 11665,
+        "name": "ads_dashboard_graph_selector",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ads_dashboard_multi_trend_graph": {
+        "id": 9172,
+        "name": "ads_dashboard_multi_trend_graph",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "ads_dashboard_ui_refresh": {
+        "id": 8840,
+        "name": "ads_dashboard_ui_refresh",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "ads_dpa_carousel_filler": {
+        "id": 12431,
+        "name": "ads_dpa_carousel_filler",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "ads_dpa_carousel_format": {
+        "id": 10643,
+        "name": "ads_dpa_carousel_format",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "ads_eu_old_web_blanks": {
+        "id": 11203,
+        "name": "ads_eu_old_web_blanks",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ads_full_screen_video": {
+        "id": 2759,
+        "name": "ads_full_screen_video",
+        "variant": "enabled",
+        "version": "30"
+    },
+    "ads_gql_enable_ad_biz_hub": {
+        "id": 8710,
+        "name": "ads_gql_enable_ad_biz_hub",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "ads_gql_image_cropping_mvp": {
+        "id": 10585,
+        "name": "ads_gql_image_cropping_mvp",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ads_in_comment_trees_m2": {
+        "id": 12490,
+        "name": "ads_in_comment_trees_m2",
+        "variant": "enabled_inference",
+        "version": "9"
+    },
+    "ads_lift_control_selection_v2": {
+        "id": 13286,
+        "name": "ads_lift_control_selection_v2",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "ads_pfpr_empty_launch": {
+        "id": 9667,
+        "name": "ads_pfpr_empty_launch",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "ads_product_ads": {
+        "id": 6808,
+        "name": "ads_product_ads",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ads_product_ads_catalog_detail_v2": {
+        "id": 10477,
+        "name": "ads_product_ads_catalog_detail_v2",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ads_product_ads_edit_ad": {
+        "id": 9317,
+        "name": "ads_product_ads_edit_ad",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ads_product_ads_multiple_feeds": {
+        "id": 7162,
+        "name": "ads_product_ads_multiple_feeds",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ads_psa_reno_m0": {
+        "id": 10842,
+        "name": "ads_psa_reno_m0",
+        "variant": "use_new_psa_process",
+        "version": "30"
+    },
+    "ads_psa_reno_m1": {
+        "id": 12547,
+        "name": "ads_psa_reno_m1",
+        "variant": "trimmer_nop",
+        "version": "13"
+    },
+    "ads_r2_dsa_overflow_menu": {
+        "id": 10448,
+        "name": "ads_r2_dsa_overflow_menu",
+        "variant": "enabled",
+        "version": "23"
+    },
+    "ads_r2_image_cropping_mvp": {
+        "id": 10563,
+        "name": "ads_r2_image_cropping_mvp",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ads_r2_lead_gen_pixels": {
+        "id": 10038,
+        "name": "ads_r2_lead_gen_pixels",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "ads_reporting_use_lookup_placement_breakdown": {
+        "id": 12912,
+        "name": "ads_reporting_use_lookup_placement_breakdown",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "ads_send_product_ads_event": {
+        "id": 8857,
+        "name": "ads_send_product_ads_event",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "ads_send_product_ads_event_carousel_r2": {
+        "id": 9556,
+        "name": "ads_send_product_ads_event_carousel_r2",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ads_send_product_ads_event_gql": {
+        "id": 9343,
+        "name": "ads_send_product_ads_event_gql",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "ads_transparency": {
+        "id": 9644,
+        "name": "ads_transparency",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "ads_updated_chatbot_integration": {
+        "id": 7304,
+        "name": "ads_updated_chatbot_integration",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "ads_van_exp_batch_2024_07_03": {
+        "id": 13515,
+        "name": "ads_van_exp_batch_2024_07_03",
+        "variant": "relevance_filter",
+        "version": "3"
+    },
+    "ads_van_experiments_group_1_prod": {
+        "id": 10785,
+        "name": "ads_van_experiments_group_1_prod",
+        "variant": "ads_van_exp_batch_2024_07_03",
+        "version": "27"
+    },
+    "ads_van_experiments_group_1_staging": {
+        "id": 10786,
+        "name": "ads_van_experiments_group_1_staging",
+        "variant": "tim_zhu_meg_exp_test",
+        "version": "28"
+    },
+    "ads_van_test_staging": {
+        "id": 10733,
+        "name": "ads_van_test_staging",
+        "variant": "control_1",
+        "version": "36"
+    },
+    "ads_web_adblock_v2_events": {
+        "id": 3839,
+        "name": "ads_web_adblock_v2_events",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "adserver_kill_switch_disable_dpa_sc_filtering": {
+        "id": 11468,
+        "name": "adserver_kill_switch_disable_dpa_sc_filtering",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "ae_android_add_users_component": {
+        "id": 9976,
+        "name": "ae_android_add_users_component",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "ae_android_appeals_flow": {
+        "id": 8964,
+        "name": "ae_android_appeals_flow",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "ae_android_mvvm_and_compose_for_blocking": {
+        "id": 7541,
+        "name": "ae_android_mvvm_and_compose_for_blocking",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "ae_android_user_details_reporting": {
+        "id": 10521,
+        "name": "ae_android_user_details_reporting",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "ae_blocked_user_chat_web": {
+        "id": 2801,
+        "name": "ae_blocked_user_chat_web",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "ae_country_setting_d2x": {
+        "id": 2217,
+        "name": "ae_country_setting_d2x",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "ae_country_setting_r2": {
+        "id": 2280,
+        "name": "ae_country_setting_r2",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "ae_evolving_som": {
+        "id": 7858,
+        "name": "ae_evolving_som",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "ae_misinformation_report_removal": {
+        "id": 7527,
+        "name": "ae_misinformation_report_removal",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ae_pros_2294_r2": {
+        "id": 2342,
+        "name": "ae_pros_2294_r2",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "ae_pros_2542_r2": {
+        "id": 2736,
+        "name": "ae_pros_2542_r2",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "ae_report_go_report_py_integration_test": {
+        "id": 12769,
+        "name": "ae_report_go_report_py_integration_test",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "ae_report_hateful_content": {
+        "id": 1117,
+        "name": "ae_report_hateful_content",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "ae_report_logged_out_gql": {
+        "id": 8796,
+        "name": "ae_report_logged_out_gql",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ae_report_provenance": {
+        "id": 10642,
+        "name": "ae_report_provenance",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "ae_report_svc_new_views": {
+        "id": 8797,
+        "name": "ae_report_svc_new_views",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "ae_report_user_profile": {
+        "id": 795,
+        "name": "ae_report_user_profile",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "ae_reporting_revamp_desktop": {
+        "id": 1466,
+        "name": "ae_reporting_revamp_desktop",
+        "variant": "enabled",
+        "version": "16"
+    },
+    "ae_reporting_revamp_mweb": {
+        "id": 1839,
+        "name": "ae_reporting_revamp_mweb",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "ae_trueblock_profile_viewing": {
+        "id": 2856,
+        "name": "ae_trueblock_profile_viewing",
+        "variant": "enabled",
+        "version": "16"
+    },
+    "ae_trueblock_user_about": {
+        "id": 3528,
+        "name": "ae_trueblock_user_about",
+        "variant": "enabled",
+        "version": "15"
+    },
+    "ae_user_accept_chats": {
+        "id": 1016,
+        "name": "ae_user_accept_chats",
+        "variant": "enabled",
+        "version": "28"
+    },
+    "ama_corestack_configuration": {
+        "id": 13677,
+        "name": "ama_corestack_configuration",
+        "variant": "ios_post_creation_corestack_migration",
+        "version": "2"
+    },
+    "ama_posts_pipedream_targeting": {
+        "id": 11570,
+        "name": "ama_posts_pipedream_targeting",
+        "variant": "enabled",
+        "version": "18"
+    },
+    "amq_ad_block": {
+        "id": 8940,
+        "name": "amq_ad_block",
+        "variant": "ad_block_enabled",
+        "version": "17"
+    },
+    "amq_ais_framework_feed_injection": {
+        "id": 12536,
+        "name": "amq_ais_framework_feed_injection",
+        "variant": "enabled",
+        "version": "19"
+    },
+    "amq_bot_traffic_detection": {
+        "id": 10120,
+        "name": "amq_bot_traffic_detection",
+        "variant": "block_bot",
+        "version": "17"
+    },
+    "amq_brand_safety_reshuffling_i18n": {
+        "id": 10767,
+        "name": "amq_brand_safety_reshuffling_i18n",
+        "variant": "bsr_shift100",
+        "version": "31"
+    },
+    "amq_fbp_not_first_chunk_filter": {
+        "id": 13340,
+        "name": "amq_fbp_not_first_chunk_filter",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "amq_novelty_term_2023": {
+        "id": 7271,
+        "name": "amq_novelty_term_2023",
+        "variant": "day_max_30",
+        "version": "18"
+    },
+    "amq_pal_global_expansion": {
+        "id": 11428,
+        "name": "amq_pal_global_expansion",
+        "variant": "rescored_global",
+        "version": "19"
+    },
+    "amq_pal_v1_us_ad_load": {
+        "id": 9070,
+        "name": "amq_pal_v1_us_ad_load",
+        "variant": "pal_v1_us_only",
+        "version": "11"
+    },
+    "amq_q124_ad_load_incr": {
+        "id": 10894,
+        "name": "amq_q124_ad_load_incr",
+        "variant": "increase",
+        "version": "16"
+    },
+    "amq_relevance_exploration": {
+        "id": 12538,
+        "name": "amq_relevance_exploration",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "amq_same_advertiser_dedupe_qa_v1": {
+        "id": 8989,
+        "name": "amq_same_advertiser_dedupe_qa_v1",
+        "variant": "relaxed_limit",
+        "version": "32"
+    },
+    "amq_third_party_costs": {
+        "id": 13478,
+        "name": "amq_third_party_costs",
+        "variant": "eligible",
+        "version": "10"
+    },
+    "android_ads_in_comment_trees": {
+        "id": 10721,
+        "name": "android_ads_in_comment_trees",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "android_baked_potato_community_drawer_ks": {
+        "id": 8814,
+        "name": "android_baked_potato_community_drawer_ks",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "android_baked_potato_community_list_entry_ks": {
+        "id": 8653,
+        "name": "android_baked_potato_community_list_entry_ks",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "android_baked_potato_community_pinning_ks": {
+        "id": 8652,
+        "name": "android_baked_potato_community_pinning_ks",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "android_baked_potato_first_pixel_pn_ks": {
+        "id": 8721,
+        "name": "android_baked_potato_first_pixel_pn_ks",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "android_baked_potato_nav_bar_ks": {
+        "id": 8813,
+        "name": "android_baked_potato_nav_bar_ks",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "android_baked_potato_second_visit_pn_ks": {
+        "id": 8720,
+        "name": "android_baked_potato_second_visit_pn_ks",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "android_baked_potato_timer_ks": {
+        "id": 8725,
+        "name": "android_baked_potato_timer_ks",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "android_beta_nudge_immediate_app_update": {
+        "id": 12260,
+        "name": "android_beta_nudge_immediate_app_update",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "android_chat_direct_chat_create_fix_ks": {
+        "id": 7256,
+        "name": "android_chat_direct_chat_create_fix_ks",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "android_chat_global_unread_counter": {
+        "id": 11649,
+        "name": "android_chat_global_unread_counter",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "android_chat_image_thumbnails": {
+        "id": 11640,
+        "name": "android_chat_image_thumbnails",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "android_chat_list_backend_unread_badge": {
+        "id": 13035,
+        "name": "android_chat_list_backend_unread_badge",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "android_chat_live_chat_reactions_streaming_ks": {
+        "id": 7177,
+        "name": "android_chat_live_chat_reactions_streaming_ks",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "android_chat_media_global_prompt_killswitch": {
+        "id": 3485,
+        "name": "android_chat_media_global_prompt_killswitch",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "android_chat_timeline_performance_fix_ks": {
+        "id": 9392,
+        "name": "android_chat_timeline_performance_fix_ks",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "android_cleanup_database_ks": {
+        "id": 6967,
+        "name": "android_cleanup_database_ks",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "android_comments_gql_expect_r2_style_cursors": {
+        "id": 7108,
+        "name": "android_comments_gql_expect_r2_style_cursors",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "android_comments_view_consume_san_fix_ks": {
+        "id": 11699,
+        "name": "android_comments_view_consume_san_fix_ks",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "android_community_chat_logged_out_users": {
+        "id": 7582,
+        "name": "android_community_chat_logged_out_users",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "android_dev_platform_enabled": {
+        "id": 5731,
+        "name": "android_dev_platform_enabled",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "android_dev_platform_feeds_enabled": {
+        "id": 8316,
+        "name": "android_dev_platform_feeds_enabled",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "android_dev_platform_flexbox_enabled": {
+        "id": 9269,
+        "name": "android_dev_platform_flexbox_enabled",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "android_downloading_image": {
+        "id": 7067,
+        "name": "android_downloading_image",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "android_dynamic_pages_ks": {
+        "id": 11087,
+        "name": "android_dynamic_pages_ks",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "android_econ_premium_subscription_order": {
+        "id": 2681,
+        "name": "android_econ_premium_subscription_order",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "android_fbp_2023_q3": {
+        "id": 8928,
+        "name": "android_fbp_2023_q3",
+        "variant": "android_bali",
+        "version": "10"
+    },
+    "android_fix_width_header_fangorn_ks": {
+        "id": 9668,
+        "name": "android_fix_width_header_fangorn_ks",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "android_flair_compose_rewrite_ks": {
+        "id": 12135,
+        "name": "android_flair_compose_rewrite_ks",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "android_leak_fix_bottom_nav_screen": {
+        "id": 5217,
+        "name": "android_leak_fix_bottom_nav_screen",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "android_matrix_aggregated_events_filtering": {
+        "id": 12523,
+        "name": "android_matrix_aggregated_events_filtering",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "android_matrix_filter_preview_collapse": {
+        "id": 13103,
+        "name": "android_matrix_filter_preview_collapse",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "android_matrix_new_aggregate_updates": {
+        "id": 12251,
+        "name": "android_matrix_new_aggregate_updates",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "android_pdp_2023q2redesign_meg": {
+        "id": 8790,
+        "name": "android_pdp_2023q2redesign_meg",
+        "variant": "android_pdp_simplification",
+        "version": "7"
+    },
+    "android_post_leave_post_events": {
+        "id": 8958,
+        "name": "android_post_leave_post_events",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "android_privacy_section_with_links": {
+        "id": 10478,
+        "name": "android_privacy_section_with_links",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "android_pros_blocked_accounts_error_handling": {
+        "id": 9215,
+        "name": "android_pros_blocked_accounts_error_handling",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "android_rituals_p1_mutex_br": {
+        "id": 5904,
+        "name": "android_rituals_p1_mutex_br",
+        "variant": "android_rituals_subbers_p1_br",
+        "version": "2"
+    },
+    "android_rituals_p1_mutex_fr": {
+        "id": 5909,
+        "name": "android_rituals_p1_mutex_fr",
+        "variant": "android_rituals_subbers_p1_fr",
+        "version": "2"
+    },
+    "android_rituals_p1_mutex_gb": {
+        "id": 5901,
+        "name": "android_rituals_p1_mutex_gb",
+        "variant": "android_rituals_subbers_p1_gb",
+        "version": "2"
+    },
+    "android_share_to_ig_stories": {
+        "id": 7145,
+        "name": "android_share_to_ig_stories",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "android_x_mr_awards_button_behaviour": {
+        "id": 13266,
+        "name": "android_x_mr_awards_button_behaviour",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "android_x_mr_coins_sunset": {
+        "id": 7419,
+        "name": "android_x_mr_coins_sunset",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "android_x_mr_expressions_mod_toggle": {
+        "id": 7712,
+        "name": "android_x_mr_expressions_mod_toggle",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "android_x_mr_expressions_quick_reply": {
+        "id": 8266,
+        "name": "android_x_mr_expressions_quick_reply",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "android_x_mr_gold_i18n_marketing_text": {
+        "id": 11554,
+        "name": "android_x_mr_gold_i18n_marketing_text",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "android_x_mr_gold_i18n_order_creation": {
+        "id": 11553,
+        "name": "android_x_mr_gold_i18n_order_creation",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "android_x_mr_reddit_gold_in_legacy_overflow": {
+        "id": 9481,
+        "name": "android_x_mr_reddit_gold_in_legacy_overflow",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "automod_screening_before_pn": {
+        "id": 6961,
+        "name": "automod_screening_before_pn",
+        "variant": "post_and_comment_screened",
+        "version": "31"
+    },
+    "automod_screening_ignore_event_check": {
+        "id": 8218,
+        "name": "automod_screening_ignore_event_check",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "automod_screening_send_to_inbox": {
+        "id": 8682,
+        "name": "automod_screening_send_to_inbox",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "backend_econ_powerups_award": {
+        "id": 2568,
+        "name": "backend_econ_powerups_award",
+        "variant": "enabled",
+        "version": "13"
+    },
+    "backend_machine_translation": {
+        "id": 7275,
+        "name": "backend_machine_translation",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "backend_post_video_generation": {
+        "id": 7453,
+        "name": "backend_post_video_generation",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "backend_pretranslation_pdp": {
+        "id": 8029,
+        "name": "backend_pretranslation_pdp",
+        "variant": "enabled",
+        "version": "17"
+    },
+    "backend_server_access_events": {
+        "id": 5376,
+        "name": "backend_server_access_events",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "backend_translation_palm2": {
+        "id": 10905,
+        "name": "backend_translation_palm2",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "be_achievements_greyed_flame_override": {
+        "id": 13575,
+        "name": "be_achievements_greyed_flame_override",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "be_cdd_discover_bar_freshness": {
+        "id": 13425,
+        "name": "be_cdd_discover_bar_freshness",
+        "variant": "control_1",
+        "version": "6"
+    },
+    "be_cdd_filter_non_discoverable_chats": {
+        "id": 13215,
+        "name": "be_cdd_filter_non_discoverable_chats",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "be_cdd_home_shuffle_max_position": {
+        "id": 13483,
+        "name": "be_cdd_home_shuffle_max_position",
+        "variant": "shuffle_5",
+        "version": "2"
+    },
+    "be_cdd_max_perspective_score_messages": {
+        "id": 13166,
+        "name": "be_cdd_max_perspective_score_messages",
+        "variant": "20_messages",
+        "version": "4"
+    },
+    "be_cdd_name_contains_restricted_phrase": {
+        "id": 13173,
+        "name": "be_cdd_name_contains_restricted_phrase",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "be_cdd_ucc_trending_migration": {
+        "id": 12432,
+        "name": "be_cdd_ucc_trending_migration",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "be_cdd_unique_participants_score_cap_acp": {
+        "id": 13133,
+        "name": "be_cdd_unique_participants_score_cap_acp",
+        "variant": "control_1",
+        "version": "2"
+    },
+    "be_chat_channels_nav_topic_pills": {
+        "id": 12853,
+        "name": "be_chat_channels_nav_topic_pills",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "be_chat_channels_new_nav_pill": {
+        "id": 12708,
+        "name": "be_chat_channels_new_nav_pill",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "be_chat_channels_profanity_filter": {
+        "id": 12430,
+        "name": "be_chat_channels_profanity_filter",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "be_chat_channels_safety_settings": {
+        "id": 13056,
+        "name": "be_chat_channels_safety_settings",
+        "variant": "enabled",
+        "version": "17"
+    },
+    "be_chat_channels_true_ban": {
+        "id": 11608,
+        "name": "be_chat_channels_true_ban",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "be_chat_host_mode_reconciliation_on_load": {
+        "id": 12734,
+        "name": "be_chat_host_mode_reconciliation_on_load",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "be_chat_nsfw_status": {
+        "id": 12842,
+        "name": "be_chat_nsfw_status",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "be_marketplace_creator_communities_autojoin": {
+        "id": 6866,
+        "name": "be_marketplace_creator_communities_autojoin",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "be_x_chat_pm_max_replies": {
+        "id": 13283,
+        "name": "be_x_chat_pm_max_replies",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "be_x_mr_award_modq": {
+        "id": 12053,
+        "name": "be_x_mr_award_modq",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "be_x_mr_awardings_by_current_user": {
+        "id": 8895,
+        "name": "be_x_mr_awardings_by_current_user",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "be_x_mr_i18n_payments": {
+        "id": 10859,
+        "name": "be_x_mr_i18n_payments",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "be_x_mr_tipping_account_status_email": {
+        "id": 9639,
+        "name": "be_x_mr_tipping_account_status_email",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "bi_bx_migration": {
+        "id": 12566,
+        "name": "bi_bx_migration",
+        "variant": "enabled",
+        "version": "25"
+    },
+    "bizex_reddit_pro_auto_register_new_advertiser": {
+        "id": 13078,
+        "name": "bizex_reddit_pro_auto_register_new_advertiser",
+        "variant": "enabled",
+        "version": "15"
+    },
+    "bizex_shreddit_community_finder": {
+        "id": 11918,
+        "name": "bizex_shreddit_community_finder",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "bizex_subscribed_trusted_profile_fpr": {
+        "id": 11354,
+        "name": "bizex_subscribed_trusted_profile_fpr",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "bizex_trusted_profiles_allowed": {
+        "id": 11339,
+        "name": "bizex_trusted_profiles_allowed",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "bizex_use_brand_store": {
+        "id": 12757,
+        "name": "bizex_use_brand_store",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "blackout_filter_rollout": {
+        "id": 8230,
+        "name": "blackout_filter_rollout",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "blank_ads_for_no_comments_page_ads": {
+        "id": 11656,
+        "name": "blank_ads_for_no_comments_page_ads",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "boost_post_mvp_1": {
+        "id": 6315,
+        "name": "boost_post_mvp_1",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "boost_post_shreddit_profile": {
+        "id": 10672,
+        "name": "boost_post_shreddit_profile",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "brand_safety_redis_integration": {
+        "id": 12999,
+        "name": "brand_safety_redis_integration",
+        "variant": "enabled",
+        "version": "17"
+    },
+    "bulk_import_shopping_ads": {
+        "id": 12460,
+        "name": "bulk_import_shopping_ads",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "business_identity_disable_r4b_status": {
+        "id": 11584,
+        "name": "business_identity_disable_r4b_status",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "cas_rollout_publish_to_kafka": {
+        "id": 9527,
+        "name": "cas_rollout_publish_to_kafka",
+        "variant": "enabled",
+        "version": "13"
+    },
+    "celebrity_user_blocking_migration": {
+        "id": 8030,
+        "name": "celebrity_user_blocking_migration",
+        "variant": "enabled",
+        "version": "17"
+    },
+    "channels_drop_active_user_pn_v2": {
+        "id": 12968,
+        "name": "channels_drop_active_user_pn_v2",
+        "variant": "drop_if_viewed_feed_no_pns",
+        "version": "12"
+    },
+    "channels_email_digest_experiments": {
+        "id": 12247,
+        "name": "channels_email_digest_experiments",
+        "variant": "channels_reenable_dzero_email_digest",
+        "version": "5"
+    },
+    "channels_email_digest_followup_v1": {
+        "id": 12724,
+        "name": "channels_email_digest_followup_v1",
+        "variant": "split_mlp_and_latest_model",
+        "version": "32"
+    },
+    "channels_email_digest_followup_v2": {
+        "id": 13330,
+        "name": "channels_email_digest_followup_v2",
+        "variant": "disliked_subreddits",
+        "version": "13"
+    },
+    "channels_email_digest_migration_listing_to_rp": {
+        "id": 11840,
+        "name": "channels_email_digest_migration_listing_to_rp",
+        "variant": "rp_tos",
+        "version": "50"
+    },
+    "channels_geo_user_subreddit_mixing": {
+        "id": 12793,
+        "name": "channels_geo_user_subreddit_mixing",
+        "variant": "geo_user_subreddit_mixing_3",
+        "version": "24"
+    },
+    "channels_listing_keep_m2_if_subscribed": {
+        "id": 10881,
+        "name": "channels_listing_keep_m2_if_subscribed",
+        "variant": "keep_m2_if_user_subscribed",
+        "version": "17"
+    },
+    "channels_ml_safety_tags_v3": {
+        "id": 12776,
+        "name": "channels_ml_safety_tags_v3",
+        "variant": "ignore_subscription",
+        "version": "18"
+    },
+    "channels_mod_permissions": {
+        "id": 6435,
+        "name": "channels_mod_permissions",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "channels_rp_keep_m2_holdout_meg": {
+        "id": 10877,
+        "name": "channels_rp_keep_m2_holdout_meg",
+        "variant": "channels_rp_keep_m2_if_subscribed",
+        "version": "4"
+    },
+    "channels_rp_keep_m2_if_subscribed": {
+        "id": 10876,
+        "name": "channels_rp_keep_m2_if_subscribed",
+        "variant": "keep_m2_if_user_subscribed",
+        "version": "26"
+    },
+    "channels_rp_limit_popular": {
+        "id": 10727,
+        "name": "channels_rp_limit_popular",
+        "variant": "limit_30",
+        "version": "8"
+    },
+    "channels_settings_in_mod_log": {
+        "id": 10208,
+        "name": "channels_settings_in_mod_log",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "chat_channels_banned_users_be": {
+        "id": 9315,
+        "name": "chat_channels_banned_users_be",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "chat_channels_holdout_override_be": {
+        "id": 11730,
+        "name": "chat_channels_holdout_override_be",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "chat_channels_host_mode_be": {
+        "id": 11311,
+        "name": "chat_channels_host_mode_be",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "chat_channels_not_appropriate_reason": {
+        "id": 11545,
+        "name": "chat_channels_not_appropriate_reason",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "chat_channels_ucc_creators": {
+        "id": 10140,
+        "name": "chat_channels_ucc_creators",
+        "variant": "enabled",
+        "version": "23"
+    },
+    "chat_discovery_bar_experiments": {
+        "id": 13576,
+        "name": "chat_discovery_bar_experiments",
+        "variant": "be_cdd_discover_bar_freshness",
+        "version": "1"
+    },
+    "chat_link_sharing_group": {
+        "id": 3023,
+        "name": "chat_link_sharing_group",
+        "variant": "tooltip_easy_access",
+        "version": "8"
+    },
+    "chat_preview_comment": {
+        "id": 2734,
+        "name": "chat_preview_comment",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "chat_reactions": {
+        "id": 3256,
+        "name": "chat_reactions",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "chat_reporting_fix": {
+        "id": 6117,
+        "name": "chat_reporting_fix",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "chnrel_remove_disliked_subreddits_trending_pn": {
+        "id": 12703,
+        "name": "chnrel_remove_disliked_subreddits_trending_pn",
+        "variant": "enabled",
+        "version": "19"
+    },
+    "comment_search_sorts": {
+        "id": 5930,
+        "name": "comment_search_sorts",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "comment_submit_recaptcha_r2": {
+        "id": 8724,
+        "name": "comment_submit_recaptcha_r2",
+        "variant": "enabled",
+        "version": "28"
+    },
+    "comments_go_can_view_grpc": {
+        "id": 6586,
+        "name": "comments_go_can_view_grpc",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "commrec3_limit_by_subscription_count": {
+        "id": 10468,
+        "name": "commrec3_limit_by_subscription_count",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "community_muting_d2x": {
+        "id": 4329,
+        "name": "community_muting_d2x",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "community_muting_gql": {
+        "id": 4183,
+        "name": "community_muting_gql",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "community_recommendations_null_destination": {
+        "id": 12892,
+        "name": "community_recommendations_null_destination",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "content_rating_survey_rollout_percentage": {
+        "id": 1649,
+        "name": "content_rating_survey_rollout_percentage",
+        "variant": "100",
+        "version": "8"
+    },
+    "contextual_at_experiment_v0": {
+        "id": 12666,
+        "name": "contextual_at_experiment_v0",
+        "variant": "sup_lm",
+        "version": "11"
+    },
+    "contribx_6368": {
+        "id": 12479,
+        "name": "contribx_6368",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "cpa_pcvr_iterations_2023": {
+        "id": 6268,
+        "name": "cpa_pcvr_iterations_2023",
+        "variant": "control_1",
+        "version": "110"
+    },
+    "cpi_pinstall_iterations_07_2024": {
+        "id": 13557,
+        "name": "cpi_pinstall_iterations_07_2024",
+        "variant": "test_2",
+        "version": "3"
+    },
+    "create_ad_group_openapi_migration": {
+        "id": 11827,
+        "name": "create_ad_group_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "create_ad_v3_openapi_migration": {
+        "id": 11511,
+        "name": "create_ad_v3_openapi_migration",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "create_bulk_actions_openapi_migration": {
+        "id": 11824,
+        "name": "create_bulk_actions_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "create_business_ad_account_openapi_migration": {
+        "id": 11677,
+        "name": "create_business_ad_account_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "create_campaign_v3_openapi_migration": {
+        "id": 11778,
+        "name": "create_campaign_v3_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "create_invitations_batch_openapi_migration": {
+        "id": 11703,
+        "name": "create_invitations_batch_openapi_migration",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "curated_one_off_pn_experiment": {
+        "id": 8432,
+        "name": "curated_one_off_pn_experiment",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "curated_one_off_pn_migration_cutover": {
+        "id": 11612,
+        "name": "curated_one_off_pn_migration_cutover",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "custom_trend_image_override": {
+        "id": 9636,
+        "name": "custom_trend_image_override",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "d0_email_notifications_tax_v6": {
+        "id": 10450,
+        "name": "d0_email_notifications_tax_v6",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "d0_post_notifications_tax_v6": {
+        "id": 10451,
+        "name": "d0_post_notifications_tax_v6",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "d2x_am_modal_design_update": {
+        "id": 4802,
+        "name": "d2x_am_modal_design_update",
+        "variant": "enabled",
+        "version": "15"
+    },
+    "d2x_appeals_with_unique_link": {
+        "id": 8112,
+        "name": "d2x_appeals_with_unique_link",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "d2x_avatar_in_comments_loggedin": {
+        "id": 953,
+        "name": "d2x_avatar_in_comments_loggedin",
+        "variant": "active",
+        "version": "14"
+    },
+    "d2x_avatar_in_comments_loggedout": {
+        "id": 963,
+        "name": "d2x_avatar_in_comments_loggedout",
+        "variant": "active",
+        "version": "13"
+    },
+    "d2x_chat_filter_group_direct": {
+        "id": 2527,
+        "name": "d2x_chat_filter_group_direct",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "d2x_chat_matrix_client": {
+        "id": 4922,
+        "name": "d2x_chat_matrix_client",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "d2x_devvit_custom_posts_enabled": {
+        "id": 9788,
+        "name": "d2x_devvit_custom_posts_enabled",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "d2x_dsa_compliance": {
+        "id": 10366,
+        "name": "d2x_dsa_compliance",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "d2x_gif_comments_setting": {
+        "id": 5222,
+        "name": "d2x_gif_comments_setting",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "d2x_google_onetap": {
+        "id": 1226,
+        "name": "d2x_google_onetap",
+        "variant": "onetap",
+        "version": "12"
+    },
+    "d2x_google_sso_gis_parity": {
+        "id": 2982,
+        "name": "d2x_google_sso_gis_parity",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "d2x_gql_comment_save": {
+        "id": 4249,
+        "name": "d2x_gql_comment_save",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "d2x_gql_modqueues": {
+        "id": 0,
+        "name": "d2x_gql_modqueues",
+        "variant": "enabled",
+        "version": "1"
+    },
+    "d2x_gql_subreddit_more_posts_2": {
+        "id": 5999,
+        "name": "d2x_gql_subreddit_more_posts_2",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "d2x_gql_subreddit_page": {
+        "id": 0,
+        "name": "d2x_gql_subreddit_page",
+        "variant": "control_1",
+        "version": "1"
+    },
+    "d2x_image_comments_creation": {
+        "id": 5036,
+        "name": "d2x_image_comments_creation",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "d2x_image_comments_setting": {
+        "id": 5037,
+        "name": "d2x_image_comments_setting",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "d2x_intuitive_post_type": {
+        "id": 4245,
+        "name": "d2x_intuitive_post_type",
+        "variant": "enabled",
+        "version": "17"
+    },
+    "d2x_lang_on_subreddit_creation": {
+        "id": 3877,
+        "name": "d2x_lang_on_subreddit_creation",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "d2x_live_chat_user_count": {
+        "id": 5458,
+        "name": "d2x_live_chat_user_count",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "d2x_liveliness_avatar_presence_indicator": {
+        "id": 1879,
+        "name": "d2x_liveliness_avatar_presence_indicator",
+        "variant": "enabled",
+        "version": "24"
+    },
+    "d2x_netzdg_compliance": {
+        "id": 3551,
+        "name": "d2x_netzdg_compliance",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "d2x_onboarding_rec_module": {
+        "id": 3807,
+        "name": "d2x_onboarding_rec_module",
+        "variant": "removed",
+        "version": "4"
+    },
+    "d2x_popular_gql_migration_logged_in": {
+        "id": 5519,
+        "name": "d2x_popular_gql_migration_logged_in",
+        "variant": "enabled",
+        "version": "25"
+    },
+    "d2x_private_community_ux": {
+        "id": 8197,
+        "name": "d2x_private_community_ux",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "d2x_profile_listing_gql_test": {
+        "id": 0,
+        "name": "d2x_profile_listing_gql_test",
+        "variant": "control_1",
+        "version": "1"
+    },
+    "d2x_promoted_user_post_ads": {
+        "id": 5327,
+        "name": "d2x_promoted_user_post_ads",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "d2x_reddit_for_community_nav": {
+        "id": 10383,
+        "name": "d2x_reddit_for_community_nav",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "d2x_remove_hide_post_overflowmenu_v2": {
+        "id": 8649,
+        "name": "d2x_remove_hide_post_overflowmenu_v2",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "d2x_reputation_new_tag": {
+        "id": 12756,
+        "name": "d2x_reputation_new_tag",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "d2x_reputation_settings": {
+        "id": 12755,
+        "name": "d2x_reputation_settings",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "d2x_safe_search_default_off": {
+        "id": 9071,
+        "name": "d2x_safe_search_default_off",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "d2x_seo_ui_match_enabled": {
+        "id": 3930,
+        "name": "d2x_seo_ui_match_enabled",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "d2x_show_supporting_link_ads": {
+        "id": 5053,
+        "name": "d2x_show_supporting_link_ads",
+        "variant": "control_1",
+        "version": "10"
+    },
+    "d2x_signal_collection": {
+        "id": 3146,
+        "name": "d2x_signal_collection",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "d2x_telemetry_via_gql": {
+        "id": 3043,
+        "name": "d2x_telemetry_via_gql",
+        "variant": "enabled",
+        "version": "21"
+    },
+    "d2x_upload_lease_via_gql": {
+        "id": 5062,
+        "name": "d2x_upload_lease_via_gql",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "d2x_viewscreen_on_return": {
+        "id": 1820,
+        "name": "d2x_viewscreen_on_return",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "delete_comment_q": {
+        "id": 12099,
+        "name": "delete_comment_q",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "delete_gender_through_update_endpoint": {
+        "id": 6939,
+        "name": "delete_gender_through_update_endpoint",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "delete_link_q": {
+        "id": 12095,
+        "name": "delete_link_q",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "delete_member_v3_openapi_migration": {
+        "id": 12059,
+        "name": "delete_member_v3_openapi_migration",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "deprecate_spammit": {
+        "id": 5241,
+        "name": "deprecate_spammit",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "devvit_portal_app_installation_configuration": {
+        "id": 7389,
+        "name": "devvit_portal_app_installation_configuration",
+        "variant": "use_app_install_config",
+        "version": "3"
+    },
+    "direct_bidding_refactor_effective_bid": {
+        "id": 13381,
+        "name": "direct_bidding_refactor_effective_bid",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "dsa_copy_updates": {
+        "id": 10252,
+        "name": "dsa_copy_updates",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "dx_mod_queue": {
+        "id": 9011,
+        "name": "dx_mod_queue",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "dx_postguidance_mod": {
+        "id": 6673,
+        "name": "dx_postguidance_mod",
+        "variant": "enabled",
+        "version": "17"
+    },
+    "dzero_pipedream_main_channels": {
+        "id": 8013,
+        "name": "dzero_pipedream_main_channels",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "econ_avatar_loggedout_screen": {
+        "id": 4678,
+        "name": "econ_avatar_loggedout_screen",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "econ_karma_award_score": {
+        "id": 961,
+        "name": "econ_karma_award_score",
+        "variant": "enabled",
+        "version": "23"
+    },
+    "email_i18n_new_user_education": {
+        "id": 5389,
+        "name": "email_i18n_new_user_education",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "embed_ctr_universal_improvements": {
+        "id": 8445,
+        "name": "embed_ctr_universal_improvements",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "embed_fullsize_media": {
+        "id": 8563,
+        "name": "embed_fullsize_media",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "enable_generalized_home_feed_injections": {
+        "id": 8041,
+        "name": "enable_generalized_home_feed_injections",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "enable_subreddit_muting": {
+        "id": 5132,
+        "name": "enable_subreddit_muting",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "encode_experiments_meg": {
+        "id": 5339,
+        "name": "encode_experiments_meg",
+        "variant": "encode_experiment_vp9",
+        "version": "3"
+    },
+    "enqueue_encoding_validation": {
+        "id": 5782,
+        "name": "enqueue_encoding_validation",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "es_core_user_bridge": {
+        "id": 12781,
+        "name": "es_core_user_bridge",
+        "variant": "control_1",
+        "version": "5"
+    },
+    "es_new_user_bridge": {
+        "id": 12780,
+        "name": "es_new_user_bridge",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "events_manager": {
+        "id": 7090,
+        "name": "events_manager",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "exclude_community_status_on_native_apps": {
+        "id": 11364,
+        "name": "exclude_community_status_on_native_apps",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "fbp_ad_load": {
+        "id": 4756,
+        "name": "fbp_ad_load",
+        "variant": "1_in_6",
+        "version": "13"
+    },
+    "fbp_bali_profile_chaining_updates": {
+        "id": 12428,
+        "name": "fbp_bali_profile_chaining_updates",
+        "variant": "enabled",
+        "version": "16"
+    },
+    "feedex_be_fangorn_media_attributes_migration": {
+        "id": 8080,
+        "name": "feedex_be_fangorn_media_attributes_migration",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "feedex_be_proto_feeds_cell_ids_update": {
+        "id": 5976,
+        "name": "feedex_be_proto_feeds_cell_ids_update",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "feedex_fangorn_control_debug": {
+        "id": 7584,
+        "name": "feedex_fangorn_control_debug",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "feedex_override_subreddit_rec_context": {
+        "id": 8263,
+        "name": "feedex_override_subreddit_rec_context",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "feedex_pre_delivery_hook": {
+        "id": 7899,
+        "name": "feedex_pre_delivery_hook",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "feedex_uxts_client_details": {
+        "id": 6449,
+        "name": "feedex_uxts_client_details",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "filter_posts_on_nsfw_allowed_experiment": {
+        "id": 9238,
+        "name": "filter_posts_on_nsfw_allowed_experiment",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "found_media_svc_mp4_captions": {
+        "id": 8582,
+        "name": "found_media_svc_mp4_captions",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "foundation_autogen_playback_trim_low_dash": {
+        "id": 7949,
+        "name": "foundation_autogen_playback_trim_low_dash",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "foundation_autogen_playback_trim_low_hls": {
+        "id": 7948,
+        "name": "foundation_autogen_playback_trim_low_hls",
+        "variant": "enabled",
+        "version": "15"
+    },
+    "gallery_items_dict_deprecated": {
+        "id": 11058,
+        "name": "gallery_items_dict_deprecated",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "garlic_bread_auto_help_modal": {
+        "id": 8100,
+        "name": "garlic_bread_auto_help_modal",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "garlic_bread_phoneauth_check": {
+        "id": 7463,
+        "name": "garlic_bread_phoneauth_check",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "garlic_bread_radar_zoom_variant": {
+        "id": 8663,
+        "name": "garlic_bread_radar_zoom_variant",
+        "variant": "clickconstantzoom",
+        "version": "7"
+    },
+    "garlic_bread_ro_experiment": {
+        "id": 7224,
+        "name": "garlic_bread_ro_experiment",
+        "variant": "readonly",
+        "version": "4"
+    },
+    "garlic_bread_verified_email_check": {
+        "id": 7865,
+        "name": "garlic_bread_verified_email_check",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "garlic_bread_zoom_out": {
+        "id": 7967,
+        "name": "garlic_bread_zoom_out",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "gazette_feature_cassandra_reads": {
+        "id": 13582,
+        "name": "gazette_feature_cassandra_reads",
+        "variant": "control_1",
+        "version": "2"
+    },
+    "get_ad_account_openapi_migration": {
+        "id": 10922,
+        "name": "get_ad_account_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "get_ad_generation_job_exec_openapi_migration": {
+        "id": 11833,
+        "name": "get_ad_generation_job_exec_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "get_ad_group_v3_openapi_migration": {
+        "id": 11142,
+        "name": "get_ad_group_v3_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "get_ad_v3_openapi_migration": {
+        "id": 11093,
+        "name": "get_ad_v3_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "get_bulk_actions_openapi_migration": {
+        "id": 11829,
+        "name": "get_bulk_actions_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "get_leads_v3_openapi_migration": {
+        "id": 11823,
+        "name": "get_leads_v3_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "get_pixel_event_activity_openapi_migration": {
+        "id": 12159,
+        "name": "get_pixel_event_activity_openapi_migration",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "get_trends_from_trends_service": {
+        "id": 10253,
+        "name": "get_trends_from_trends_service",
+        "variant": "trends_service",
+        "version": "8"
+    },
+    "ggv_fpr_fact_table_migration": {
+        "id": 13542,
+        "name": "ggv_fpr_fact_table_migration",
+        "variant": "v2",
+        "version": "2"
+    },
+    "gis_pipedream_cache": {
+        "id": 10516,
+        "name": "gis_pipedream_cache",
+        "variant": "cache_15s",
+        "version": "31"
+    },
+    "global_ads_trimmer_exploration": {
+        "id": 12388,
+        "name": "global_ads_trimmer_exploration",
+        "variant": "capped_control",
+        "version": "51"
+    },
+    "global_trimmer_model_improvement": {
+        "id": 13243,
+        "name": "global_trimmer_model_improvement",
+        "variant": "variant_iab_features",
+        "version": "19"
+    },
+    "good_visit_event_search_feed": {
+        "id": 2113,
+        "name": "good_visit_event_search_feed",
+        "variant": "enabled",
+        "version": "15"
+    },
+    "gpl_disable_decider_context_overrides_logging": {
+        "id": 8803,
+        "name": "gpl_disable_decider_context_overrides_logging",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "gql_adlayoutv2_cast_all_to_unknown": {
+        "id": 11567,
+        "name": "gql_adlayoutv2_cast_all_to_unknown",
+        "variant": "cast_all_to_unknown",
+        "version": "7"
+    },
+    "gql_ads_domain_hotfix": {
+        "id": 8479,
+        "name": "gql_ads_domain_hotfix",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "gql_autogenerated_video_thumbnails": {
+        "id": 5307,
+        "name": "gql_autogenerated_video_thumbnails",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "gql_channels_enabled_killswitch": {
+        "id": 12402,
+        "name": "gql_channels_enabled_killswitch",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "gql_cmux_author_search_rp": {
+        "id": 12935,
+        "name": "gql_cmux_author_search_rp",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "gql_cmux_spellcheck_rp": {
+        "id": 13308,
+        "name": "gql_cmux_spellcheck_rp",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "gql_cmux_subreddit_search_rp": {
+        "id": 12674,
+        "name": "gql_cmux_subreddit_search_rp",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "gql_google_maps_integration": {
+        "id": 948,
+        "name": "gql_google_maps_integration",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "gql_posting_eligibility_users": {
+        "id": 13177,
+        "name": "gql_posting_eligibility_users",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "gql_safe_search_override": {
+        "id": 12034,
+        "name": "gql_safe_search_override",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "gql_sub_is_nsfw_from_new_taxo_endpoint": {
+        "id": 10376,
+        "name": "gql_sub_is_nsfw_from_new_taxo_endpoint",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "gql_subreddit_channels_enabled_killswitch": {
+        "id": 12401,
+        "name": "gql_subreddit_channels_enabled_killswitch",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "gql_subreddit_channels_upstream_call": {
+        "id": 5957,
+        "name": "gql_subreddit_channels_upstream_call",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "gql_taxonomy_subreddit_info_cache": {
+        "id": 9706,
+        "name": "gql_taxonomy_subreddit_info_cache",
+        "variant": "enabled",
+        "version": "16"
+    },
+    "gql_taxonomy_subreddit_metadata_cache": {
+        "id": 9738,
+        "name": "gql_taxonomy_subreddit_metadata_cache",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "gql_taxonomy_top_srs_by_topics_cache": {
+        "id": 9935,
+        "name": "gql_taxonomy_top_srs_by_topics_cache",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "gql_to_ranking_grpc_community_recs": {
+        "id": 10588,
+        "name": "gql_to_ranking_grpc_community_recs",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "gql_to_ranking_grpc_dataloaders_rollout": {
+        "id": 10757,
+        "name": "gql_to_ranking_grpc_dataloaders_rollout",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "gql_to_ranking_grpc_feed_experiences_rollout": {
+        "id": 10357,
+        "name": "gql_to_ranking_grpc_feed_experiences_rollout",
+        "variant": "enabled",
+        "version": "27"
+    },
+    "gql_to_ranking_grpc_flairs_rollout": {
+        "id": 10416,
+        "name": "gql_to_ranking_grpc_flairs_rollout",
+        "variant": "enabled",
+        "version": "16"
+    },
+    "gql_to_ranking_grpc_geo_popular_rollout": {
+        "id": 10417,
+        "name": "gql_to_ranking_grpc_geo_popular_rollout",
+        "variant": "enabled",
+        "version": "16"
+    },
+    "gql_to_ranking_grpc_home_feed_rollout": {
+        "id": 10547,
+        "name": "gql_to_ranking_grpc_home_feed_rollout",
+        "variant": "enabled",
+        "version": "20"
+    },
+    "gql_to_ranking_grpc_i18n_feed": {
+        "id": 11412,
+        "name": "gql_to_ranking_grpc_i18n_feed",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "gql_to_ranking_grpc_one_feed_rollout": {
+        "id": 10572,
+        "name": "gql_to_ranking_grpc_one_feed_rollout",
+        "variant": "enabled",
+        "version": "65"
+    },
+    "gql_to_ranking_grpc_post_feed": {
+        "id": 10759,
+        "name": "gql_to_ranking_grpc_post_feed",
+        "variant": "enabled",
+        "version": "15"
+    },
+    "gql_to_ranking_grpc_ptp_guest_rollout": {
+        "id": 10359,
+        "name": "gql_to_ranking_grpc_ptp_guest_rollout",
+        "variant": "enabled",
+        "version": "29"
+    },
+    "gql_to_ranking_grpc_subreddit_feed_rollout": {
+        "id": 10343,
+        "name": "gql_to_ranking_grpc_subreddit_feed_rollout",
+        "variant": "enabled",
+        "version": "22"
+    },
+    "gql_to_ranking_grpc_taxonomy_rollout": {
+        "id": 10758,
+        "name": "gql_to_ranking_grpc_taxonomy_rollout",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "gql_to_ranking_grpc_trending_srs_rollout": {
+        "id": 10419,
+        "name": "gql_to_ranking_grpc_trending_srs_rollout",
+        "variant": "enabled",
+        "version": "17"
+    },
+    "gql_to_ranking_service_grpc_video_feed": {
+        "id": 7889,
+        "name": "gql_to_ranking_service_grpc_video_feed",
+        "variant": "enabled",
+        "version": "37"
+    },
+    "gql_ucc_upstream_call": {
+        "id": 9365,
+        "name": "gql_ucc_upstream_call",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "gql_use_internal_ads_api_url": {
+        "id": 12214,
+        "name": "gql_use_internal_ads_api_url",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "graphql_cmux_post_search_ranking_platform": {
+        "id": 11373,
+        "name": "graphql_cmux_post_search_ranking_platform",
+        "variant": "enabled",
+        "version": "46"
+    },
+    "graphql_cmux_post_search_rp_modmail": {
+        "id": 12379,
+        "name": "graphql_cmux_post_search_rp_modmail",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "graphql_federation_main_gate": {
+        "id": 7902,
+        "name": "graphql_federation_main_gate",
+        "variant": "enabled",
+        "version": "31"
+    },
+    "graphql_go_error_logging": {
+        "id": 11122,
+        "name": "graphql_go_error_logging",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "graphql_lead_generation_ads": {
+        "id": 6690,
+        "name": "graphql_lead_generation_ads",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "graphql_media_asset_use_media_svc_upstream": {
+        "id": 4465,
+        "name": "graphql_media_asset_use_media_svc_upstream",
+        "variant": "enabled",
+        "version": "17"
+    },
+    "graphql_media_attr_use_media_svc_upstream": {
+        "id": 4953,
+        "name": "graphql_media_attr_use_media_svc_upstream",
+        "variant": "enabled",
+        "version": "23"
+    },
+    "graphql_private_messages_tracing": {
+        "id": 9850,
+        "name": "graphql_private_messages_tracing",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "graphql_router_query_getaccount": {
+        "id": 12106,
+        "name": "graphql_router_query_getaccount",
+        "variant": "enabled",
+        "version": "17"
+    },
+    "graphql_router_query_i18n_translation": {
+        "id": 12121,
+        "name": "graphql_router_query_i18n_translation",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "graphql_router_query_i18n_translation_issue": {
+        "id": 13275,
+        "name": "graphql_router_query_i18n_translation_issue",
+        "variant": "control_1",
+        "version": "11"
+    },
+    "graphql_router_query_i18n_translation_pfb": {
+        "id": 13365,
+        "name": "graphql_router_query_i18n_translation_pfb",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "graphql_search_x_v_tag_filter": {
+        "id": 11437,
+        "name": "graphql_search_x_v_tag_filter",
+        "variant": "gql_indexing",
+        "version": "39"
+    },
+    "growth_email_v16": {
+        "id": 9356,
+        "name": "growth_email_v16",
+        "variant": "gfs_training",
+        "version": "7"
+    },
+    "growth_pn_20_x_disable_head": {
+        "id": 11772,
+        "name": "growth_pn_20_x_disable_head",
+        "variant": "class_weight",
+        "version": "28"
+    },
+    "growth_pn_v16_autodeploy_rollout": {
+        "id": 10404,
+        "name": "growth_pn_v16_autodeploy_rollout",
+        "variant": "gfs_autodeploy",
+        "version": "23"
+    },
+    "growth_pn_v17_rollout": {
+        "id": 10752,
+        "name": "growth_pn_v17_rollout",
+        "variant": "norm_and_resnet",
+        "version": "18"
+    },
+    "growth_pn_v18_rollout": {
+        "id": 11148,
+        "name": "growth_pn_v18_rollout",
+        "variant": "masknet_2ksteps_rollout",
+        "version": "18"
+    },
+    "guest_mweb3x_listing_below": {
+        "id": 5797,
+        "name": "guest_mweb3x_listing_below",
+        "variant": "guest_mweb3x_listing_below_nlp_tt_final",
+        "version": "1"
+    },
+    "hash_tagged_reads": {
+        "id": 13656,
+        "name": "hash_tagged_reads",
+        "variant": "control_1",
+        "version": "6"
+    },
+    "hcf_settings_page_phase_1": {
+        "id": 10834,
+        "name": "hcf_settings_page_phase_1",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "hybrid_video_rollout_android_v2": {
+        "id": 499,
+        "name": "hybrid_video_rollout_android_v2",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "hydrate_ad_features_via_gql_popular_feed": {
+        "id": 11214,
+        "name": "hydrate_ad_features_via_gql_popular_feed",
+        "variant": "hydrate_ad_features",
+        "version": "21"
+    },
+    "hydrated_comments_endpoint": {
+        "id": 8961,
+        "name": "hydrated_comments_endpoint",
+        "variant": "enabled",
+        "version": "78"
+    },
+    "i18n_bulkposting_job_state": {
+        "id": 7263,
+        "name": "i18n_bulkposting_job_state",
+        "variant": "enabled",
+        "version": "17"
+    },
+    "i18n_communities_secondary_similar_subs": {
+        "id": 8742,
+        "name": "i18n_communities_secondary_similar_subs",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "i18n_communities_tab_be": {
+        "id": 8274,
+        "name": "i18n_communities_tab_be",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "i18n_curated_navbar_event_euro_2024": {
+        "id": 13422,
+        "name": "i18n_curated_navbar_event_euro_2024",
+        "variant": "ga",
+        "version": "11"
+    },
+    "i18n_curated_navbar_event_euro_2024_de": {
+        "id": 13563,
+        "name": "i18n_curated_navbar_event_euro_2024_de",
+        "variant": "ga",
+        "version": "4"
+    },
+    "i18n_curated_navbar_event_euro_2024_es": {
+        "id": 13604,
+        "name": "i18n_curated_navbar_event_euro_2024_es",
+        "variant": "ga",
+        "version": "2"
+    },
+    "i18n_detected_language_default": {
+        "id": 8402,
+        "name": "i18n_detected_language_default",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "i18n_detected_language_uses_country_settings": {
+        "id": 3946,
+        "name": "i18n_detected_language_uses_country_settings",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "i18n_is_media_language_query_enabled": {
+        "id": 11449,
+        "name": "i18n_is_media_language_query_enabled",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "i18n_machine_translations_notifications": {
+        "id": 12210,
+        "name": "i18n_machine_translations_notifications",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "i18n_media_translation_llm": {
+        "id": 12779,
+        "name": "i18n_media_translation_llm",
+        "variant": "control_1",
+        "version": "5"
+    },
+    "i18n_moments_features_be": {
+        "id": 12934,
+        "name": "i18n_moments_features_be",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "i18n_navbar_datacuration_bucketing": {
+        "id": 11585,
+        "name": "i18n_navbar_datacuration_bucketing",
+        "variant": "enabled",
+        "version": "19"
+    },
+    "i18n_translation_llm": {
+        "id": 12910,
+        "name": "i18n_translation_llm",
+        "variant": "enabled",
+        "version": "17"
+    },
+    "i18n_trending_search_per_geo": {
+        "id": 12071,
+        "name": "i18n_trending_search_per_geo",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "ie_new_user_bridge": {
+        "id": 12960,
+        "name": "ie_new_user_bridge",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "inactivation_note_new_header_and_footer": {
+        "id": 13117,
+        "name": "inactivation_note_new_header_and_footer",
+        "variant": "new_header_footer_enabled",
+        "version": "8"
+    },
+    "incr_props_single_tx": {
+        "id": 7785,
+        "name": "incr_props_single_tx",
+        "variant": "enabled",
+        "version": "15"
+    },
+    "incr_props_single_tx_v2": {
+        "id": 8337,
+        "name": "incr_props_single_tx_v2",
+        "variant": "enabled",
+        "version": "23"
+    },
+    "incr_update_events_experiment": {
+        "id": 8032,
+        "name": "incr_update_events_experiment",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "incr_update_events_experiment_comment": {
+        "id": 8421,
+        "name": "incr_update_events_experiment_comment",
+        "variant": "enabled",
+        "version": "20"
+    },
+    "incr_update_events_experiment_identity": {
+        "id": 8423,
+        "name": "incr_update_events_experiment_identity",
+        "variant": "enabled",
+        "version": "13"
+    },
+    "incr_update_events_experiment_links": {
+        "id": 8422,
+        "name": "incr_update_events_experiment_links",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "increase_ml_pers_rollout": {
+        "id": 12126,
+        "name": "increase_ml_pers_rollout",
+        "variant": "increase_ml_personalized_sr",
+        "version": "17"
+    },
+    "inhouse_bframes_rollout_flags": {
+        "id": 9447,
+        "name": "inhouse_bframes_rollout_flags",
+        "variant": "allow_hdr",
+        "version": "3"
+    },
+    "inhouse_encoder_as_primary_rollout_per_media": {
+        "id": 8193,
+        "name": "inhouse_encoder_as_primary_rollout_per_media",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "inhouse_encoder_rollout_flags": {
+        "id": 8196,
+        "name": "inhouse_encoder_rollout_flags",
+        "variant": "allow_ads_hdr",
+        "version": "5"
+    },
+    "inhouse_encoder_rollout_max_duration": {
+        "id": 7156,
+        "name": "inhouse_encoder_rollout_max_duration",
+        "variant": "max_duration_0",
+        "version": "9"
+    },
+    "inhouse_nosc_rollout_flags": {
+        "id": 12612,
+        "name": "inhouse_nosc_rollout_flags",
+        "variant": "allows_ads_hdr",
+        "version": "3"
+    },
+    "inhouse_nosc_rollout_max_duration": {
+        "id": 12611,
+        "name": "inhouse_nosc_rollout_max_duration",
+        "variant": "max_duration_600",
+        "version": "3"
+    },
+    "inhouse_nosc_rollout_min_ups": {
+        "id": 12613,
+        "name": "inhouse_nosc_rollout_min_ups",
+        "variant": "min_ups_1000",
+        "version": "8"
+    },
+    "inhouse_unified_rollout_flags": {
+        "id": 8195,
+        "name": "inhouse_unified_rollout_flags",
+        "variant": "allow_ads_hdr",
+        "version": "3"
+    },
+    "intuitive_post_type_be": {
+        "id": 4172,
+        "name": "intuitive_post_type_be",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "ios_additional_comment_ads_killswitch": {
+        "id": 10720,
+        "name": "ios_additional_comment_ads_killswitch",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "ios_ads_debug_dedupe_killswitch": {
+        "id": 9278,
+        "name": "ios_ads_debug_dedupe_killswitch",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "ios_bad_network_video_loading_error_fix": {
+        "id": 8166,
+        "name": "ios_bad_network_video_loading_error_fix",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "ios_baked_potato_community_drawer_killswitch": {
+        "id": 8818,
+        "name": "ios_baked_potato_community_drawer_killswitch",
+        "variant": "killed",
+        "version": "3"
+    },
+    "ios_baked_potato_explore_killswitch": {
+        "id": 8678,
+        "name": "ios_baked_potato_explore_killswitch",
+        "variant": "killed",
+        "version": "7"
+    },
+    "ios_baked_potato_nav_bar_killswitch": {
+        "id": 8817,
+        "name": "ios_baked_potato_nav_bar_killswitch",
+        "variant": "killed",
+        "version": "3"
+    },
+    "ios_chat_async_fetch_ks": {
+        "id": 11815,
+        "name": "ios_chat_async_fetch_ks",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "ios_chat_backend_unread_counters": {
+        "id": 12959,
+        "name": "ios_chat_backend_unread_counters",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "ios_chat_channels_channel_tagging": {
+        "id": 10063,
+        "name": "ios_chat_channels_channel_tagging",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "ios_chat_channels_ucc_sharing": {
+        "id": 9757,
+        "name": "ios_chat_channels_ucc_sharing",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ios_chat_content_vc_v2": {
+        "id": 10332,
+        "name": "ios_chat_content_vc_v2",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "ios_chat_list_backend_unread_badge": {
+        "id": 13033,
+        "name": "ios_chat_list_backend_unread_badge",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "ios_chat_reactions_killswitch": {
+        "id": 3678,
+        "name": "ios_chat_reactions_killswitch",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "ios_chat_room_list_v2": {
+        "id": 9449,
+        "name": "ios_chat_room_list_v2",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "ios_comments_gql_expect_r2_style_cursors": {
+        "id": 7107,
+        "name": "ios_comments_gql_expect_r2_style_cursors",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ios_community_chat_logged_out_users": {
+        "id": 7581,
+        "name": "ios_community_chat_logged_out_users",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "ios_community_chat_message_pinning": {
+        "id": 9451,
+        "name": "ios_community_chat_message_pinning",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "ios_community_drawer_pagination_killswitch": {
+        "id": 5855,
+        "name": "ios_community_drawer_pagination_killswitch",
+        "variant": "killed",
+        "version": "2"
+    },
+    "ios_crowd_control_from_settings": {
+        "id": 6873,
+        "name": "ios_crowd_control_from_settings",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "ios_cv_nil_data_source_cell_for_item_at_fix": {
+        "id": 5372,
+        "name": "ios_cv_nil_data_source_cell_for_item_at_fix",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "ios_dev_platform_enabled": {
+        "id": 6034,
+        "name": "ios_dev_platform_enabled",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "ios_devplatform_customposts": {
+        "id": 8413,
+        "name": "ios_devplatform_customposts",
+        "variant": "enabled",
+        "version": "16"
+    },
+    "ios_downloading_image": {
+        "id": 7068,
+        "name": "ios_downloading_image",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "ios_dq_events_common_payload_cleanup": {
+        "id": 7860,
+        "name": "ios_dq_events_common_payload_cleanup",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ios_econ_order_subs_sk1": {
+        "id": 7360,
+        "name": "ios_econ_order_subs_sk1",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "ios_edit_post_apollo_ks": {
+        "id": 13551,
+        "name": "ios_edit_post_apollo_ks",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "ios_fbp_2023_q3": {
+        "id": 9176,
+        "name": "ios_fbp_2023_q3",
+        "variant": "ios_pdp_header_modernization_link",
+        "version": "14"
+    },
+    "ios_feed_header_share_icon": {
+        "id": 8055,
+        "name": "ios_feed_header_share_icon",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "ios_gender_onboarding_async_killswitch": {
+        "id": 6101,
+        "name": "ios_gender_onboarding_async_killswitch",
+        "variant": "killed",
+        "version": "4"
+    },
+    "ios_legacy_videoslice_refactor_ks": {
+        "id": 13304,
+        "name": "ios_legacy_videoslice_refactor_ks",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "ios_live_chat_reactions_message_killswitch": {
+        "id": 7178,
+        "name": "ios_live_chat_reactions_message_killswitch",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ios_matrix_aggregated_events_filtering": {
+        "id": 12524,
+        "name": "ios_matrix_aggregated_events_filtering",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "ios_matrix_filter_preview_collapse": {
+        "id": 13104,
+        "name": "ios_matrix_filter_preview_collapse",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "ios_matrix_new_aggregate_updates": {
+        "id": 12252,
+        "name": "ios_matrix_new_aggregate_updates",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "ios_native_appeals": {
+        "id": 8276,
+        "name": "ios_native_appeals",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "ios_nsfw_spoiler_not_blured_fix_killswitch": {
+        "id": 6319,
+        "name": "ios_nsfw_spoiler_not_blured_fix_killswitch",
+        "variant": "killed",
+        "version": "3"
+    },
+    "ios_nsfw_spoiler_not_blurred_fix_killswitch": {
+        "id": 6318,
+        "name": "ios_nsfw_spoiler_not_blurred_fix_killswitch",
+        "variant": "killswitch_enabled",
+        "version": "3"
+    },
+    "ios_onboarding_condensed_subreddits": {
+        "id": 4265,
+        "name": "ios_onboarding_condensed_subreddits",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "ios_pdp_2023q2redesign_meg": {
+        "id": 8789,
+        "name": "ios_pdp_2023q2redesign_meg",
+        "variant": "ios_pdp_simplification",
+        "version": "14"
+    },
+    "ios_phone_auth_extended_country_codes": {
+        "id": 7764,
+        "name": "ios_phone_auth_extended_country_codes",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ios_platform_metric_audit_meg": {
+        "id": 10363,
+        "name": "ios_platform_metric_audit_meg",
+        "variant": "ios_platform_metric_audit_b",
+        "version": "1"
+    },
+    "ios_platformex_video_captions": {
+        "id": 9184,
+        "name": "ios_platformex_video_captions",
+        "variant": "enabled",
+        "version": "22"
+    },
+    "ios_redditorbyname_typename_check_killswitch": {
+        "id": 6755,
+        "name": "ios_redditorbyname_typename_check_killswitch",
+        "variant": "killed",
+        "version": "2"
+    },
+    "ios_reporting_ban_evasion": {
+        "id": 9769,
+        "name": "ios_reporting_ban_evasion",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "ios_reporting_freeform_text": {
+        "id": 6806,
+        "name": "ios_reporting_freeform_text",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "ios_ritual_v1_mutex_au": {
+        "id": 5903,
+        "name": "ios_ritual_v1_mutex_au",
+        "variant": "ios_ritual_v1_non_subbers_au",
+        "version": "2"
+    },
+    "ios_ritual_v1_mutex_br": {
+        "id": 5906,
+        "name": "ios_ritual_v1_mutex_br",
+        "variant": "ios_ritual_v1_non_subbers_br",
+        "version": "2"
+    },
+    "ios_ritual_v1_mutex_fr": {
+        "id": 5908,
+        "name": "ios_ritual_v1_mutex_fr",
+        "variant": "ios_ritual_v1_non_subbers_fr",
+        "version": "2"
+    },
+    "ios_ritual_v1_mutex_gb": {
+        "id": 5902,
+        "name": "ios_ritual_v1_mutex_gb",
+        "variant": "ios_ritual_v1_existing_subbers_gb",
+        "version": "2"
+    },
+    "ios_share_to_ig_stories": {
+        "id": 7146,
+        "name": "ios_share_to_ig_stories",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "ios_share_to_ig_stories_gallery": {
+        "id": 7421,
+        "name": "ios_share_to_ig_stories_gallery",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "ios_signup_telemetry_ks": {
+        "id": 10347,
+        "name": "ios_signup_telemetry_ks",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "ios_subreddit_channels_navigation": {
+        "id": 6887,
+        "name": "ios_subreddit_channels_navigation",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "ios_subreddit_header_expanded_killswitch": {
+        "id": 7274,
+        "name": "ios_subreddit_header_expanded_killswitch",
+        "variant": "killed",
+        "version": "4"
+    },
+    "ios_updated_video_downloader": {
+        "id": 11363,
+        "name": "ios_updated_video_downloader",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "ios_us_onboarding_gender_curation": {
+        "id": 6481,
+        "name": "ios_us_onboarding_gender_curation",
+        "variant": "female_2",
+        "version": "6"
+    },
+    "ios_user_details_reporting": {
+        "id": 10111,
+        "name": "ios_user_details_reporting",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "ios_username_share_prompt": {
+        "id": 7559,
+        "name": "ios_username_share_prompt",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "ios_video_captions_positioning_fix_killswitch": {
+        "id": 10372,
+        "name": "ios_video_captions_positioning_fix_killswitch",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "ios_video_captions_v2_events_killswitch": {
+        "id": 10457,
+        "name": "ios_video_captions_v2_events_killswitch",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ios_video_removed_error_handling": {
+        "id": 8394,
+        "name": "ios_video_removed_error_handling",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "ios_x_mr_coins_sunset": {
+        "id": 7422,
+        "name": "ios_x_mr_coins_sunset",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "ios_x_mr_expressions_mod_toggle": {
+        "id": 7643,
+        "name": "ios_x_mr_expressions_mod_toggle",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ios_x_mr_expressions_quick_reply": {
+        "id": 8265,
+        "name": "ios_x_mr_expressions_quick_reply",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "ios_x_mr_gold_i18n_order_creation": {
+        "id": 11313,
+        "name": "ios_x_mr_gold_i18n_order_creation",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "ios_x_mr_tipping_tooltip_ks": {
+        "id": 10115,
+        "name": "ios_x_mr_tipping_tooltip_ks",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "ios_x_points_mainnet_launch": {
+        "id": 4566,
+        "name": "ios_x_points_mainnet_launch",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "ipm_announcements_shreddit": {
+        "id": 7502,
+        "name": "ipm_announcements_shreddit",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "is_afs_calls_enabled": {
+        "id": 5478,
+        "name": "is_afs_calls_enabled",
+        "variant": "enabled",
+        "version": "21"
+    },
+    "is_afs_calls_enabled_ad_supplementary_text": {
+        "id": 6263,
+        "name": "is_afs_calls_enabled_ad_supplementary_text",
+        "variant": "enabled",
+        "version": "16"
+    },
+    "is_afs_enabled_fangorn_gql": {
+        "id": 6822,
+        "name": "is_afs_enabled_fangorn_gql",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "is_afs_enabled_for_dynamic_product_fangorn": {
+        "id": 7786,
+        "name": "is_afs_enabled_for_dynamic_product_fangorn",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "is_afs_enabled_for_dynamic_product_legacy": {
+        "id": 7359,
+        "name": "is_afs_enabled_for_dynamic_product_legacy",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "is_afs_enabled_for_gallery_gql": {
+        "id": 7249,
+        "name": "is_afs_enabled_for_gallery_gql",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "is_afs_enabled_for_media_profile_post": {
+        "id": 9931,
+        "name": "is_afs_enabled_for_media_profile_post",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "is_afs_enabled_for_product_ads_gql": {
+        "id": 6632,
+        "name": "is_afs_enabled_for_product_ads_gql",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "is_carousel_dpa_legacy_enabled": {
+        "id": 11308,
+        "name": "is_carousel_dpa_legacy_enabled",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "is_contribution_comments_translation_enabled": {
+        "id": 11902,
+        "name": "is_contribution_comments_translation_enabled",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "is_contribution_posts_translation_enabled": {
+        "id": 11904,
+        "name": "is_contribution_posts_translation_enabled",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "is_pcp_legacy_enabled": {
+        "id": 7109,
+        "name": "is_pcp_legacy_enabled",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "is_sensitive_ads_preferences_enabled": {
+        "id": 9346,
+        "name": "is_sensitive_ads_preferences_enabled",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "it_core_user_bridge": {
+        "id": 12783,
+        "name": "it_core_user_bridge",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "it_new_user_bridge": {
+        "id": 12782,
+        "name": "it_new_user_bridge",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "karma_lab_headline_generator": {
+        "id": 11555,
+        "name": "karma_lab_headline_generator",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "kn_adidasmultisport2_062024_072024": {
+        "id": 12922,
+        "name": "kn_adidasmultisport2_062024_072024",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "kn_samsung_ncme_watch7_q324_072024_092024": {
+        "id": 13620,
+        "name": "kn_samsung_ncme_watch7_q324_072024_092024",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "kn_toyotalandcruiser_052024_082024": {
+        "id": 12796,
+        "name": "kn_toyotalandcruiser_052024_082024",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "kn_toyotatacoma_052024_082024": {
+        "id": 12608,
+        "name": "kn_toyotatacoma_052024_082024",
+        "variant": "control_1",
+        "version": "2"
+    },
+    "kwif_lp_seo_exp": {
+        "id": 13435,
+        "name": "kwif_lp_seo_exp",
+        "variant": "control_1",
+        "version": "4"
+    },
+    "landing_experience_q1_24_meg": {
+        "id": 10738,
+        "name": "landing_experience_q1_24_meg",
+        "variant": "shreddit_landing_experiences_m2_5",
+        "version": "2"
+    },
+    "lang_on_subreddit_creation": {
+        "id": 3875,
+        "name": "lang_on_subreddit_creation",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "language_detection_enabled": {
+        "id": 6232,
+        "name": "language_detection_enabled",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "lead_gen_ga_fields_ads_ui": {
+        "id": 9307,
+        "name": "lead_gen_ga_fields_ads_ui",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "lead_generation_fields_on_ads_ui": {
+        "id": 7609,
+        "name": "lead_generation_fields_on_ads_ui",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "li_shreddit_migrations_desktop_meg": {
+        "id": 9652,
+        "name": "li_shreddit_migrations_desktop_meg",
+        "variant": "shreddit_migration_li_pdp_d2x",
+        "version": "9"
+    },
+    "li_shreddit_migrations_mweb_meg": {
+        "id": 9653,
+        "name": "li_shreddit_migrations_mweb_meg",
+        "variant": "shreddit_mobile_profiles_logged_in",
+        "version": "9"
+    },
+    "libeks_test_mutex": {
+        "id": 8172,
+        "name": "libeks_test_mutex",
+        "variant": "libeks_test_exclusive_2",
+        "version": "1"
+    },
+    "lifetime_creator_stats": {
+        "id": 9015,
+        "name": "lifetime_creator_stats",
+        "variant": "lifetime",
+        "version": "12"
+    },
+    "links_redis_loggedout": {
+        "id": 13076,
+        "name": "links_redis_loggedout",
+        "variant": "enabled",
+        "version": "30"
+    },
+    "links_redis_service_1": {
+        "id": 13135,
+        "name": "links_redis_service_1",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "links_redis_service_2": {
+        "id": 13406,
+        "name": "links_redis_service_2",
+        "variant": "enabled",
+        "version": "18"
+    },
+    "list_ad_accounts_in_busines_openapi_migration": {
+        "id": 10924,
+        "name": "list_ad_accounts_in_busines_openapi_migration",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "list_ad_generation_job_exec_openapi_migration": {
+        "id": 11834,
+        "name": "list_ad_generation_job_exec_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "list_contacts_openapi_migration": {
+        "id": 11813,
+        "name": "list_contacts_openapi_migration",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "list_user_ad_groups_v3_openapi_migration": {
+        "id": 11141,
+        "name": "list_user_ad_groups_v3_openapi_migration",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "list_user_ads_v3_openapi_migration": {
+        "id": 11266,
+        "name": "list_user_ads_v3_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "list_user_campaigns_v3_openapi_migration": {
+        "id": 10945,
+        "name": "list_user_campaigns_v3_openapi_migration",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "listing_below_ranking": {
+        "id": 10911,
+        "name": "listing_below_ranking",
+        "variant": "platformex_listing_below_fpr_limit_override",
+        "version": "11"
+    },
+    "listing_below_tpr": {
+        "id": 7289,
+        "name": "listing_below_tpr",
+        "variant": "balanced",
+        "version": "16"
+    },
+    "lo_spr_v17_upgrade": {
+        "id": 13451,
+        "name": "lo_spr_v17_upgrade",
+        "variant": "v17",
+        "version": "11"
+    },
+    "location_preference_consolidation": {
+        "id": 6529,
+        "name": "location_preference_consolidation",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "lookalike_v1": {
+        "id": 13182,
+        "name": "lookalike_v1",
+        "variant": "control_1",
+        "version": "7"
+    },
+    "m_feed_diversity_penalty": {
+        "id": 7064,
+        "name": "m_feed_diversity_penalty",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "matrix_be_admin_grpc": {
+        "id": 13277,
+        "name": "matrix_be_admin_grpc",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "matrix_be_android_chat_reaction_aggregation": {
+        "id": 10958,
+        "name": "matrix_be_android_chat_reaction_aggregation",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "matrix_be_call_moderated_subreddits_directly": {
+        "id": 13529,
+        "name": "matrix_be_call_moderated_subreddits_directly",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "matrix_be_call_telemetry_directly": {
+        "id": 13568,
+        "name": "matrix_be_call_telemetry_directly",
+        "variant": "enabled",
+        "version": "16"
+    },
+    "matrix_be_call_user_relations_directly": {
+        "id": 13505,
+        "name": "matrix_be_call_user_relations_directly",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "matrix_be_hide_non_dm_invites": {
+        "id": 12689,
+        "name": "matrix_be_hide_non_dm_invites",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "matrix_be_immediate_peeks": {
+        "id": 12604,
+        "name": "matrix_be_immediate_peeks",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "matrix_be_ios_chat_reaction_aggregation": {
+        "id": 10957,
+        "name": "matrix_be_ios_chat_reaction_aggregation",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "matrix_be_limit_initial_sync_size": {
+        "id": 12803,
+        "name": "matrix_be_limit_initial_sync_size",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "matrix_be_reported_message_pn_rollout": {
+        "id": 10988,
+        "name": "matrix_be_reported_message_pn_rollout",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "matrix_be_restore_muted_rooms": {
+        "id": 12726,
+        "name": "matrix_be_restore_muted_rooms",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "matrix_be_skip_deleted_rooms_counting": {
+        "id": 12709,
+        "name": "matrix_be_skip_deleted_rooms_counting",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "matrix_be_web_chat_reaction_aggregation": {
+        "id": 10956,
+        "name": "matrix_be_web_chat_reaction_aggregation",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "matrix_chat_pn_delay": {
+        "id": 10656,
+        "name": "matrix_chat_pn_delay",
+        "variant": "enabled",
+        "version": "29"
+    },
+    "matrix_chat_trust_score_requests": {
+        "id": 9613,
+        "name": "matrix_chat_trust_score_requests",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "matrix_in_be_new_gql_badge_rollout": {
+        "id": 10495,
+        "name": "matrix_in_be_new_gql_badge_rollout",
+        "variant": "enabled",
+        "version": "51"
+    },
+    "max_ml_personalized_candidates": {
+        "id": 10921,
+        "name": "max_ml_personalized_candidates",
+        "variant": "max_100",
+        "version": "16"
+    },
+    "maz_cache_messages_feature_rollout": {
+        "id": 6251,
+        "name": "maz_cache_messages_feature_rollout",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "mcd_comments_write": {
+        "id": 9666,
+        "name": "mcd_comments_write",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "mcd_links_add": {
+        "id": 11315,
+        "name": "mcd_links_add",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "mcd_subreddit_writes_v2": {
+        "id": 8757,
+        "name": "mcd_subreddit_writes_v2",
+        "variant": "enabled",
+        "version": "17"
+    },
+    "media_attributes_mms_reads": {
+        "id": 9773,
+        "name": "media_attributes_mms_reads",
+        "variant": "enabled",
+        "version": "19"
+    },
+    "media_attributes_reads_switch_to_mms": {
+        "id": 9808,
+        "name": "media_attributes_reads_switch_to_mms",
+        "variant": "enabled",
+        "version": "19"
+    },
+    "media_svc_link_attrs_thing_go_grpc_rollout": {
+        "id": 10864,
+        "name": "media_svc_link_attrs_thing_go_grpc_rollout",
+        "variant": "enabled",
+        "version": "66"
+    },
+    "mic_m1_web_giphy": {
+        "id": 4008,
+        "name": "mic_m1_web_giphy",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "mic_m1_web_mod_giphy": {
+        "id": 4002,
+        "name": "mic_m1_web_mod_giphy",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "migrate_brand_safety_context_checks": {
+        "id": 13026,
+        "name": "migrate_brand_safety_context_checks",
+        "variant": "enabled",
+        "version": "20"
+    },
+    "mod_reorder_inactive_mods": {
+        "id": 9727,
+        "name": "mod_reorder_inactive_mods",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "mod_settings_advanced_protections": {
+        "id": 8926,
+        "name": "mod_settings_advanced_protections",
+        "variant": "enforce",
+        "version": "16"
+    },
+    "mod_settings_advanced_protections_modmail": {
+        "id": 9024,
+        "name": "mod_settings_advanced_protections_modmail",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "mod_settings_check_sr_protections": {
+        "id": 8226,
+        "name": "mod_settings_check_sr_protections",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "moderated_one_off_pn_migration_cutover": {
+        "id": 11613,
+        "name": "moderated_one_off_pn_migration_cutover",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "modmail_age_restriction": {
+        "id": 8442,
+        "name": "modmail_age_restriction",
+        "variant": "enabled_60_sec",
+        "version": "5"
+    },
+    "modmail_search_solr9_migration": {
+        "id": 12810,
+        "name": "modmail_search_solr9_migration",
+        "variant": "solr9",
+        "version": "11"
+    },
+    "modmail_sr_to_sr": {
+        "id": 3800,
+        "name": "modmail_sr_to_sr",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "modmail_with_link_age_restriction": {
+        "id": 10739,
+        "name": "modmail_with_link_age_restriction",
+        "variant": "enabled_43200_sec",
+        "version": "8"
+    },
+    "modmail_with_sr_karma_age_restriction": {
+        "id": 10740,
+        "name": "modmail_with_sr_karma_age_restriction",
+        "variant": "enabled_180_sec",
+        "version": "8"
+    },
+    "mutex_test": {
+        "id": 12311,
+        "name": "mutex_test",
+        "variant": "feedex_be_feed_debug",
+        "version": "1"
+    },
+    "mweb_global_event": {
+        "id": 2417,
+        "name": "mweb_global_event",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "mweb_google_sso_gis_parity": {
+        "id": 3094,
+        "name": "mweb_google_sso_gis_parity",
+        "variant": "enabled",
+        "version": "13"
+    },
+    "mweb_hidden_post_card": {
+        "id": 8708,
+        "name": "mweb_hidden_post_card",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "mweb_safari_onetap": {
+        "id": 3135,
+        "name": "mweb_safari_onetap",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "ncim_text_update": {
+        "id": 3291,
+        "name": "ncim_text_update",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "ncs_nesquik_052024_072024": {
+        "id": 12442,
+        "name": "ncs_nesquik_052024_072024",
+        "variant": "treatment",
+        "version": "2"
+    },
+    "netzdg_text_population_report": {
+        "id": 4660,
+        "name": "netzdg_text_population_report",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "new_user_curated_post_email_content": {
+        "id": 6138,
+        "name": "new_user_curated_post_email_content",
+        "variant": "model_ranked_d0",
+        "version": "12"
+    },
+    "new_user_curated_post_pn_content": {
+        "id": 6137,
+        "name": "new_user_curated_post_pn_content",
+        "variant": "curated_1_1",
+        "version": "7"
+    },
+    "new_users_1_trending_pn": {
+        "id": 13055,
+        "name": "new_users_1_trending_pn",
+        "variant": "budget_1",
+        "version": "15"
+    },
+    "non_celebrity_user_blocking_migration": {
+        "id": 7820,
+        "name": "non_celebrity_user_blocking_migration",
+        "variant": "enabled",
+        "version": "49"
+    },
+    "notif_muted_by_sr": {
+        "id": 5323,
+        "name": "notif_muted_by_sr",
+        "variant": "enabled",
+        "version": "27"
+    },
+    "notification_platform_inbox_trending_rollout": {
+        "id": 13153,
+        "name": "notification_platform_inbox_trending_rollout",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "notification_platform_subreddit_rec_rollout": {
+        "id": 12811,
+        "name": "notification_platform_subreddit_rec_rollout",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "notification_platform_trending_deliveryman_go": {
+        "id": 12338,
+        "name": "notification_platform_trending_deliveryman_go",
+        "variant": "enabled",
+        "version": "15"
+    },
+    "nsfw_classifier_query_tag": {
+        "id": 8874,
+        "name": "nsfw_classifier_query_tag",
+        "variant": "threshold_85",
+        "version": "14"
+    },
+    "nsfw_community_video_upload_killswitch": {
+        "id": 7796,
+        "name": "nsfw_community_video_upload_killswitch",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "onboarding_mod_setting_discovery": {
+        "id": 6083,
+        "name": "onboarding_mod_setting_discovery",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "onboarding_mod_setting_discovery_backend": {
+        "id": 6214,
+        "name": "onboarding_mod_setting_discovery_backend",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "one_feed_adjusted_loss": {
+        "id": 13267,
+        "name": "one_feed_adjusted_loss",
+        "variant": "adjusted_loss_v16_hw",
+        "version": "23"
+    },
+    "one_feed_bali_hw_tuning": {
+        "id": 13630,
+        "name": "one_feed_bali_hw_tuning",
+        "variant": "var_v2_35_19",
+        "version": "10"
+    },
+    "one_feed_fpr_split": {
+        "id": 3871,
+        "name": "one_feed_fpr_split",
+        "variant": "experiment_4",
+        "version": "12"
+    },
+    "one_feed_fpr_split_new_user": {
+        "id": 6757,
+        "name": "one_feed_fpr_split_new_user",
+        "variant": "experiment_2",
+        "version": "12"
+    },
+    "one_feed_ph_bridge_core_users": {
+        "id": 10310,
+        "name": "one_feed_ph_bridge_core_users",
+        "variant": "variant",
+        "version": "14"
+    },
+    "one_feed_ph_bridge_new_users": {
+        "id": 10309,
+        "name": "one_feed_ph_bridge_new_users",
+        "variant": "variant",
+        "version": "8"
+    },
+    "one_feed_rollout": {
+        "id": 2524,
+        "name": "one_feed_rollout",
+        "variant": "one_feed_default",
+        "version": "32"
+    },
+    "one_feed_spr_split": {
+        "id": 3704,
+        "name": "one_feed_spr_split",
+        "variant": "experiment_4",
+        "version": "42"
+    },
+    "one_feed_tpr_blending_meg": {
+        "id": 11208,
+        "name": "one_feed_tpr_blending_meg",
+        "variant": "one_feed_semantic_diversity_tpr",
+        "version": "3"
+    },
+    "one_feed_warm_autodeploy": {
+        "id": 13622,
+        "name": "one_feed_warm_autodeploy",
+        "variant": "dynamic_refresh",
+        "version": "10"
+    },
+    "one_off_pn_migration_cutover": {
+        "id": 11615,
+        "name": "one_off_pn_migration_cutover",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "one_off_pn_notification_platform": {
+        "id": 11431,
+        "name": "one_off_pn_notification_platform",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "onefeed_cqs_boost": {
+        "id": 12583,
+        "name": "onefeed_cqs_boost",
+        "variant": "medium_boost",
+        "version": "9"
+    },
+    "onefeed_enable_muting": {
+        "id": 5643,
+        "name": "onefeed_enable_muting",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "openapi_tooling_sentry_cache": {
+        "id": 13662,
+        "name": "openapi_tooling_sentry_cache",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "payment_methods_paypal_enabled": {
+        "id": 4966,
+        "name": "payment_methods_paypal_enabled",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "payment_methods_stripe_enabled": {
+        "id": 4967,
+        "name": "payment_methods_stripe_enabled",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "pdp_listing_below_feed_elements": {
+        "id": 11657,
+        "name": "pdp_listing_below_feed_elements",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "phone_consent_v2_event": {
+        "id": 8306,
+        "name": "phone_consent_v2_event",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "pipedream_embed_landing_page_rollout": {
+        "id": 8516,
+        "name": "pipedream_embed_landing_page_rollout",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "pipedream_home_feed_hot_all": {
+        "id": 8557,
+        "name": "pipedream_home_feed_hot_all",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "pipedream_home_feed_new_all": {
+        "id": 8779,
+        "name": "pipedream_home_feed_new_all",
+        "variant": "enabled",
+        "version": "19"
+    },
+    "pipedream_multi_feed": {
+        "id": 9439,
+        "name": "pipedream_multi_feed",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "pipedream_one_feed_default_rollout": {
+        "id": 5960,
+        "name": "pipedream_one_feed_default_rollout",
+        "variant": "enabled",
+        "version": "90"
+    },
+    "pipedream_one_feed_new_user_rollout": {
+        "id": 5961,
+        "name": "pipedream_one_feed_new_user_rollout",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "pipedream_one_feed_new_user_rollout_row": {
+        "id": 6035,
+        "name": "pipedream_one_feed_new_user_rollout_row",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "pipedream_onefeed_no_recs": {
+        "id": 8780,
+        "name": "pipedream_onefeed_no_recs",
+        "variant": "enabled",
+        "version": "18"
+    },
+    "pixel_sharing_create_pixel": {
+        "id": 10626,
+        "name": "pixel_sharing_create_pixel",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "pk_new_user_bridge": {
+        "id": 12337,
+        "name": "pk_new_user_bridge",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "platformex_android_streamable_experiment": {
+        "id": 11978,
+        "name": "platformex_android_streamable_experiment",
+        "variant": "enabled",
+        "version": "35"
+    },
+    "platformex_be_ad_event_debug": {
+        "id": 8998,
+        "name": "platformex_be_ad_event_debug",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "platformex_be_ad_event_debug_logging": {
+        "id": 9196,
+        "name": "platformex_be_ad_event_debug_logging",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "platformex_be_ads_content_media_fix": {
+        "id": 9119,
+        "name": "platformex_be_ads_content_media_fix",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "platformex_be_home_hot_feed_with_injections": {
+        "id": 9414,
+        "name": "platformex_be_home_hot_feed_with_injections",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "platformex_be_home_new_feed_with_injections": {
+        "id": 9415,
+        "name": "platformex_be_home_new_feed_with_injections",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "platformex_be_i18n_feed_with_injections": {
+        "id": 9418,
+        "name": "platformex_be_i18n_feed_with_injections",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "platformex_be_i18n_logged_out_feed_with_injec": {
+        "id": 9419,
+        "name": "platformex_be_i18n_logged_out_feed_with_injec",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "platformex_be_logged_out_feed_with_injections": {
+        "id": 9417,
+        "name": "platformex_be_logged_out_feed_with_injections",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "platformex_be_new_user_feed_with_injections": {
+        "id": 9048,
+        "name": "platformex_be_new_user_feed_with_injections",
+        "variant": "enabled",
+        "version": "18"
+    },
+    "platformex_be_one_feed_default_with_injection": {
+        "id": 9416,
+        "name": "platformex_be_one_feed_default_with_injection",
+        "variant": "enabled",
+        "version": "13"
+    },
+    "platformex_be_one_feed_no_recs_with_injection": {
+        "id": 9420,
+        "name": "platformex_be_one_feed_no_recs_with_injection",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "platformex_be_polls_android": {
+        "id": 10250,
+        "name": "platformex_be_polls_android",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "platformex_disable_gql_content_svc_traffic": {
+        "id": 11692,
+        "name": "platformex_disable_gql_content_svc_traffic",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "platformex_enable_1080p_playback_abr": {
+        "id": 8943,
+        "name": "platformex_enable_1080p_playback_abr",
+        "variant": "enabled",
+        "version": "32"
+    },
+    "platformex_enable_1080p_playback_mp4": {
+        "id": 8944,
+        "name": "platformex_enable_1080p_playback_mp4",
+        "variant": "enabled",
+        "version": "27"
+    },
+    "platformex_encoding_subtitler_autogen": {
+        "id": 8941,
+        "name": "platformex_encoding_subtitler_autogen",
+        "variant": "enabled",
+        "version": "30"
+    },
+    "platformex_encsvc_hls_captions_enabled": {
+        "id": 10413,
+        "name": "platformex_encsvc_hls_captions_enabled",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "platformex_hls_captions": {
+        "id": 10391,
+        "name": "platformex_hls_captions",
+        "variant": "enabled",
+        "version": "17"
+    },
+    "platformex_listing_below_popular_keyword_fpr": {
+        "id": 11653,
+        "name": "platformex_listing_below_popular_keyword_fpr",
+        "variant": "heavy",
+        "version": "17"
+    },
+    "platformex_media_svc_call_streamable_api": {
+        "id": 11944,
+        "name": "platformex_media_svc_call_streamable_api",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "platformex_media_svc_gpac_packaging": {
+        "id": 9709,
+        "name": "platformex_media_svc_gpac_packaging",
+        "variant": "enabled",
+        "version": "58"
+    },
+    "platformex_media_svc_muxed_mp4_nsfw_captions": {
+        "id": 11420,
+        "name": "platformex_media_svc_muxed_mp4_nsfw_captions",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "platformex_media_svc_skip_streamable_url_gen": {
+        "id": 11945,
+        "name": "platformex_media_svc_skip_streamable_url_gen",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "platformex_media_svc_subtitle_sanitization": {
+        "id": 10606,
+        "name": "platformex_media_svc_subtitle_sanitization",
+        "variant": "enabled",
+        "version": "47"
+    },
+    "platformex_upload_lease_signature_check": {
+        "id": 12176,
+        "name": "platformex_upload_lease_signature_check",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "platformex_video_auth_gql": {
+        "id": 12246,
+        "name": "platformex_video_auth_gql",
+        "variant": "enabled",
+        "version": "33"
+    },
+    "platformex_video_auth_gql_sdui_enabled": {
+        "id": 12248,
+        "name": "platformex_video_auth_gql_sdui_enabled",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "platformex_video_auth_token_symmetric": {
+        "id": 13011,
+        "name": "platformex_video_auth_token_symmetric",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "platformx_media_svc_pg_dual_write": {
+        "id": 11859,
+        "name": "platformx_media_svc_pg_dual_write",
+        "variant": "enabled",
+        "version": "19"
+    },
+    "popular_feed_freshness_bsr_mutex": {
+        "id": 11202,
+        "name": "popular_feed_freshness_bsr_mutex",
+        "variant": "amq_brand_safety_reshuffling_popular",
+        "version": "1"
+    },
+    "popular_pn_suppression": {
+        "id": 6968,
+        "name": "popular_pn_suppression",
+        "variant": "2_max",
+        "version": "12"
+    },
+    "post_guidance_phaseout_dynamic_configs": {
+        "id": 12537,
+        "name": "post_guidance_phaseout_dynamic_configs",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "post_guidance_user_flow": {
+        "id": 11822,
+        "name": "post_guidance_user_flow",
+        "variant": "enabled",
+        "version": "13"
+    },
+    "post_index_on_shr": {
+        "id": 12245,
+        "name": "post_index_on_shr",
+        "variant": "enabled",
+        "version": "33"
+    },
+    "post_omit_field_request_from_tor": {
+        "id": 9586,
+        "name": "post_omit_field_request_from_tor",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "post_stats_in_feed": {
+        "id": 6608,
+        "name": "post_stats_in_feed",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "post_submit_recaptcha_go": {
+        "id": 8327,
+        "name": "post_submit_recaptcha_go",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "post_submit_recaptcha_post_service_python": {
+        "id": 8285,
+        "name": "post_submit_recaptcha_post_service_python",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "post_submit_recaptcha_r2": {
+        "id": 7963,
+        "name": "post_submit_recaptcha_r2",
+        "variant": "enabled",
+        "version": "15"
+    },
+    "post_submit_recaptcha_r2_media_upload": {
+        "id": 8440,
+        "name": "post_submit_recaptcha_r2_media_upload",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "post_svc_async_post_created": {
+        "id": 12787,
+        "name": "post_svc_async_post_created",
+        "variant": "enabled",
+        "version": "13"
+    },
+    "post_svc_create_chat_post": {
+        "id": 9029,
+        "name": "post_svc_create_chat_post",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "post_svc_create_collection_post": {
+        "id": 10296,
+        "name": "post_svc_create_collection_post",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "post_svc_create_crosspost_post": {
+        "id": 8507,
+        "name": "post_svc_create_crosspost_post",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "post_svc_create_image_post": {
+        "id": 5932,
+        "name": "post_svc_create_image_post",
+        "variant": "enabled",
+        "version": "22"
+    },
+    "post_svc_create_link_post": {
+        "id": 5931,
+        "name": "post_svc_create_link_post",
+        "variant": "enabled",
+        "version": "22"
+    },
+    "post_svc_create_text_post": {
+        "id": 5664,
+        "name": "post_svc_create_text_post",
+        "variant": "enabled",
+        "version": "52"
+    },
+    "post_svc_create_video_post_submit": {
+        "id": 9813,
+        "name": "post_svc_create_video_post_submit",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "preference_ads_preference_simplification": {
+        "id": 8064,
+        "name": "preference_ads_preference_simplification",
+        "variant": "enabled",
+        "version": "21"
+    },
+    "presence_indicator_toggle": {
+        "id": 1735,
+        "name": "presence_indicator_toggle",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "private_storage_outbox_poller_test": {
+        "id": 13503,
+        "name": "private_storage_outbox_poller_test",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "probably_consumed_popular_feed": {
+        "id": 9270,
+        "name": "probably_consumed_popular_feed",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "product_ad_review_queue": {
+        "id": 7101,
+        "name": "product_ad_review_queue",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "profile_feed_indexing_rollout": {
+        "id": 10486,
+        "name": "profile_feed_indexing_rollout",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "profile_feed_migration_rollout_post_sets_hot": {
+        "id": 10228,
+        "name": "profile_feed_migration_rollout_post_sets_hot",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "profile_feed_migration_rollout_post_sets_new": {
+        "id": 10227,
+        "name": "profile_feed_migration_rollout_post_sets_new",
+        "variant": "enabled",
+        "version": "40"
+    },
+    "profile_feed_migration_rollout_posts": {
+        "id": 10161,
+        "name": "profile_feed_migration_rollout_posts",
+        "variant": "enabled",
+        "version": "23"
+    },
+    "pros_2482_r2_interstitial": {
+        "id": 3861,
+        "name": "pros_2482_r2_interstitial",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "provide_ip_address_from_gql_to_pipedream": {
+        "id": 11892,
+        "name": "provide_ip_address_from_gql_to_pipedream",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "pupc_fangorn_sdui_enabled": {
+        "id": 6669,
+        "name": "pupc_fangorn_sdui_enabled",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "query_ad_accounts_wo_perm_openapi_migration": {
+        "id": 11812,
+        "name": "query_ad_accounts_wo_perm_openapi_migration",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "r2_ad_targeting_html_hydration": {
+        "id": 10707,
+        "name": "r2_ad_targeting_html_hydration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "r2_apps_captcha": {
+        "id": 8373,
+        "name": "r2_apps_captcha",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "r2_automod_phone_verified": {
+        "id": 6440,
+        "name": "r2_automod_phone_verified",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "r2_ban_message_note_fix": {
+        "id": 8325,
+        "name": "r2_ban_message_note_fix",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "r2_block_migration_writes": {
+        "id": 7233,
+        "name": "r2_block_migration_writes",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "r2_comments_go_svc_reads": {
+        "id": 6367,
+        "name": "r2_comments_go_svc_reads",
+        "variant": "enabled",
+        "version": "41"
+    },
+    "r2_cutover_ff": {
+        "id": 11430,
+        "name": "r2_cutover_ff",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "r2_cutover_multi_ff": {
+        "id": 11576,
+        "name": "r2_cutover_multi_ff",
+        "variant": "enabled",
+        "version": "17"
+    },
+    "r2_disable_dead_endpoints": {
+        "id": 13230,
+        "name": "r2_disable_dead_endpoints",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "r2_disable_dead_endpoints_admin_bucket": {
+        "id": 13231,
+        "name": "r2_disable_dead_endpoints_admin_bucket",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "r2_disable_dead_endpoints_ban_bucket": {
+        "id": 13232,
+        "name": "r2_disable_dead_endpoints_ban_bucket",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "r2_disable_dead_endpoints_other_bucket": {
+        "id": 13233,
+        "name": "r2_disable_dead_endpoints_other_bucket",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "r2_disable_dead_endpoints_public_bucket": {
+        "id": 13234,
+        "name": "r2_disable_dead_endpoints_public_bucket",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "r2_drafts_richtext_to_commonmark_be": {
+        "id": 10277,
+        "name": "r2_drafts_richtext_to_commonmark_be",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "r2_dsa_compliance": {
+        "id": 10365,
+        "name": "r2_dsa_compliance",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "r2_empty_s3_key_check": {
+        "id": 6103,
+        "name": "r2_empty_s3_key_check",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "r2_enforce_asset_id_author_on_post_creation": {
+        "id": 8664,
+        "name": "r2_enforce_asset_id_author_on_post_creation",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "r2_ets_completion_skip_system_message": {
+        "id": 12446,
+        "name": "r2_ets_completion_skip_system_message",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "r2_get_gender_targeting_info_for_ads": {
+        "id": 6739,
+        "name": "r2_get_gender_targeting_info_for_ads",
+        "variant": "enabled",
+        "version": "30"
+    },
+    "r2_hidden_post_card": {
+        "id": 8709,
+        "name": "r2_hidden_post_card",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "r2_inactive_mod_status": {
+        "id": 9155,
+        "name": "r2_inactive_mod_status",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "r2_intuitive_post_type": {
+        "id": 4496,
+        "name": "r2_intuitive_post_type",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "r2_link_media_attributes": {
+        "id": 6235,
+        "name": "r2_link_media_attributes",
+        "variant": "enabled",
+        "version": "42"
+    },
+    "r2_link_media_attributes_writes": {
+        "id": 8272,
+        "name": "r2_link_media_attributes_writes",
+        "variant": "enabled",
+        "version": "15"
+    },
+    "r2_mask_mod_log_from_mod_svc": {
+        "id": 5675,
+        "name": "r2_mask_mod_log_from_mod_svc",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "r2_media_service_dual_write_create_api": {
+        "id": 4308,
+        "name": "r2_media_service_dual_write_create_api",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "r2_media_service_dual_write_update_api": {
+        "id": 4309,
+        "name": "r2_media_service_dual_write_update_api",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "r2_media_service_migrate_reads": {
+        "id": 6106,
+        "name": "r2_media_service_migrate_reads",
+        "variant": "enabled",
+        "version": "36"
+    },
+    "r2_media_upload_lease_media_asset_media_svc": {
+        "id": 7603,
+        "name": "r2_media_upload_lease_media_asset_media_svc",
+        "variant": "enabled",
+        "version": "19"
+    },
+    "r2_media_upload_lease_single_image_media_svc": {
+        "id": 7561,
+        "name": "r2_media_upload_lease_single_image_media_svc",
+        "variant": "enabled",
+        "version": "17"
+    },
+    "r2_mod_protections": {
+        "id": 9153,
+        "name": "r2_mod_protections",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "r2_modmail_service": {
+        "id": 7225,
+        "name": "r2_modmail_service",
+        "variant": "enabled",
+        "version": "35"
+    },
+    "r2_penalized_client_logic": {
+        "id": 8466,
+        "name": "r2_penalized_client_logic",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "r2_ratelimit_new_bucket_logic": {
+        "id": 8467,
+        "name": "r2_ratelimit_new_bucket_logic",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "r2_remove_badge_count_messages": {
+        "id": 7525,
+        "name": "r2_remove_badge_count_messages",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "r2_remove_muted_from_sr_relations": {
+        "id": 4343,
+        "name": "r2_remove_muted_from_sr_relations",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "r2_send_ban_context_to_user": {
+        "id": 7610,
+        "name": "r2_send_ban_context_to_user",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "r2_subreddit_svc_reads": {
+        "id": 6256,
+        "name": "r2_subreddit_svc_reads",
+        "variant": "enabled",
+        "version": "29"
+    },
+    "r2_thing_go_svc_reads": {
+        "id": 8357,
+        "name": "r2_thing_go_svc_reads",
+        "variant": "enabled",
+        "version": "30"
+    },
+    "r2_track_ratelimit_api": {
+        "id": 8354,
+        "name": "r2_track_ratelimit_api",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "r2_track_ratelimit_oauth": {
+        "id": 8372,
+        "name": "r2_track_ratelimit_oauth",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "r2_username_mentions_check": {
+        "id": 7825,
+        "name": "r2_username_mentions_check",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "r2_whatsapp_comment_reply": {
+        "id": 5974,
+        "name": "r2_whatsapp_comment_reply",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "r2enfrl_api_account_id_standard": {
+        "id": 8382,
+        "name": "r2enfrl_api_account_id_standard",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "r2enfrl_api_ip_standard": {
+        "id": 8384,
+        "name": "r2enfrl_api_ip_standard",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "r2enfrl_api_loid_standard": {
+        "id": 8383,
+        "name": "r2enfrl_api_loid_standard",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "r2enfrl_oauth_account_and_client_id_standard": {
+        "id": 8387,
+        "name": "r2enfrl_oauth_account_and_client_id_standard",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "r2enfrl_oauth_account_id_moderator": {
+        "id": 8389,
+        "name": "r2enfrl_oauth_account_id_moderator",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "r2enfrl_oauth_account_id_override": {
+        "id": 8468,
+        "name": "r2enfrl_oauth_account_id_override",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "r2enfrl_oauth_client_id_standard": {
+        "id": 8386,
+        "name": "r2enfrl_oauth_client_id_standard",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "r2enfrl_oauth_loid_and_client_id_standard": {
+        "id": 8388,
+        "name": "r2enfrl_oauth_loid_and_client_id_standard",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "r2enfrl_penalized_oauth_clients": {
+        "id": 8465,
+        "name": "r2enfrl_penalized_oauth_clients",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "r4b_official_label_fangorn_killswitch": {
+        "id": 8916,
+        "name": "r4b_official_label_fangorn_killswitch",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "raff_test_meg": {
+        "id": 5690,
+        "name": "raff_test_meg",
+        "variant": "raff_test_user_id",
+        "version": "1"
+    },
+    "rbl_amex_nova_072024_092024": {
+        "id": 13586,
+        "name": "rbl_amex_nova_072024_092024",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "rbl_blinkpilotq3_072024_092024": {
+        "id": 13694,
+        "name": "rbl_blinkpilotq3_072024_092024",
+        "variant": "control_1",
+        "version": "2"
+    },
+    "rbl_bloomberg_05312024_07152024": {
+        "id": 12904,
+        "name": "rbl_bloomberg_05312024_07152024",
+        "variant": "control_1",
+        "version": "2"
+    },
+    "rbl_draftkingscasinoq3_071524_082524": {
+        "id": 13665,
+        "name": "rbl_draftkingscasinoq3_071524_082524",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "rbl_energizerbatteriesq3_072024_092024": {
+        "id": 13535,
+        "name": "rbl_energizerbatteriesq3_072024_092024",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "rbl_eqbanknoticesavings_052024_072024": {
+        "id": 12899,
+        "name": "rbl_eqbanknoticesavings_052024_072024",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "rbl_fentanyladcouncil_062024_072024": {
+        "id": 13073,
+        "name": "rbl_fentanyladcouncil_062024_072024",
+        "variant": "rbl_fentanyladcouncil_062024_072024_cell_1",
+        "version": "1"
+    },
+    "rbl_hemlibrahemophilia_062024_092024": {
+        "id": 13034,
+        "name": "rbl_hemlibrahemophilia_062024_092024",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "rbl_houseofdragon_062024_072024": {
+        "id": 12997,
+        "name": "rbl_houseofdragon_062024_072024",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "rbl_hyundaievama_062024_082024": {
+        "id": 13116,
+        "name": "rbl_hyundaievama_062024_082024",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "rbl_intelcorebacktoschool_072024_082024": {
+        "id": 13405,
+        "name": "rbl_intelcorebacktoschool_072024_082024",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "rbl_kindlevella_062024_072024": {
+        "id": 13565,
+        "name": "rbl_kindlevella_062024_072024",
+        "variant": "control_1",
+        "version": "2"
+    },
+    "rbl_lyfttravel_072024_082024": {
+        "id": 13467,
+        "name": "rbl_lyfttravel_072024_082024",
+        "variant": "control_1",
+        "version": "2"
+    },
+    "rbl_microsoftcopilot_062024_092024": {
+        "id": 13225,
+        "name": "rbl_microsoftcopilot_062024_092024",
+        "variant": "control_1",
+        "version": "2"
+    },
+    "rbl_multicell_test_2": {
+        "id": 12224,
+        "name": "rbl_multicell_test_2",
+        "variant": "rbl_multicell_test_2_cell_a",
+        "version": "1"
+    },
+    "rbl_multicell_test_3": {
+        "id": 13214,
+        "name": "rbl_multicell_test_3",
+        "variant": "rbl_multicell_test_3_cell_a",
+        "version": "1"
+    },
+    "rbl_multicell_test_4": {
+        "id": 13369,
+        "name": "rbl_multicell_test_4",
+        "variant": "rbl_multicell_test_4_survey_2",
+        "version": "1"
+    },
+    "rbl_mutlicell_test_1": {
+        "id": 12217,
+        "name": "rbl_mutlicell_test_1",
+        "variant": "rbl_mutlicell_test_1_cell_b",
+        "version": "1"
+    },
+    "rbl_nissanlineupq2_052024_072024": {
+        "id": 12497,
+        "name": "rbl_nissanlineupq2_052024_072024",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "rbl_oreidaq3_072024_092024": {
+        "id": 13661,
+        "name": "rbl_oreidaq3_072024_092024",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "rbl_oreo_062024_072024": {
+        "id": 13093,
+        "name": "rbl_oreo_062024_072024",
+        "variant": "control_1",
+        "version": "2"
+    },
+    "rbl_parvotreatmentq2_042024_072024": {
+        "id": 12285,
+        "name": "rbl_parvotreatmentq2_042024_072024",
+        "variant": "control_1",
+        "version": "2"
+    },
+    "rbl_pinterestemeabrand_062024_102024": {
+        "id": 12944,
+        "name": "rbl_pinterestemeabrand_062024_102024",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "rbl_polestar3_062024_092024": {
+        "id": 13193,
+        "name": "rbl_polestar3_062024_092024",
+        "variant": "control_1",
+        "version": "2"
+    },
+    "rbl_progressiverv_us_052024_071424": {
+        "id": 12764,
+        "name": "rbl_progressiverv_us_052024_071424",
+        "variant": "treatment_show_survey",
+        "version": "3"
+    },
+    "rbl_propelwater_072024_082024": {
+        "id": 13497,
+        "name": "rbl_propelwater_072024_082024",
+        "variant": "control_1",
+        "version": "2"
+    },
+    "rbl_saxxunderwear_052024_072024": {
+        "id": 12632,
+        "name": "rbl_saxxunderwear_052024_072024",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "rbl_siemens_24052024_08092024": {
+        "id": 12819,
+        "name": "rbl_siemens_24052024_08092024",
+        "variant": "control_1",
+        "version": "2"
+    },
+    "rbl_snapdragonuk_062024_072024": {
+        "id": 13094,
+        "name": "rbl_snapdragonuk_062024_072024",
+        "variant": "control_1",
+        "version": "2"
+    },
+    "rbl_thornesupplements_072024_102024": {
+        "id": 13683,
+        "name": "rbl_thornesupplements_072024_102024",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "rbl_toyotacamryaa_062024_082024": {
+        "id": 12929,
+        "name": "rbl_toyotacamryaa_062024_082024",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "rbl_visiblebyverizonq3_072024_092024": {
+        "id": 13482,
+        "name": "rbl_visiblebyverizonq3_072024_092024",
+        "variant": "control_1",
+        "version": "2"
+    },
+    "rbl_windowsailaptopuk_062024_092024": {
+        "id": 13220,
+        "name": "rbl_windowsailaptopuk_062024_092024",
+        "variant": "treatment_show_survey",
+        "version": "2"
+    },
+    "rbl_xeroholdings_072024_082024": {
+        "id": 13680,
+        "name": "rbl_xeroholdings_072024_082024",
+        "variant": "control_1",
+        "version": "2"
+    },
+    "rcl_indeed_incremental_070824_081824": {
+        "id": 13465,
+        "name": "rcl_indeed_incremental_070824_081824",
+        "variant": "treatment",
+        "version": "2"
+    },
+    "read_watch_feeds_cache_with_origin": {
+        "id": 7126,
+        "name": "read_watch_feeds_cache_with_origin",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "read_watch_m1_android_meg": {
+        "id": 7012,
+        "name": "read_watch_m1_android_meg",
+        "variant": "read_feed_m1_android",
+        "version": "1"
+    },
+    "read_watch_m1_ios_meg": {
+        "id": 7011,
+        "name": "read_watch_m1_ios_meg",
+        "variant": "read_feed_m1_ios",
+        "version": "1"
+    },
+    "real_time_ban_evasion_experiment_userid_24q1": {
+        "id": 11900,
+        "name": "real_time_ban_evasion_experiment_userid_24q1",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "recap_inbox_banner_localization": {
+        "id": 9494,
+        "name": "recap_inbox_banner_localization",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "reddar_dev_platform_integration": {
+        "id": 12257,
+        "name": "reddar_dev_platform_integration",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "reddar_reverse_suspensions_to_uas": {
+        "id": 10789,
+        "name": "reddar_reverse_suspensions_to_uas",
+        "variant": "uas",
+        "version": "9"
+    },
+    "reddar_sends_dsa_copyright_messaging": {
+        "id": 10934,
+        "name": "reddar_sends_dsa_copyright_messaging",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "reddit_pro_send_user_engagement_email": {
+        "id": 12864,
+        "name": "reddit_pro_send_user_engagement_email",
+        "variant": "perf_email",
+        "version": "6"
+    },
+    "remove_event_creation_ui": {
+        "id": 5681,
+        "name": "remove_event_creation_ui",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "report_center_legacy_reports": {
+        "id": 11878,
+        "name": "report_center_legacy_reports",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "required_email_permission": {
+        "id": 9998,
+        "name": "required_email_permission",
+        "variant": "required",
+        "version": "4"
+    },
+    "retrieve_gender_for_ads_graphql": {
+        "id": 6579,
+        "name": "retrieve_gender_for_ads_graphql",
+        "variant": "enabled",
+        "version": "47"
+    },
+    "rp_geo_popular": {
+        "id": 9917,
+        "name": "rp_geo_popular",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "run_ad_generation_job_openapi_migration": {
+        "id": 11832,
+        "name": "run_ad_generation_job_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "run_duplication_job_openapi_migration": {
+        "id": 11837,
+        "name": "run_duplication_job_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "search_client_snippets": {
+        "id": 11850,
+        "name": "search_client_snippets",
+        "variant": "shreddit_search_post_snippets",
+        "version": "1"
+    },
+    "search_post_interleaving_google_update": {
+        "id": 8781,
+        "name": "search_post_interleaving_google_update",
+        "variant": "update_group",
+        "version": "10"
+    },
+    "search_post_ltr_nsfw": {
+        "id": 13005,
+        "name": "search_post_ltr_nsfw",
+        "variant": "ltr_signal",
+        "version": "47"
+    },
+    "search_post_nonstopwords_filter": {
+        "id": 12235,
+        "name": "search_post_nonstopwords_filter",
+        "variant": "filter_single_terms",
+        "version": "48"
+    },
+    "search_post_signals": {
+        "id": 11435,
+        "name": "search_post_signals",
+        "variant": "sorted10",
+        "version": "28"
+    },
+    "search_solr_9_comments": {
+        "id": 12466,
+        "name": "search_solr_9_comments",
+        "variant": "use_solr_9",
+        "version": "88"
+    },
+    "search_solr_9_posts_to_sr_facets": {
+        "id": 11960,
+        "name": "search_solr_9_posts_to_sr_facets",
+        "variant": "use_solr_9",
+        "version": "16"
+    },
+    "search_trending_graphql": {
+        "id": 6180,
+        "name": "search_trending_graphql",
+        "variant": "enabled",
+        "version": "19"
+    },
+    "search_typeahead_by_type": {
+        "id": 5929,
+        "name": "search_typeahead_by_type",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "sendbird_group_channel_message_send_v2": {
+        "id": 11219,
+        "name": "sendbird_group_channel_message_send_v2",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "seo_community_directory_backlinks_rollout": {
+        "id": 5446,
+        "name": "seo_community_directory_backlinks_rollout",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "seo_community_directory_menu": {
+        "id": 4285,
+        "name": "seo_community_directory_menu",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "seo_descriptive_filename_phase_4_rollout": {
+        "id": 6153,
+        "name": "seo_descriptive_filename_phase_4_rollout",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "seo_descriptive_filenames_third_party_rollout": {
+        "id": 5554,
+        "name": "seo_descriptive_filenames_third_party_rollout",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "seo_mt_persisted_urls": {
+        "id": 12090,
+        "name": "seo_mt_persisted_urls",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "seo_mt_pipedream_directory_service_post": {
+        "id": 11255,
+        "name": "seo_mt_pipedream_directory_service_post",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "seo_uddp_post_directory": {
+        "id": 9506,
+        "name": "seo_uddp_post_directory",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "sg_new_user_bridge": {
+        "id": 13485,
+        "name": "sg_new_user_bridge",
+        "variant": "control_1",
+        "version": "3"
+    },
+    "shreddit_ama_creation": {
+        "id": 10618,
+        "name": "shreddit_ama_creation",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "shreddit_automations_devvit_migration": {
+        "id": 11540,
+        "name": "shreddit_automations_devvit_migration",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "shreddit_automod_keyword_highlight": {
+        "id": 12516,
+        "name": "shreddit_automod_keyword_highlight",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "shreddit_base_feed_migration": {
+        "id": 9255,
+        "name": "shreddit_base_feed_migration",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "shreddit_base_feed_virtualization": {
+        "id": 9256,
+        "name": "shreddit_base_feed_virtualization",
+        "variant": "enabled",
+        "version": "26"
+    },
+    "shreddit_business_tools_trendspotting": {
+        "id": 9620,
+        "name": "shreddit_business_tools_trendspotting",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "shreddit_cdd_discover_chats_cta_homefeed": {
+        "id": 13526,
+        "name": "shreddit_cdd_discover_chats_cta_homefeed",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "shreddit_comment_link_preview": {
+        "id": 8476,
+        "name": "shreddit_comment_link_preview",
+        "variant": "enabled",
+        "version": "15"
+    },
+    "shreddit_community_rules": {
+        "id": 12227,
+        "name": "shreddit_community_rules",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "shreddit_desktop_profiles_logged_out": {
+        "id": 7969,
+        "name": "shreddit_desktop_profiles_logged_out",
+        "variant": "enabled",
+        "version": "28"
+    },
+    "shreddit_edit_media_post_logic": {
+        "id": 12532,
+        "name": "shreddit_edit_media_post_logic",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "shreddit_feed_ad_classic_view_show_thumbnail": {
+        "id": 10348,
+        "name": "shreddit_feed_ad_classic_view_show_thumbnail",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "shreddit_gql_fed": {
+        "id": 3026,
+        "name": "shreddit_gql_fed",
+        "variant": "enabled",
+        "version": "159"
+    },
+    "shreddit_hui_flex_grid": {
+        "id": 11698,
+        "name": "shreddit_hui_flex_grid",
+        "variant": "enabled",
+        "version": "19"
+    },
+    "shreddit_immersive_pretranslations_mutex": {
+        "id": 13097,
+        "name": "shreddit_immersive_pretranslations_mutex",
+        "variant": "shreddit_immersive_pretranslations",
+        "version": "1"
+    },
+    "shreddit_in_feed_community_recs_gate": {
+        "id": 11525,
+        "name": "shreddit_in_feed_community_recs_gate",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "shreddit_in_feed_moderation": {
+        "id": 11617,
+        "name": "shreddit_in_feed_moderation",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "shreddit_migration_li_d2x": {
+        "id": 9966,
+        "name": "shreddit_migration_li_d2x",
+        "variant": "enabled",
+        "version": "30"
+    },
+    "shreddit_migration_li_d2x_fastlane": {
+        "id": 10736,
+        "name": "shreddit_migration_li_d2x_fastlane",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "shreddit_migration_li_mweb": {
+        "id": 9967,
+        "name": "shreddit_migration_li_mweb",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "shreddit_migration_li_profiles_d2x": {
+        "id": 11416,
+        "name": "shreddit_migration_li_profiles_d2x",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "shreddit_migration_lo_all_d2x": {
+        "id": 8153,
+        "name": "shreddit_migration_lo_all_d2x",
+        "variant": "enabled",
+        "version": "20"
+    },
+    "shreddit_migration_lo_all_mweb": {
+        "id": 8154,
+        "name": "shreddit_migration_lo_all_mweb",
+        "variant": "enabled",
+        "version": "18"
+    },
+    "shreddit_migration_lo_communities_d2x": {
+        "id": 8151,
+        "name": "shreddit_migration_lo_communities_d2x",
+        "variant": "enabled",
+        "version": "23"
+    },
+    "shreddit_migration_lo_communities_mweb": {
+        "id": 8152,
+        "name": "shreddit_migration_lo_communities_mweb",
+        "variant": "enabled",
+        "version": "22"
+    },
+    "shreddit_migration_lo_homepage_d2x": {
+        "id": 8149,
+        "name": "shreddit_migration_lo_homepage_d2x",
+        "variant": "enabled",
+        "version": "22"
+    },
+    "shreddit_migration_lo_homepage_mweb": {
+        "id": 8150,
+        "name": "shreddit_migration_lo_homepage_mweb",
+        "variant": "enabled",
+        "version": "19"
+    },
+    "shreddit_migration_mod_d2x": {
+        "id": 10058,
+        "name": "shreddit_migration_mod_d2x",
+        "variant": "enabled",
+        "version": "13"
+    },
+    "shreddit_mobile_profiles_logged_out": {
+        "id": 7970,
+        "name": "shreddit_mobile_profiles_logged_out",
+        "variant": "enabled",
+        "version": "26"
+    },
+    "shreddit_mobile_serp_logged_in": {
+        "id": 8985,
+        "name": "shreddit_mobile_serp_logged_in",
+        "variant": "enabled",
+        "version": "26"
+    },
+    "shreddit_mod_insights_feature": {
+        "id": 4980,
+        "name": "shreddit_mod_insights_feature",
+        "variant": "control_1",
+        "version": "12"
+    },
+    "shreddit_mod_log": {
+        "id": 10846,
+        "name": "shreddit_mod_log",
+        "variant": "control_1",
+        "version": "9"
+    },
+    "shreddit_mod_nav_feature": {
+        "id": 6531,
+        "name": "shreddit_mod_nav_feature",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "shreddit_mod_post_flair": {
+        "id": 12558,
+        "name": "shreddit_mod_post_flair",
+        "variant": "control_1",
+        "version": "5"
+    },
+    "shreddit_mod_queue_beta_entrypoint": {
+        "id": 11763,
+        "name": "shreddit_mod_queue_beta_entrypoint",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "shreddit_mod_queue_feature": {
+        "id": 10226,
+        "name": "shreddit_mod_queue_feature",
+        "variant": "control_1",
+        "version": "6"
+    },
+    "shreddit_mod_reorder_hierarchy": {
+        "id": 9807,
+        "name": "shreddit_mod_reorder_hierarchy",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "shreddit_mod_user_flair": {
+        "id": 12117,
+        "name": "shreddit_mod_user_flair",
+        "variant": "control_1",
+        "version": "9"
+    },
+    "shreddit_post_view_events": {
+        "id": 7554,
+        "name": "shreddit_post_view_events",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "shreddit_previous_actions": {
+        "id": 11560,
+        "name": "shreddit_previous_actions",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "shreddit_qr_code": {
+        "id": 6159,
+        "name": "shreddit_qr_code",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "shreddit_r4b_feature_gate": {
+        "id": 10185,
+        "name": "shreddit_r4b_feature_gate",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "shreddit_reddit_for_community_nav": {
+        "id": 10382,
+        "name": "shreddit_reddit_for_community_nav",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "shreddit_resized_subreddit_icons": {
+        "id": 12326,
+        "name": "shreddit_resized_subreddit_icons",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "shreddit_serp_desktop": {
+        "id": 7346,
+        "name": "shreddit_serp_desktop",
+        "variant": "enabled",
+        "version": "28"
+    },
+    "shreddit_serp_mobile": {
+        "id": 7345,
+        "name": "shreddit_serp_mobile",
+        "variant": "enabled",
+        "version": "47"
+    },
+    "shreddit_standalone_auth_desktop": {
+        "id": 10774,
+        "name": "shreddit_standalone_auth_desktop",
+        "variant": "enabled",
+        "version": "15"
+    },
+    "shreddit_standalone_auth_mobile": {
+        "id": 10773,
+        "name": "shreddit_standalone_auth_mobile",
+        "variant": "enabled",
+        "version": "58"
+    },
+    "shredtop_accountmanager_modal": {
+        "id": 6166,
+        "name": "shredtop_accountmanager_modal",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "skip_chat_toxicity_fetch_for_non_chatpost": {
+        "id": 9123,
+        "name": "skip_chat_toxicity_fetch_for_non_chatpost",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "spammit_bypass": {
+        "id": 4891,
+        "name": "spammit_bypass",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "sr_rec_pn_subreddit_candidates_update": {
+        "id": 7891,
+        "name": "sr_rec_pn_subreddit_candidates_update",
+        "variant": "control_1",
+        "version": "18"
+    },
+    "sr_rec_rp_migration_np": {
+        "id": 13013,
+        "name": "sr_rec_rp_migration_np",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "sr_recs_refresh": {
+        "id": 4563,
+        "name": "sr_recs_refresh",
+        "variant": "refresh",
+        "version": "4"
+    },
+    "storefront_dynamic_ui_android": {
+        "id": 5454,
+        "name": "storefront_dynamic_ui_android",
+        "variant": "production_1",
+        "version": "35"
+    },
+    "storefront_dynamic_ui_ios": {
+        "id": 5455,
+        "name": "storefront_dynamic_ui_ios",
+        "variant": "production_1",
+        "version": "35"
+    },
+    "storefront_dynamic_ui_web": {
+        "id": 5453,
+        "name": "storefront_dynamic_ui_web",
+        "variant": "production_1",
+        "version": "30"
+    },
+    "subex_block_for_legal_reasons": {
+        "id": 9201,
+        "name": "subex_block_for_legal_reasons",
+        "variant": "enabled",
+        "version": "22"
+    },
+    "subex_mod_svc_get_target_sub_refactor": {
+        "id": 13583,
+        "name": "subex_mod_svc_get_target_sub_refactor",
+        "variant": "enabled",
+        "version": "15"
+    },
+    "subex_validate_styling_urls": {
+        "id": 8971,
+        "name": "subex_validate_styling_urls",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "subreddit_grpc_v2_handler": {
+        "id": 5785,
+        "name": "subreddit_grpc_v2_handler",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "subreddit_index_on_shr": {
+        "id": 12939,
+        "name": "subreddit_index_on_shr",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "subreddit_language_edit_d2x": {
+        "id": 3935,
+        "name": "subreddit_language_edit_d2x",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "subreddit_mark_as_active_cloudroutine": {
+        "id": 12976,
+        "name": "subreddit_mark_as_active_cloudroutine",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "subreddit_moderator_srp_cache_writes": {
+        "id": 12340,
+        "name": "subreddit_moderator_srp_cache_writes",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "subreddit_participation_cloudroutine": {
+        "id": 12564,
+        "name": "subreddit_participation_cloudroutine",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "subreddit_redis_loggedout_reads": {
+        "id": 9301,
+        "name": "subreddit_redis_loggedout_reads",
+        "variant": "enabled",
+        "version": "19"
+    },
+    "subreddit_redis_service_reads_1": {
+        "id": 9682,
+        "name": "subreddit_redis_service_reads_1",
+        "variant": "enabled",
+        "version": "41"
+    },
+    "subreddit_relations_memcache_writes": {
+        "id": 11066,
+        "name": "subreddit_relations_memcache_writes",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "subreddit_rels_negative_sentinel_writes": {
+        "id": 11128,
+        "name": "subreddit_rels_negative_sentinel_writes",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "subreddit_srmemberp_cache_writes": {
+        "id": 12277,
+        "name": "subreddit_srmemberp_cache_writes",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "subreddit_svc_grpc_gql": {
+        "id": 4596,
+        "name": "subreddit_svc_grpc_gql",
+        "variant": "enabled",
+        "version": "209"
+    },
+    "tagging_automation_rollout": {
+        "id": 1882,
+        "name": "tagging_automation_rollout",
+        "variant": "100",
+        "version": "6"
+    },
+    "taxonomy_hide_mod_log_entries_from_users": {
+        "id": 5052,
+        "name": "taxonomy_hide_mod_log_entries_from_users",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "tbl_acx_amexbusniessgcs_051324_071324": {
+        "id": 12580,
+        "name": "tbl_acx_amexbusniessgcs_051324_071324",
+        "variant": "treatment",
+        "version": "2"
+    },
+    "tc_consumer_egress": {
+        "id": 13520,
+        "name": "tc_consumer_egress",
+        "variant": "enabled",
+        "version": "13"
+    },
+    "thing_go_account_relations_grpc": {
+        "id": 6678,
+        "name": "thing_go_account_relations_grpc",
+        "variant": "enabled",
+        "version": "19"
+    },
+    "thing_go_gender": {
+        "id": 6789,
+        "name": "thing_go_gender",
+        "variant": "enabled",
+        "version": "25"
+    },
+    "thingpy_snooflake": {
+        "id": 7086,
+        "name": "thingpy_snooflake",
+        "variant": "thingpy_snooflake",
+        "version": "6"
+    },
+    "tim_zhu_meg_exp_test": {
+        "id": 10233,
+        "name": "tim_zhu_meg_exp_test",
+        "variant": "__uncapped",
+        "version": "24"
+    },
+    "tpl_acx_amex_consumer_072024_092024": {
+        "id": 13560,
+        "name": "tpl_acx_amex_consumer_072024_092024",
+        "variant": "treatment",
+        "version": "2"
+    },
+    "tpl_max_godzilla_062724_071424": {
+        "id": 13350,
+        "name": "tpl_max_godzilla_062724_071424",
+        "variant": "treatment",
+        "version": "2"
+    },
+    "tpl_ncs_digiorno_062024_092024": {
+        "id": 13399,
+        "name": "tpl_ncs_digiorno_062024_092024",
+        "variant": "treatment",
+        "version": "2"
+    },
+    "tpl_ncs_gatorade_3xcampaigns_052024_092024": {
+        "id": 12933,
+        "name": "tpl_ncs_gatorade_3xcampaigns_052024_092024",
+        "variant": "treatment",
+        "version": "2"
+    },
+    "tpl_ncs_secretdeoderant_062024_082024": {
+        "id": 13003,
+        "name": "tpl_ncs_secretdeoderant_062024_082024",
+        "variant": "treatment",
+        "version": "2"
+    },
+    "tpl_sba_wnba_050824_072024": {
+        "id": 12316,
+        "name": "tpl_sba_wnba_050824_072024",
+        "variant": "treatment",
+        "version": "2"
+    },
+    "trending_early_filter_muted": {
+        "id": 7766,
+        "name": "trending_early_filter_muted",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "trending_search_localization_experiment": {
+        "id": 8433,
+        "name": "trending_search_localization_experiment",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "trending_search_top_24_hours": {
+        "id": 9687,
+        "name": "trending_search_top_24_hours",
+        "variant": "top",
+        "version": "7"
+    },
+    "trending_system_enablement": {
+        "id": 12164,
+        "name": "trending_system_enablement",
+        "variant": "enabled",
+        "version": "20"
+    },
+    "trueblock_unreliable_reason": {
+        "id": 2911,
+        "name": "trueblock_unreliable_reason",
+        "variant": "enabled",
+        "version": "30"
+    },
+    "two_tower_user_post_2023q3": {
+        "id": 9147,
+        "name": "two_tower_user_post_2023q3",
+        "variant": "tower_tower_user_post_model_v2_features",
+        "version": "3"
+    },
+    "uas_async_fpr": {
+        "id": 13095,
+        "name": "uas_async_fpr",
+        "variant": "uas",
+        "version": "4"
+    },
+    "uas_async_hardban": {
+        "id": 13126,
+        "name": "uas_async_hardban",
+        "variant": "uas",
+        "version": "8"
+    },
+    "uas_async_mark_for_alt_track": {
+        "id": 11326,
+        "name": "uas_async_mark_for_alt_track",
+        "variant": "uas",
+        "version": "11"
+    },
+    "uas_async_neuter": {
+        "id": 13123,
+        "name": "uas_async_neuter",
+        "variant": "uas",
+        "version": "3"
+    },
+    "uas_async_permaban": {
+        "id": 12902,
+        "name": "uas_async_permaban",
+        "variant": "uas",
+        "version": "9"
+    },
+    "uas_async_revoke_fpr": {
+        "id": 13459,
+        "name": "uas_async_revoke_fpr",
+        "variant": "uas",
+        "version": "4"
+    },
+    "uas_async_revoke_hardban": {
+        "id": 13548,
+        "name": "uas_async_revoke_hardban",
+        "variant": "uas",
+        "version": "5"
+    },
+    "uas_async_revoke_mark_for_alt_track": {
+        "id": 13311,
+        "name": "uas_async_revoke_mark_for_alt_track",
+        "variant": "uas",
+        "version": "5"
+    },
+    "uas_async_revoke_neuter": {
+        "id": 13522,
+        "name": "uas_async_revoke_neuter",
+        "variant": "uas",
+        "version": "9"
+    },
+    "uas_async_revoke_permaban": {
+        "id": 13312,
+        "name": "uas_async_revoke_permaban",
+        "variant": "uas",
+        "version": "5"
+    },
+    "uas_async_revoke_suspension": {
+        "id": 13430,
+        "name": "uas_async_revoke_suspension",
+        "variant": "uas",
+        "version": "3"
+    },
+    "uas_async_suspension": {
+        "id": 13113,
+        "name": "uas_async_suspension",
+        "variant": "uas",
+        "version": "3"
+    },
+    "uas_rollout_force_logout": {
+        "id": 5417,
+        "name": "uas_rollout_force_logout",
+        "variant": "uas",
+        "version": "6"
+    },
+    "uas_rollout_force_password_reset": {
+        "id": 5125,
+        "name": "uas_rollout_force_password_reset",
+        "variant": "uas",
+        "version": "6"
+    },
+    "uas_rollout_mark_for_bounce": {
+        "id": 6236,
+        "name": "uas_rollout_mark_for_bounce",
+        "variant": "uas",
+        "version": "3"
+    },
+    "uas_rollout_mark_for_unbounce": {
+        "id": 5642,
+        "name": "uas_rollout_mark_for_unbounce",
+        "variant": "uas",
+        "version": "5"
+    },
+    "uas_rollout_revoke_fpr": {
+        "id": 11544,
+        "name": "uas_rollout_revoke_fpr",
+        "variant": "uas",
+        "version": "3"
+    },
+    "uas_rollout_revoke_suspension": {
+        "id": 5370,
+        "name": "uas_rollout_revoke_suspension",
+        "variant": "uas",
+        "version": "8"
+    },
+    "uas_rollout_revoke_temp_suspension": {
+        "id": 9210,
+        "name": "uas_rollout_revoke_temp_suspension",
+        "variant": "uas",
+        "version": "3"
+    },
+    "uas_rollout_scramble_password": {
+        "id": 5255,
+        "name": "uas_rollout_scramble_password",
+        "variant": "uas",
+        "version": "3"
+    },
+    "update_ad_account_openapi_migration": {
+        "id": 11838,
+        "name": "update_ad_account_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "update_ad_group_openapi_migration": {
+        "id": 11828,
+        "name": "update_ad_group_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "update_ad_v3_openapi_migration": {
+        "id": 11513,
+        "name": "update_ad_v3_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "update_campaign_v3_openapi_migration": {
+        "id": 11779,
+        "name": "update_campaign_v3_openapi_migration",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "update_default_subreddit_icon_feed_utils": {
+        "id": 9891,
+        "name": "update_default_subreddit_icon_feed_utils",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "update_default_subreddit_icon_notification": {
+        "id": 9892,
+        "name": "update_default_subreddit_icon_notification",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "use_blocking_svc_in_r2": {
+        "id": 6131,
+        "name": "use_blocking_svc_in_r2",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "use_comments_go_comment_trees_in_r2": {
+        "id": 8076,
+        "name": "use_comments_go_comment_trees_in_r2",
+        "variant": "enabled",
+        "version": "15"
+    },
+    "use_comments_go_full_comment_trees_in_gql": {
+        "id": 4971,
+        "name": "use_comments_go_full_comment_trees_in_gql",
+        "variant": "enabled",
+        "version": "25"
+    },
+    "use_mailroom_for_badge_count": {
+        "id": 11645,
+        "name": "use_mailroom_for_badge_count",
+        "variant": "enabled",
+        "version": "19"
+    },
+    "use_mailroom_for_badge_count_in_gql": {
+        "id": 11441,
+        "name": "use_mailroom_for_badge_count_in_gql",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "use_shreddit_app_name_header": {
+        "id": 7063,
+        "name": "use_shreddit_app_name_header",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "user_details_reporting": {
+        "id": 9500,
+        "name": "user_details_reporting",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "uxtargeting_service_feature_rollout": {
+        "id": 3947,
+        "name": "uxtargeting_service_feature_rollout",
+        "variant": "enabled",
+        "version": "20"
+    },
+    "uxts_3pa_disable_reonboarding": {
+        "id": 8434,
+        "name": "uxts_3pa_disable_reonboarding",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "uxts_android_reonboarding_in_feed_targeting": {
+        "id": 6199,
+        "name": "uxts_android_reonboarding_in_feed_targeting",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "uxts_decider_v2_experiments": {
+        "id": 8634,
+        "name": "uxts_decider_v2_experiments",
+        "variant": "enabled",
+        "version": "19"
+    },
+    "uxts_language_bottom_sheet_kill_switch": {
+        "id": 6541,
+        "name": "uxts_language_bottom_sheet_kill_switch",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "v3_api_migration_ad": {
+        "id": 8901,
+        "name": "v3_api_migration_ad",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "v3_api_migration_adgroup": {
+        "id": 8900,
+        "name": "v3_api_migration_adgroup",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "v3_api_migration_campaign": {
+        "id": 8899,
+        "name": "v3_api_migration_campaign",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "video_ads_edit_retry_websocket": {
+        "id": 12336,
+        "name": "video_ads_edit_retry_websocket",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "video_ads_hls_spec_order2": {
+        "id": 10262,
+        "name": "video_ads_hls_spec_order2",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "video_ads_hls_trim_low": {
+        "id": 4827,
+        "name": "video_ads_hls_trim_low",
+        "variant": "enabled",
+        "version": "14"
+    },
+    "video_hls_spec_order": {
+        "id": 4914,
+        "name": "video_hls_spec_order",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "video_post_creation_using_post_go_service": {
+        "id": 6172,
+        "name": "video_post_creation_using_post_go_service",
+        "variant": "enabled",
+        "version": "16"
+    },
+    "video_qos_mp4_downscale_i18n_meg": {
+        "id": 5517,
+        "name": "video_qos_mp4_downscale_i18n_meg",
+        "variant": "video_qos_mp4_downscale_i18n_threshold_2mbps",
+        "version": "1"
+    },
+    "video_qos_mp4_downscale_meg": {
+        "id": 5511,
+        "name": "video_qos_mp4_downscale_meg",
+        "variant": "video_qos_mp4_downscale_threshold_5mbps",
+        "version": "2"
+    },
+    "watch_feed_pipeline": {
+        "id": 8974,
+        "name": "watch_feed_pipeline",
+        "variant": "watch_feed_inventory_expansion",
+        "version": "6"
+    },
+    "web2x_call_to_action_bar": {
+        "id": 4484,
+        "name": "web2x_call_to_action_bar",
+        "variant": "treatment",
+        "version": "14"
+    },
+    "web2x_reading_indicators": {
+        "id": 3075,
+        "name": "web2x_reading_indicators",
+        "variant": "enabled",
+        "version": "22"
+    },
+    "web2x_typing_indicators_v2_m1": {
+        "id": 2928,
+        "name": "web2x_typing_indicators_v2_m1",
+        "variant": "indicators_plus_cta",
+        "version": "21"
+    },
+    "web_chat_account_data_notifications": {
+        "id": 13456,
+        "name": "web_chat_account_data_notifications",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "web_chat_account_manager_redirect": {
+        "id": 10470,
+        "name": "web_chat_account_manager_redirect",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "web_chat_badges_v3": {
+        "id": 11422,
+        "name": "web_chat_badges_v3",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "web_chat_ban_all_client_handling": {
+        "id": 10069,
+        "name": "web_chat_ban_all_client_handling",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "web_chat_banned_accounts": {
+        "id": 12110,
+        "name": "web_chat_banned_accounts",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "web_chat_cached_login_token": {
+        "id": 12664,
+        "name": "web_chat_cached_login_token",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "web_chat_channel_ban_user": {
+        "id": 9429,
+        "name": "web_chat_channel_ban_user",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "web_chat_channel_create_intro": {
+        "id": 13088,
+        "name": "web_chat_channel_create_intro",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "web_chat_channel_media_types_restriction": {
+        "id": 12242,
+        "name": "web_chat_channel_media_types_restriction",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "web_chat_channel_moderation_media_types": {
+        "id": 12241,
+        "name": "web_chat_channel_moderation_media_types",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "web_chat_channel_settings_moderation": {
+        "id": 9436,
+        "name": "web_chat_channel_settings_moderation",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "web_chat_channels_channel_tagging": {
+        "id": 12677,
+        "name": "web_chat_channels_channel_tagging",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "web_chat_channels_distinguish_mods": {
+        "id": 11782,
+        "name": "web_chat_channels_distinguish_mods",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "web_chat_collapse_toxic_messages": {
+        "id": 10892,
+        "name": "web_chat_collapse_toxic_messages",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "web_chat_content_control": {
+        "id": 12240,
+        "name": "web_chat_content_control",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "web_chat_crowd_control": {
+        "id": 12239,
+        "name": "web_chat_crowd_control",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "web_chat_edit_ucc_icon": {
+        "id": 10163,
+        "name": "web_chat_edit_ucc_icon",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "web_chat_hide_removed_images_ks": {
+        "id": 12970,
+        "name": "web_chat_hide_removed_images_ks",
+        "variant": "enabled",
+        "version": "2"
+    },
+    "web_chat_image_compression": {
+        "id": 12792,
+        "name": "web_chat_image_compression",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "web_chat_inbox_all_chats_link": {
+        "id": 12586,
+        "name": "web_chat_inbox_all_chats_link",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "web_chat_instant_peeks": {
+        "id": 13329,
+        "name": "web_chat_instant_peeks",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "web_chat_login_sentry_log": {
+        "id": 7831,
+        "name": "web_chat_login_sentry_log",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "web_chat_matrix_http3": {
+        "id": 10098,
+        "name": "web_chat_matrix_http3",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "web_chat_multitasking": {
+        "id": 12857,
+        "name": "web_chat_multitasking",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "web_chat_new_sync": {
+        "id": 6189,
+        "name": "web_chat_new_sync",
+        "variant": "enabled",
+        "version": "24"
+    },
+    "web_chat_new_ui": {
+        "id": 6347,
+        "name": "web_chat_new_ui",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "web_chat_no_access_on_ban": {
+        "id": 11627,
+        "name": "web_chat_no_access_on_ban",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "web_chat_not_aggregated_relations_filter": {
+        "id": 12003,
+        "name": "web_chat_not_aggregated_relations_filter",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "web_chat_peeking": {
+        "id": 11637,
+        "name": "web_chat_peeking",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "web_chat_per_thread_receipts": {
+        "id": 10106,
+        "name": "web_chat_per_thread_receipts",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "web_chat_persistent_filters": {
+        "id": 8713,
+        "name": "web_chat_persistent_filters",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "web_chat_prefer_matrix_killswitch": {
+        "id": 7836,
+        "name": "web_chat_prefer_matrix_killswitch",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "web_chat_profanity_filters": {
+        "id": 12624,
+        "name": "web_chat_profanity_filters",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "web_chat_reaction_aggregation": {
+        "id": 10854,
+        "name": "web_chat_reaction_aggregation",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "web_chat_report_invite_with_membership_event": {
+        "id": 10052,
+        "name": "web_chat_report_invite_with_membership_event",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "web_chat_scoring_aggregation": {
+        "id": 10378,
+        "name": "web_chat_scoring_aggregation",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "web_chat_sentry_error_check": {
+        "id": 7650,
+        "name": "web_chat_sentry_error_check",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "web_chat_share_killswitch": {
+        "id": 6207,
+        "name": "web_chat_share_killswitch",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "web_chat_show_who_reacted": {
+        "id": 11844,
+        "name": "web_chat_show_who_reacted",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "web_chat_threads": {
+        "id": 8289,
+        "name": "web_chat_threads",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "web_chat_threads_mute_button": {
+        "id": 9359,
+        "name": "web_chat_threads_mute_button",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "web_chat_threads_page": {
+        "id": 10380,
+        "name": "web_chat_threads_page",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "web_chat_typing_indicator": {
+        "id": 9925,
+        "name": "web_chat_typing_indicator",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "web_chat_updated_subreddit_rule_copy": {
+        "id": 6936,
+        "name": "web_chat_updated_subreddit_rule_copy",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "web_chat_use_indexed_db": {
+        "id": 7982,
+        "name": "web_chat_use_indexed_db",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "web_community_chat_channel_specific_settings": {
+        "id": 8060,
+        "name": "web_community_chat_channel_specific_settings",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "web_community_chat_discovery_page": {
+        "id": 8059,
+        "name": "web_community_chat_discovery_page",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "web_community_chat_discovery_tooltip": {
+        "id": 8241,
+        "name": "web_community_chat_discovery_tooltip",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "web_community_chat_manage_notifications": {
+        "id": 8763,
+        "name": "web_community_chat_manage_notifications",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "web_community_chat_message_pinning": {
+        "id": 8844,
+        "name": "web_community_chat_message_pinning",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "web_corechat_filter_pills": {
+        "id": 6611,
+        "name": "web_corechat_filter_pills",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "web_dxr_blocks_realtime": {
+        "id": 11367,
+        "name": "web_dxr_blocks_realtime",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "web_dxr_navigate_to": {
+        "id": 10746,
+        "name": "web_dxr_navigate_to",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "web_dxr_optimize_feed_loading": {
+        "id": 12389,
+        "name": "web_dxr_optimize_feed_loading",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "web_econ_avatar_creator_tools": {
+        "id": 3874,
+        "name": "web_econ_avatar_creator_tools",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "web_econ_avatar_nft": {
+        "id": 2298,
+        "name": "web_econ_avatar_nft",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "web_econ_avatar_nft_integration": {
+        "id": 3437,
+        "name": "web_econ_avatar_nft_integration",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "web_econ_closet_killswitch": {
+        "id": 3838,
+        "name": "web_econ_closet_killswitch",
+        "variant": "enabled",
+        "version": "12"
+    },
+    "web_econ_storefront_launch1": {
+        "id": 4104,
+        "name": "web_econ_storefront_launch1",
+        "variant": "enabled",
+        "version": "26"
+    },
+    "web_marketplace_transfers": {
+        "id": 5101,
+        "name": "web_marketplace_transfers",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "web_matrix_aggregated_events_filtering": {
+        "id": 12525,
+        "name": "web_matrix_aggregated_events_filtering",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "web_matrix_filter_preview_collapse": {
+        "id": 13105,
+        "name": "web_matrix_filter_preview_collapse",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "web_matrix_new_aggregate_updates": {
+        "id": 12253,
+        "name": "web_matrix_new_aggregate_updates",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "web_x_dynamic_claims_deeplink": {
+        "id": 5563,
+        "name": "web_x_dynamic_claims_deeplink",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "web_x_dynamic_layout": {
+        "id": 5253,
+        "name": "web_x_dynamic_layout",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "web_x_free_items_in_builder": {
+        "id": 5564,
+        "name": "web_x_free_items_in_builder",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "web_x_mr_awards_sunset": {
+        "id": 8023,
+        "name": "web_x_mr_awards_sunset",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "web_x_mr_background_selection": {
+        "id": 6589,
+        "name": "web_x_mr_background_selection",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "web_x_mr_coins_sunset": {
+        "id": 7423,
+        "name": "web_x_mr_coins_sunset",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "web_x_mr_continuous_release_ui": {
+        "id": 10394,
+        "name": "web_x_mr_continuous_release_ui",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "web_x_mr_creator_tools_end_sale": {
+        "id": 10362,
+        "name": "web_x_mr_creator_tools_end_sale",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "web_x_mr_expressions_comments": {
+        "id": 7663,
+        "name": "web_x_mr_expressions_comments",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "web_x_mr_expressions_mod_toggle": {
+        "id": 8182,
+        "name": "web_x_mr_expressions_mod_toggle",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "web_x_mr_points_sunset": {
+        "id": 10134,
+        "name": "web_x_mr_points_sunset",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "web_x_mr_sales_analytics": {
+        "id": 10596,
+        "name": "web_x_mr_sales_analytics",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "web_x_mr_shop_deeplinks": {
+        "id": 5879,
+        "name": "web_x_mr_shop_deeplinks",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "web_x_mr_showcase_collectibles": {
+        "id": 6732,
+        "name": "web_x_mr_showcase_collectibles",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "web_x_mr_shreddit_avatars": {
+        "id": 11541,
+        "name": "web_x_mr_shreddit_avatars",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "web_x_mr_sorting_and_redirecting": {
+        "id": 6092,
+        "name": "web_x_mr_sorting_and_redirecting",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "web_x_mr_stripe_payment_intents_api_migration": {
+        "id": 6564,
+        "name": "web_x_mr_stripe_payment_intents_api_migration",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "web_x_points_marketing_killswitch": {
+        "id": 9803,
+        "name": "web_x_points_marketing_killswitch",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "web_x_shop_buy_cta": {
+        "id": 5365,
+        "name": "web_x_shop_buy_cta",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "web_x_show_remaining_inventory": {
+        "id": 5364,
+        "name": "web_x_show_remaining_inventory",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "web_x_storefront_categories": {
+        "id": 5363,
+        "name": "web_x_storefront_categories",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "web_x_storefront_listing_badges": {
+        "id": 5550,
+        "name": "web_x_storefront_listing_badges",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "x_be_proxy_awards_to_payment_platform": {
+        "id": 12725,
+        "name": "x_be_proxy_awards_to_payment_platform",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "x_econ_9999_price_tier_android": {
+        "id": 8804,
+        "name": "x_econ_9999_price_tier_android",
+        "variant": "enabled",
+        "version": "6"
+    },
+    "x_econ_blocker_use_rate_limit": {
+        "id": 6879,
+        "name": "x_econ_blocker_use_rate_limit",
+        "variant": "enabled",
+        "version": "10"
+    },
+    "x_feed_be_gql_feed": {
+        "id": 6504,
+        "name": "x_feed_be_gql_feed",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "x_feed_be_gql_subs": {
+        "id": 6502,
+        "name": "x_feed_be_gql_subs",
+        "variant": "enabled",
+        "version": "5"
+    },
+    "x_fetch_custom_emojis": {
+        "id": 7529,
+        "name": "x_fetch_custom_emojis",
+        "variant": "enabled",
+        "version": "9"
+    },
+    "x_gold_pack_recaptcha": {
+        "id": 12360,
+        "name": "x_gold_pack_recaptcha",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "x_marketplace_avatar_accessories_for_shreddit": {
+        "id": 11014,
+        "name": "x_marketplace_avatar_accessories_for_shreddit",
+        "variant": "enabled",
+        "version": "7"
+    },
+    "x_marketplace_captcha_android": {
+        "id": 8125,
+        "name": "x_marketplace_captcha_android",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "x_marketplace_captcha_ios": {
+        "id": 8126,
+        "name": "x_marketplace_captcha_ios",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "x_marketplace_captcha_web": {
+        "id": 8122,
+        "name": "x_marketplace_captcha_web",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "x_marketplace_storefront_opensearch": {
+        "id": 6734,
+        "name": "x_marketplace_storefront_opensearch",
+        "variant": "enabled",
+        "version": "8"
+    },
+    "x_mr_async_staging": {
+        "id": 10341,
+        "name": "x_mr_async_staging",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "x_mr_continuous_release": {
+        "id": 10254,
+        "name": "x_mr_continuous_release",
+        "variant": "enabled",
+        "version": "4"
+    },
+    "x_mr_data_deletion_pipeline": {
+        "id": 11591,
+        "name": "x_mr_data_deletion_pipeline",
+        "variant": "enabled",
+        "version": "17"
+    },
+    "x_mr_storefront_dynamic_layout_localization": {
+        "id": 9477,
+        "name": "x_mr_storefront_dynamic_layout_localization",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "x_new_awards": {
+        "id": 11388,
+        "name": "x_new_awards",
+        "variant": "enabled",
+        "version": "22"
+    },
+    "x_snoovatar_off_r2": {
+        "id": 10051,
+        "name": "x_snoovatar_off_r2",
+        "variant": "enabled",
+        "version": "11"
+    },
+    "x_storefront_price_tiers": {
+        "id": 5942,
+        "name": "x_storefront_price_tiers",
+        "variant": "enabled",
+        "version": "3"
+    },
+    "x_use_snoovatar_go": {
+        "id": 6181,
+        "name": "x_use_snoovatar_go",
+        "variant": "enabled",
+        "version": "28"
+    }
+}

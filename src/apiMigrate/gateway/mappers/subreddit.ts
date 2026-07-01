@@ -174,7 +174,7 @@ export const processSubredditUserFlairGql = ({ authorFlairSettings, modPermissio
 				backgroundColor: authorFlair.template.backgroundColor,
 				templateId: authorFlair.template.id,
 				textColor: authorFlair.template.textColor,
-				type: authorFlair.template.rtjson ? "rtjson" : "text",
+				type: authorFlair.template.richtext ? "rtjson" : "text",
 			}
 		: null,
 	templates: {},

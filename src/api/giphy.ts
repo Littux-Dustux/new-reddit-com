@@ -45,7 +45,7 @@ type RedditGiphyGif = {
 	p: [],
 	ext: string,
 	t: "giphy",
-	id: string,
+	id?: string,
 	/* profile_url: string,
 	display_name: string,
 	username: string */
@@ -92,7 +92,7 @@ export async function getGIPHYGifsByIds(ids: Iterable<string>): Promise<Record<s
 				p: [],
 				ext: gif.url,
 				t: "giphy",
-				id: "giphy|"+gif.id,
+				// id: "giphy|"+gif.id,
 				/* profile_url: gif.user.profile_url,
 				display_name: gif.user.display_name,
 				username: gif.user.username */
