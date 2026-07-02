@@ -3,7 +3,8 @@ import { gqlFetch } from "../../../api/gql";
 import { getLogger } from "../../../logging";
 import { getMuxedMP4sDownloadRTJSON, getVideoMediaMetadataGql, getVoteStateNum } from "./common";
 import { processPost } from "./posts";
-import { getAuthorFlairFromR2Thing, processSubreddit, processSubredditAboutInfo, processSubredditPostFlair, processSubredditUserFlair } from "./subreddit";
+import { processSubreddit, processSubredditAboutInfo } from "./subreddit";
+import { getAuthorFlairFromR2Thing, processSubredditPostFlair, processSubredditUserFlair } from "./flair";
 
 type CommentPosition = { id: string; type: string } | null;
 

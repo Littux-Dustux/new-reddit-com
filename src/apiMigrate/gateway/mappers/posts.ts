@@ -5,6 +5,8 @@ import { getVoteStateNum } from "./common";
 
 const getFlair = (data: any) => {
 	const flair = [];
+	if (data.spoiler) flair.push({ text: "spoiler", type: "spoiler" });
+	if (data.over_18) flair.push({ text: "nsfw", type: "nsfw" });
 	if (data.link_flair_richtext?.length) {
 		flair.push({
 			richtext: data.link_flair_richtext,
@@ -23,8 +25,6 @@ const getFlair = (data: any) => {
 			templateId: data.link_flair_template_id,
 		});
 	}
-	if (data.spoiler) flair.push({ text: "spoiler", type: "spoiler" });
-	if (data.over_18) flair.push({ text: "nsfw", type: "nsfw" });
 	return flair;
 };
 

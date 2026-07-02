@@ -1,11 +1,17 @@
 import { processPost } from "./posts";
-import { getAuthorFlairFromR2Thing, processModPermissionsGql, processSubreddit, processSubredditAboutInfo, processSubredditAboutInfoGql, processSubredditGql, processSubredditPostFlair, processSubredditPostFlairGql, processSubredditUserFlair, processSubredditUserFlairGql } from "./subreddit";
+import { processModPermissionsGql, processSubreddit, processSubredditAboutInfo, processSubredditAboutInfoGql, processSubredditGql } from "./subreddit";
+import { getAuthorFlairFromR2Thing, processSubredditPostFlair, processSubredditPostFlairGql, processSubredditUserFlair, processSubredditUserFlairGql } from "./flair";
 
 export const processListing = (
 	items: Record<string, any>[],
 	afterToken: string,
-	gqlSubredditAboutInfo?: any,
-	structuredStyles?: any
+	{ gqlSubredditAboutInfo, structuredStyles, userFlairsV2, postFlairsV2 }: {
+		gqlSubredditAboutInfo?: any,
+		structuredStyles?: any,
+		userFlairsV2?: any,
+		postFlairsV2?: any
+		
+	}
 ) => {
 	const state: Record<string, any> = {
 		account: null,
@@ -20,7 +26,7 @@ export const processListing = (
 		profiles: {},
 		token: afterToken,
 		postInstances: {},
-		structuredStyles: gqlSubredditAboutInfo && structuredStyles ? structuredStyles : null,
+		structuredStyles,
 		userFlair: {},
 		subredditPermissions: null,
 		preferences: null
@@ -30,8 +36,8 @@ export const processListing = (
 		const id = gqlSubredditAboutInfo.id;
 		state.subredditAboutInfo[id] = processSubredditAboutInfoGql(gqlSubredditAboutInfo);
 		state.subreddits[id] = processSubredditGql(gqlSubredditAboutInfo);
-		state.postFlair[id] = processSubredditPostFlairGql(gqlSubredditAboutInfo);
-		state.userFlair[id] = processSubredditUserFlairGql(gqlSubredditAboutInfo);
+		state.postFlair[id] = processSubredditPostFlairGql(gqlSubredditAboutInfo, postFlairsV2);
+		state.userFlair[id] = processSubredditUserFlairGql(gqlSubredditAboutInfo, userFlairsV2);
 		state.subredditPermissions = processModPermissionsGql(gqlSubredditAboutInfo);
 	}
 

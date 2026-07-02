@@ -1,6 +1,7 @@
 import { gqlFetch } from "../../api/gql";
 import { getREST, RedditAPIError } from "../../api/rest";
 import { getLogger } from "../../logging";
+import { getState } from "../../main";
 import { processListing } from "./mappers/listing";
 import { convertUnavailableSubredditToGatewayError, structuredStylesLoadedSubs } from "./mappers/subreddit";
 
@@ -8,7 +9,7 @@ const logger = getLogger("subredditPostsPage");
 
 export async function subredditPostsPage(subreddits: string, params: Record<string, any>) {
 	const isAdhocMulti = subreddits.includes("+") || subreddits === "all" || subreddits === "mod" || subreddits === "friends";
-	const shouldFetchSubreddit = !isAdhocMulti && !params.after;
+	const shouldFetchSubreddit = !isAdhocMulti && !(getState().listings.postOrder.fetchedTokens as any)[subreddits];
 
 	const subredditInfoGql = !shouldFetchSubreddit ? null : gqlFetch(
 		"SubredditInfoByName",
@@ -34,6 +35,9 @@ export async function subredditPostsPage(subreddits: string, params: Record<stri
 	if (fetchStructuredStyles) {
 		structuredStylesLoadedSubs.add(subreddits.toLowerCase());
 	}
+
+	//const postFlairsV2 = !shouldFetchSubreddit ? null : getREST(`/r/${subreddits}/api/link_flair_v2.json?raw_json=1`).catch(() => {});
+	//const userFlairsV2 = !shouldFetchSubreddit ? null : getREST(`/r/${subreddits}/api/user_flair_v2.json?raw_json=1`).catch(() => {});
 
 	params.raw_json = '1';
 	params.limit = params.dist || '';
@@ -63,8 +67,12 @@ export async function subredditPostsPage(subreddits: string, params: Record<stri
 			processListing(
 				listing.data.children,
 				listing.data.after,
-				subredditInfoByName,
-				await structuredStyles
+				{
+					gqlSubredditAboutInfo: subredditInfoByName,
+					structuredStyles: await structuredStyles,
+					//userFlairsV2: await userFlairsV2,
+					//postFlairsV2: await postFlairsV2
+				}
 			)
 		),
 		status: 200
