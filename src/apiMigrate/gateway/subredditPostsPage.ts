@@ -9,7 +9,7 @@ const logger = getLogger("subredditPostsPage");
 
 export async function subredditPostsPage(subreddits: string, params: Record<string, any>) {
 	const isAdhocMulti = subreddits.includes("+") || subreddits === "all" || subreddits === "mod" || subreddits === "friends";
-	const shouldFetchSubreddit = !isAdhocMulti && !(getState().listings.postOrder.fetchedTokens as any)[subreddits];
+	const shouldFetchSubreddit = !isAdhocMulti && !params.after;
 
 	const subredditInfoGql = !shouldFetchSubreddit ? null : gqlFetch(
 		"SubredditInfoByName",
