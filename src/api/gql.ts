@@ -1,6 +1,7 @@
 import { getLogger } from "../logging/logger";
 import { multiErrorToast } from "../logging/toast";
 import { getCache, setCache } from "./caching";
+import { getRedditRequestHeaders, parseResponseAndStoreAuth } from "./helpers";
 import { RedditAPIError } from "./rest";
 
 const logger = getLogger("api:gql");
@@ -35,12 +36,8 @@ export async function gqlFetch(
 		method: "POST",
 		url: "https://gql-fed.reddit.com?" + operationName,
 		headers: {
-			"Accept": "application/json",
-			"Authorization": "Bearer " + (await window.getToken()),
 			"Content-Type": "application/json",
-			"Origin": "https://new.reddit.com",
-			"Referer": "https://new.reddit.com/",
-			"X-Reddit-Loid": window.loid
+			...(await getRedditRequestHeaders())
 		},
 		data: JSON.stringify({
 			operationName,
@@ -54,6 +51,8 @@ export async function gqlFetch(
 		}),
 		anonymous: true,
 	});
+
+	parseResponseAndStoreAuth(resp.responseHeaders);
 
 	if (resp.status !== 200) logger.err(`Status code ${resp.status} with ${operationName}`);
 

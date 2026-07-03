@@ -213,7 +213,7 @@ const recursiveProcessComments = async (
 	return { authorFlair, comments, continueThreads, moreComments };
 };
 
-export async function postcomments(post: Record<string, any>, commentsChildren: Record<string, any>[], structuredStyles: any = null) {
+export async function postcomments(post: Record<string, any>, commentsChildren: Record<string, any>[], structuredStyles: any = null, postWithDevvit: any) {
 	const state: Record<string, any> = {
 		account: null,
 		authorFlair: {},
@@ -240,12 +240,12 @@ export async function postcomments(post: Record<string, any>, commentsChildren: 
 	};
 
 	const posts = state.posts;
-	posts[post.name] = processPost(post);
+	posts[post.name] = processPost(post, postWithDevvit?.devvit);
 
 	if (post.crosspost_parent_list?.[0]) {
 		const crossPost = post.crosspost_parent_list[0];
 		const subId = crossPost.subreddit_id || "";
-		posts[crossPost.name] = processPost(crossPost);
+		posts[crossPost.name] = processPost(crossPost, postWithDevvit?.crosspostRoot?.postInfo?.devvit);
 
 		state.authorFlair[subId] ??= {};
 		state.authorFlair[subId][crossPost.author] = getAuthorFlairFromR2Thing(crossPost);

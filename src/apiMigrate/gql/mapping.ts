@@ -993,6 +993,17 @@ export const gqlFedMap: GqlFedMapping = {
 	SubredditWiki: {
 		operationName: "SubredditWiki", // 2026 app
 		sha256Hash: "4f446702368bfcd945efe732576160a017ebf73dc24cab7e7d31de91c6bf5dcc",
+		mapVars: ({ includePageData, subredditName, wikiPageName }) => ({
+			includePage: includePageData,
+			subredditName,
+			pageName: wikiPageName,
+			includeMediaFragment: includePageData,
+			includeIsRevisable: includePageData,
+			includePageTitle: includePageData,
+			includePageContent: includePageData,
+			includeRevisionsCount: includePageData
+  		}),
+		mapResp: ({ subredditInfoByName }) => ({ subreddit: subredditInfoByName })
 	},
 	SubscribedSubreddits: {
 		operationName: "SubscribedSubreddits",

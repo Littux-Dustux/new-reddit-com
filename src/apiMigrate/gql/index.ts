@@ -9,8 +9,8 @@ import { RedditAPIError } from "../../api/rest";
 const logger = getLogger("gqlMigrate");
 
 const defaultResponse = {
-	jsonResponse: '{"errors":[{"message":"Unknown operation"}],"data":{}}',
-	status: 400,
+	jsonResponse: '{"data":{}}',
+	status: 200,
 };
 
 export const gqlMigrationInterceptor: InterceptorHandler = async (_, data: any) => {

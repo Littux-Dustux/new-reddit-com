@@ -28,7 +28,7 @@ const getFlair = (data: any) => {
 	return flair;
 };
 
-const getMedia = (data: any) => {
+const getMedia = (data: any, devvitData?: any) => {
 	const isPreviewEnabled = data.preview?.enabled;
 	const isObscured = data.over_18 || data.spoiler;
 	let obfuscatedUrl = null;
@@ -38,6 +38,29 @@ const getMedia = (data: any) => {
 		if (isObscured && variants.obfuscated) {
 			obfuscatedUrl = variants.obfuscated.source.url;
 		}
+	}
+
+	if (devvitData?.__typename === "DevvitPost") {
+		setTimeout(() => {
+			const embedIFrame = document.body.querySelector<HTMLIFrameElement>(
+				`.uI_hDmU5GSiudtABRz_37 #${data.name} ._3K6DCjWs2dQ93YYZDOHjib`
+			);
+			if (embedIFrame) {
+				embedIFrame.replaceWith(convertDevvitDataToIFrame(devvitData));
+				console.debug("Injected devvit iframe");
+			} else {
+				console.error("Devvit iframe not found");
+			}
+		}, 1000);
+		return {
+			content: "https://www.redditstatic.com/desktop2x/img/loading.gif",
+			type: "embed",
+			width: 512,
+			height: 512,
+			obfuscated: obfuscatedUrl,
+			provider: "reddit",
+			richtextContent: data.rtjson
+		};
 	}
 
 	// 0. Gallery posts
@@ -180,7 +203,7 @@ const normalizeR2Poll = (data: any) => ({
 	resolvedOptionId: data.resolved_option_id,
 });
 
-export const processPost = (data: any) => ({
+export const processPost = (data: any, devvitData?: any) => ({
 	adPromotedUserPostIds: [],
 	adSupplementaryText: null,
 	approvedAtUTC: data.approved_at_utc,
@@ -229,7 +252,7 @@ export const processPost = (data: any) => ({
 	isStickied: data.stickied,
 	isSurveyAd: Boolean(data.is_survey_ad),
 	liveCommentsWebsocket: data.liveCommentsWebsocket || data.websocket_url,
-	media: getMedia(data),
+	media: getMedia(data, devvitData),
 	modReports: data.mod_reports,
 	numComments: data.num_comments,
 	numCrossposts: data.num_crossposts || 0,
@@ -268,3 +291,27 @@ export const processPost = (data: any) => ({
 	viewCount: data.view_count || 0,
 	voteState: getVoteStateNum(data.likes),
 });
+
+
+export const convertDevvitDataToIFrame = (devvit: any): HTMLIFrameElement => {
+	const iframe = document.createElement("iframe");
+	iframe.className = "devvitEmbed";
+	iframe.allow = "clipboard-write; web-share";
+	iframe.loading = "lazy";
+	iframe.referrerPolicy = "origin";
+	iframe.sandbox = "allow-forms allow-same-origin allow-scripts";
+	iframe.name = JSON.stringify({
+		appPermissionState: { consentStatus: 0, requestedScopes: [], grantedScopes: [] },
+		client: 3,
+		devvitDebug: "",
+		postData: JSON.parse(devvit.postData),
+		shredditVersion: { major: 0, minor: 13, patch: 6, version: "0.13.6" },
+		signedRequestContext: devvit.signedRequestContext,
+		startTime: Date.now(),
+		viewMode: 1,
+		webbitToken: devvit.webbitToken,
+		webViewClientData: JSON.parse(devvit.webViewClientData),
+	});
+	iframe.src = devvit.entrypointUrl;
+	return iframe;
+}

@@ -4,10 +4,12 @@
 
 import { getCache, setCache } from "./caching";
 import { getLogger, showToast } from "../logging";
+import { convertHeadersStringToObject } from "../utils";
+import { getState } from "../main";
+import { getLoidState } from "../state/utils";
+import { getRedditRequestHeaders, parseResponseAndStoreAuth } from "./helpers";
 
 const logger = getLogger('api:rest');
-
-// --- Custom Error Class ---
 
 export class RedditAPIError extends Error {
 	public status: number;
@@ -29,8 +31,6 @@ export class RedditAPIError extends Error {
 	}
 }
 
-// --- Internal Error Parser ---
-
 /**
  * Attempts to parse JSON from response text. Returns parsed object or null if invalid JSON.
  */
@@ -46,7 +46,6 @@ function tryParseJson(responseText: string): any | null {
  * Normalizes the varying error structures returned by Reddit into a single RedditAPIError.
  */
 function parseRedditError(status: number, responseText: string, parsed?: any): RedditAPIError {
-	// Parse JSON if not already provided
 	if (!parsed) {
 		parsed = tryParseJson(responseText);
 		if (!parsed) {
@@ -97,7 +96,7 @@ function parseRedditError(status: number, responseText: string, parsed?: any): R
 	return new RedditAPIError(status, `${status}: Unknown JSON error`, "UNKNOWN_JSON_ERROR", parsed);
 }
 
-// --- API Client ---
+
 
 export interface RequestOptions {
 	method?: string;
@@ -107,6 +106,7 @@ export interface RequestOptions {
 	cacheMaxAge?: number;
 }
 
+
 /**
  * Base function to make authenticated requests to oauth.reddit.com.
  */
@@ -114,25 +114,21 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 	const method = options.method || "GET";
 	const isGet = method === "GET";
 
-	// Check Cache first (if applicable)
 	const cacheKey = endpoint;
 	if (isGet && typeof options.cacheMaxAge === "number" && options.cacheMaxAge >= -1) {
 		const cached = getCache(cacheKey, options.cacheMaxAge);
 		if (cached) return cached as T;
 	}
 
-	// Prepare URL
 	const url = endpoint.startsWith("http") ? endpoint : `https://oauth.reddit.com${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
 
-	// Get Auth Token
 	const token = await window.getToken();
 	if (!token) {
 		throw new RedditAPIError(401, "No authentication token available", "NO_TOKEN");
 	}
 
-	// Prepare headers and data
 	const headers: Record<string, string> = {
-		Authorization: `Bearer ${token}`,
+		...(await getRedditRequestHeaders()),
 		...options.headers,
 	};
 
@@ -155,21 +151,17 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 		data: (requestData as any),
 		anonymous: true
 	});
+	parseResponseAndStoreAuth(response.responseHeaders);
 
 	logger.log(`${method} ${url.slice(0, 128)} (status: ${response.status}) ${requestData?.slice(0, 128)}`);
 
-	// Parse response once at the beginning
 	const parsed = tryParseJson(response.responseText);
-
-	// Detect if Reddit returned an error format in the body (even if HTTP status is 200 OK)
 	const isErrorPayload = parsed?.json?.errors && Array.isArray(parsed.json.errors) && parsed.json.errors.length > 0;
 
-	// Throw normalized error if HTTP error OR if body contains Reddit's custom error arrays
 	if (response.status >= 400 || isErrorPayload) {
 		throw parseRedditError(response.status, response.responseText, parsed);
 	}
 
-	// Use parsed result if available, otherwise fall back to raw text
 	const result = parsed ?? response.responseText;
 
 	// Cache the successful result if requested

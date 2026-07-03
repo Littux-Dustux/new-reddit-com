@@ -1634,7 +1634,7 @@
     "d2x_gql_subreddit_more_posts_2": {
         "id": 5999,
         "name": "d2x_gql_subreddit_more_posts_2",
-        "variant": "enabled",
+        "variant": "control_1",
         "version": "8"
     },
     "d2x_gql_subreddit_page": {

@@ -1,7 +1,8 @@
 import { getLogger } from "./logging";
 import { initAPIMigratorInterceptors } from "./apiMigrate";
 import { gqlFetch } from "./api/gql";
-import experiments from "./initialState/experiments.json";
+import experiments from "./state/experiments.json";
+import { getLoidState } from "./state/utils";
 
 const logger = getLogger('init');
 
@@ -2345,7 +2346,6 @@ export const initialState = {
 
 export type State = typeof initialState;
 
-
 const addScript = (url: string): Promise<HTMLScriptElement> => {
 	return new Promise((resolve, reject) => {
 		const script = document.createElement("script");
@@ -2369,6 +2369,7 @@ async function main() {
 
 	logger.dbg("Userscript loaded, loading client...");
 
+	initialState.user.loid = getLoidState();
 	initialState.user.session = {
 		accessToken: window.tokenCache.token,
 		expires: new Date(window.tokenCache.expires).toISOString(),
