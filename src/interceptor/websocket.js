@@ -23,5 +23,5 @@ Object.assign(DummyWebSocket, {
 });
 
 if (location.host === "new-reddit-com.netlify.app") {
-	(window as any).WebSocket = DummyWebSocket;
+	window.WebSocket = DummyWebSocket;
 }

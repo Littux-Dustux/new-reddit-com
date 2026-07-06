@@ -5,6 +5,8 @@ import { postcomments, morecomments } from "./mappers/comments";
 import { structuredStylesLoadedSubs } from "./mappers/subreddit";
 
 
+const devvitDataCacheOptions = { cache: true, maxCacheAge: 300e3 };
+
 export const postCommentsResponse = async (postID: string, commentID: string | undefined, params: Record<string, string>) => {
 	try {
 		let postWithDevvit;
@@ -16,18 +18,18 @@ export const postCommentsResponse = async (postID: string, commentID: string | u
 				postWithDevvit = gqlFetch("GetDevvitPostData", "c1b617abd8eec6232ae0c97893316d44a2f09cb7cef56c646680b2d9de0d8802", {
 					postId: postID,
 					getCrossPost: Boolean(postFromState.crosspostParentId),
-				});
+				}, devvitDataCacheOptions);
 			} else {
 				postWithDevvit = (async () => {
 					const [post, postWithCrosspost] = await Promise.all([
 						gqlFetch("GetDevvitPostData", "c1b617abd8eec6232ae0c97893316d44a2f09cb7cef56c646680b2d9de0d8802", {
 							postId: postID,
 							getCrossPost: false,
-						}),
+						}, devvitDataCacheOptions),
 						gqlFetch("GetDevvitPostData", "c1b617abd8eec6232ae0c97893316d44a2f09cb7cef56c646680b2d9de0d8802", {
 							postId: postID,
 							getCrossPost: true,
-						})
+						}, devvitDataCacheOptions)
 					]);
 					if (post?.postInfoById?.devvit?.__typename === "DevvitPost") {
 						return post;
@@ -54,7 +56,7 @@ export const postCommentsResponse = async (postID: string, commentID: string | u
 			{ data: { children: [{ data: postData }] }},
 			{ data: { children: comments }}
 		] = await getREST(`${
-				params.subredditName && `/r/${params.subredditName}`
+				params.subredditName ? `/r/${params.subredditName}` : ''
 			}/comments/${postID.slice(3)}/_/${(commentID?.slice(3)) ?? ''}.json?${
 				new URLSearchParams({
 					...params,
@@ -65,7 +67,7 @@ export const postCommentsResponse = async (postID: string, commentID: string | u
 					threaded: "false",
 					raw_json: "1",
 					raw_media_syntax: "1",
-					context: "10000"
+					context: "3"
 			})
 		}`);
 		return {

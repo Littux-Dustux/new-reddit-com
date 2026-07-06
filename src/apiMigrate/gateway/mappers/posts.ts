@@ -41,21 +41,26 @@ const getMedia = (data: any, devvitData?: any) => {
 	}
 
 	if (devvitData?.__typename === "DevvitPost") {
-		setTimeout(() => {
+		/* let numTries = 0;
+		const iframeCaptureInterval = setInterval(() => {
+			numTries++;
+			if (numTries > 20) {
+				console.error("Devvit iframe not found");
+			}
 			const embedIFrame = document.body.querySelector<HTMLIFrameElement>(
 				`.uI_hDmU5GSiudtABRz_37 #${data.name} ._3K6DCjWs2dQ93YYZDOHjib`
 			);
 			if (embedIFrame) {
+				clearInterval(iframeCaptureInterval);
 				embedIFrame.replaceWith(convertDevvitDataToIFrame(devvitData));
 				console.debug("Injected devvit iframe");
-			} else {
-				console.error("Devvit iframe not found");
 			}
-		}, 1000);
+		}, 300); */
+
 		return {
-			content: "https://www.redditstatic.com/desktop2x/img/loading.gif",
+			content: `devvit:http://${location.host}/embed.html?${encodeURIComponent(convertDevvitDataToIFrame(devvitData).outerHTML)}`,
 			type: "embed",
-			width: 512,
+			width: 640,
 			height: 512,
 			obfuscated: obfuscatedUrl,
 			provider: "reddit",
@@ -295,7 +300,6 @@ export const processPost = (data: any, devvitData?: any) => ({
 
 export const convertDevvitDataToIFrame = (devvit: any): HTMLIFrameElement => {
 	const iframe = document.createElement("iframe");
-	iframe.className = "devvitEmbed";
 	iframe.allow = "clipboard-write; web-share";
 	iframe.loading = "lazy";
 	iframe.referrerPolicy = "origin";

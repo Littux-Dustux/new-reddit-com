@@ -1,10 +1,10 @@
-import { markdown } from "snudown-js";
 import modNoteCountFix from "./modNoteCountFix";
 import notificationsFix from "./notificationsFix";
 import { processGeneralSearch } from "./search";
 import { getREST } from "../../api/rest";
-import { getState } from "../../main";
 import { subredditNameToId } from "../gateway/mappers/subreddit";
+import { gqlFetch } from "../../api/gql";
+import { fixAwardIconSize } from "./mappers";
 
 export type OldOperation = (
 	| "CreatorStats"
@@ -333,6 +333,10 @@ export const gqlFedMap: GqlFedMapping = {
 		operationName: "GetModeratorList",
 		sha256Hash: "00b15ca6088f3aef8c887f54f4d70bbec5312cfef3a2a54a5efa8dbfb2b9cd83",
 	},
+	AllUserMultireddits: {
+		operationName: "MyMultireddits",
+		sha256Hash: "2482bfa42b8c8ae31ee5ef76105217138e7d81e8f9bfc274fabd33d71742afe8"
+	},
 	AddApprovedTalkHost: {
 		operationName: "<hardcoded>",
 		hardcodedResp: hardcodedMutation("addApprovedHostMember"),
@@ -349,15 +353,40 @@ export const gqlFedMap: GqlFedMapping = {
 		operationName: "AvailableAwards",
 		sha256Hash: "0d748eaa3d03cc4dbb5c6da31cdbd60aa37d3aeebbe40728707baaacd534753c",
 	},
+	AwardSheetInfo: {
+		operationName: "SortedUsableAwardsWithTags",
+		sha256Hash: "d44dfe19c0c19985410587e633838ff24c28fbd1013908b16da695fc37b43eb0",
+		mapVars: ({ thingId, ...rest }) => ({ nodeId: thingId, ...rest }),
+		mapResp: ({ subredditInfoById }) => ({
+			subredditInfoById: {
+				...subredditInfoById,
+				sortedUsableAwards: subredditInfoById.sortedUsableAwards.map((awardingTotal: any) => ({
+					...awardingTotal,
+					award: fixAwardIconSize(awardingTotal.award),
+				}))
+			}
+		})
+	},
+	AwardSheetInfoForProfile: {
+		operationName: "SortedUsableAwardsForProfile",
+		sha256Hash: "047bf98c22183ee3dd2daa8f542ca0b717f729a4df5b07f41dddff13ec6b68cd",
+		// will break
+	},
 	BadgeIndicators: {
-		//operationName: "BadgeCount",
-		//sha256Hash: "6e5b40ea4193a6fcfd6890518f4cdde524e434243d055c33a552af2e42e0a433",
-		operationName: "BadgeCountV2",
-		sha256Hash: "73bcdf5b9296d1a6dbd344d4fd1989a2f50428d45bdb98a498e05e81879cc979",
+		operationName: "BadgeCount",
+		sha256Hash: "6e5b40ea4193a6fcfd6890518f4cdde524e434243d055c33a552af2e42e0a433",
+		//operationName: "BadgeCountV2",
+		//sha256Hash: "73bcdf5b9296d1a6dbd344d4fd1989a2f50428d45bdb98a498e05e81879cc979",
 		mapResp: ({ badgeIndicators }) => ({
 			badgeIndicators: {
-				chatUnreadMessages: { count: badgeIndicators.chatInboxTab.count },
-				inboxBadgeCount: badgeIndicators.notificationInboxTab.count,
+				messageTab: badgeIndicators.messageTab,
+				activityTab: badgeIndicators.activityTab,
+				inboxTab: badgeIndicators.inboxTab,
+				chatUnreadMessages: {"count":0,"style":"NUMBERED"},
+				chatUnreadMentions: {"count":0,"style":"NUMBERED"},
+				chatV2UnreadMessages: {"count": badgeIndicators.chatTab.count,"style":"NUMBERED"},
+				chatHasNewMessages: {"isShowing": badgeIndicators.chatHasNewMessages.isShowing,"style":"FILLED"},
+				chatUnacceptedInvites: {"count":0,"style":"NUMBERED"}
 			}
 		})
 	},
@@ -723,8 +752,65 @@ export const gqlFedMap: GqlFedMapping = {
 		useShredditGqlProxy: true
 	},
 	MultiredditListing: {
-		operationName: "MultiredditByPath", // found a "MultiredditPosts" too. not sure which one is correct
-		sha256Hash: "bf03e8080191cd9cf427c354f0e4538c75f700f186caff46c55ad346afca32d3",
+		// operationName: "MultiredditByPath", // found a "MultiredditPosts" too. not sure which one is correct
+		// sha256Hash: "bf03e8080191cd9cf427c354f0e4538c75f700f186caff46c55ad346afca32d3",
+		operationName: "MultiredditListing",
+		// sha256Hash: "29fd321afe5604976850089b011cec4438e73297a4feca7ecefc50acf3c00f53",
+		// mapVars: ({ path, ...rest }) => ({ multiredditPath: path, ...rest }),
+		// mapResp: ({ postFeed }) => ({
+		//	multireddit: {
+		//		elements: postFeed.posts
+		//	}
+		// }),
+		async process({ path, includeSources, ...rest }) {
+			const [{ postFeed }, { multireddit } = {}] = await Promise.all([
+				gqlFetch(
+					"MultiredditPosts", "29fd321afe5604976850089b011cec4438e73297a4feca7ecefc50acf3c00f53",
+					{ multiredditPath: path, ...rest }
+				),
+				gqlFetch(
+					"MultiredditByPath", "bf03e8080191cd9cf427c354f0e4538c75f700f186caff46c55ad346afca32d3",
+					{ path, withSubreddits: includeSources }
+				)
+			]);
+
+			const responseMultireddit: Record<string, any> = {
+				elements: postFeed.posts
+			};
+
+			if (includeSources && multireddit.__typename === "Multireddit") {
+				const sources = Array(multireddit.subreddits.edges.length + multireddit.profiles.edges.length);
+				let index = 0;
+
+				for (const edge of multireddit.subreddits.edges) {
+					if (edge.node) {
+						edge.node.__typename = "Subreddit";
+						edge.node.type = "PUBLIC";
+						const legacyIcon = edge.node.styles?.legacyIcon;
+						if (legacyIcon) legacyIcon.dimensions = {
+							width: 256,
+							height: 256
+						}
+					}
+					sources[index++] = edge;
+				}
+
+				for (const edge of multireddit.profiles.edges) {
+					if (edge.node) edge.node.__typename = "Profile";
+					sources[index++] = edge;
+				}
+
+				responseMultireddit.sources = { edges: sources };
+				delete multireddit.subreddits;
+				delete multireddit.profiles;
+			}
+
+			return JSON.stringify({
+				data: {
+					multireddit: Object.assign(responseMultireddit, multireddit)
+				}
+			})
+		}
 	},
 	MutedSubreddits: {
 		operationName: "MutedSubreddits",
@@ -814,6 +900,21 @@ export const gqlFedMap: GqlFedMapping = {
 	ProfileHidden: {
 		operationName: "HiddenPosts",
 		sha256Hash: "dd50be43da2e469e529cb4c63c1d0f3c2f54c12d5e8f65a809b90ebaff0aa8e9",
+	},
+	ProfileHistoryPosts: {
+		operationName: "PostsByIds",
+		sha256Hash: "eb435514e5e7cbe599e34adb2d827d36832852dde767b74d96d917b812253124",
+		mapVars: ({ recentPostIds }) => ({ ids: recentPostIds }),
+		mapResp: ({ postsInfoByIds }) => ({
+			postsInfoByIds: postsInfoByIds.map((post: any) => {
+				if (post?.subreddit?.styles?.legacyIcon) post.subreddit.styles.legacyIcon.dimensions = {
+					width: 256,
+					height: 256
+				};
+				return post;
+			}),
+			identity: { redditor: null }
+		})
 	},
 	ProfileSaved: {
 		operationName: "SavedPosts",
@@ -907,7 +1008,19 @@ export const gqlFedMap: GqlFedMapping = {
 		mapVars: ({ id, ...otherVariables }) => ({ ids: [id], ...otherVariables }),
 		mapResp: ({ postsInfoByIds: posts }) => ({ postInfoById: posts[0] ?? null }),
 	},
-	// SocialLinks: todo
+	SocialLinks: {
+		// Got from Reddit themselves
+		// https://github.com/reddit/devvit/blob/0eabc7abebf850bdd0b7a4c7c1bdf3feac340402/packages/reddit/src/models/User.ts#L494
+		operationName: "GetUserSocialLinks",
+		sha256Hash: "2aca18ef5f4fc75fb91cdaace3e9aeeae2cb3843b5c26ad511e6f01b8521593a",
+		mapVars: ({ username }) => ({ name: username }),
+		mapResp: ({ user }) => ({
+			redditorInfoByName: {
+				__typename: user ? "Redditor" : "UnavailableRedditor",
+				...user
+			}
+		})
+	},
 	SubmitMediaUpload: {
 		operationName: "SubmitMediaUpload",
 		sha256Hash: "059a8313aa6543392de0443c3b0dd4ea42e35d5a83479864804c51c92982ded9",

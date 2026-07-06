@@ -282,7 +282,7 @@ export async function postcomments(post: Record<string, any>, commentsChildren: 
 	};
 
 	await recursiveProcessComments(commentsChildren, post, {
-		authorFlair: state.authorFlair,
+		authorFlair: state.authorFlair[subId],
 		comments: state.comments,
 		continueThreads: state.continueThreads,
 		moreComments: state.moreComments,

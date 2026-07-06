@@ -6230,7 +6230,7 @@
     "web_x_mr_awards_sunset": {
         "id": 8023,
         "name": "web_x_mr_awards_sunset",
-        "variant": "enabled",
+        "variant": "control_1",
         "version": "8"
     },
     "web_x_mr_background_selection": {
