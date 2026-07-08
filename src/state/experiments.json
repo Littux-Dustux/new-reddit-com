@@ -1766,7 +1766,7 @@
     "d2x_telemetry_via_gql": {
         "id": 3043,
         "name": "d2x_telemetry_via_gql",
-        "variant": "enabled",
+        "variant": "control_1",
         "version": "21"
     },
     "d2x_upload_lease_via_gql": {
