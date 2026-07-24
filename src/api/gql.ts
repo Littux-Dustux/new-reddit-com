@@ -6,12 +6,12 @@ import { RedditAPIError } from "./rest";
 
 const logger = getLogger("api:gql");
 
-export async function gqlFetch(
+export async function gqlFetch<T = any>(
 	operationName: string,
 	sha256Hash: string,
 	variables: any,
 	options: { parseJSON?: boolean, cache?: boolean, maxCacheAge?: number } = { parseJSON: true, cache: false, maxCacheAge: 5 * 60_000 },
-) {
+): Promise<T> {
 	options.parseJSON ??= true;
 	options.cache ??= false;
 	options.maxCacheAge ??= 5 * 60_000;
@@ -23,9 +23,9 @@ export async function gqlFetch(
 		const data = getCache(cacheKey, options.maxCacheAge);
 		if (data) {
 			if (typeof data === "string") {
-				return options.parseJSON ? JSON.parse(data).data : data;
+				return options.parseJSON ? JSON.parse(data).data : data as any;
 			} else {
-				return options.parseJSON ? data : JSON.stringify({ data });
+				return options.parseJSON ? data : JSON.stringify({ data }) as any;
 			}
 		}
 	}
@@ -70,7 +70,7 @@ export async function gqlFetch(
 
 	if (!options.parseJSON) {
 		if (options.cache) setCache(cacheKey, resp.responseText);
-		return resp.responseText;
+		return resp.responseText as any;
 	}
 
 	if (options.cache) setCache(cacheKey, data.data);

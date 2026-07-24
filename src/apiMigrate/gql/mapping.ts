@@ -4,7 +4,9 @@ import { processGeneralSearch } from "./search";
 import { getREST } from "../../api/rest";
 import { subredditNameToId } from "../gateway/mappers/subreddit";
 import { gqlFetch } from "../../api/gql";
-import { fixAwardIconSize } from "./mappers";
+import { fixAwardIconSize } from "./helpers/award";
+import { fixGqlListing, fixGqlPost, fixPopularElements } from "./helpers/post";
+import { getState } from "../../main";
 
 export type OldOperation = (
 	| "CreatorStats"
@@ -563,8 +565,33 @@ export const gqlFedMap: GqlFedMapping = {
 			},
 			experienceInputs: ["REONBOARDING_IN_FEED", "VIRAL_COMMUNITY_XPROMO", "ANNOUNCEMENT_IN_FEED"]
 		}),
-		mapResp: ({ postFeed, ...rest }) => ({ home: postFeed, ...rest }),
+		mapResp: ({ postFeed, ...rest }) => ({
+			home: {
+				elements: fixGqlListing(postFeed.elements),
+			},
+			...rest
+		}),
+		/* operationName: "Frontpage",
+		useShredditGqlProxy: true,
+		mapVars: ({ pageSize, ...rest }) => ({
+			first: pageSize,
+			navigationSessionId: rest.feedRankingContext.servingId,
+			includeAwards: true,
+			...rest
+		}),
+		mapResp: ({ feed }) => ({
+			home: {
+				elements: fixGqlListing(feed.elements)
+			}
+		}) */
 /*
+{
+      after: "",
+      distance: 4,
+      navigationSessionId: "",
+      cursor: "",
+      sort: "BEST"
+    }
 		operationName: "<FIXME>",
 		hardcodedResp: JSON.stringify({
 			data: {
@@ -627,6 +654,8 @@ export const gqlFedMap: GqlFedMapping = {
 	GetModPnSettingsLayout: {
 		operationName: "GetModPnSettingsLayout", // used the 2026 one here because it's probably more suitable
 		sha256Hash: "63b8a9fe8b50c8a4f343777fd6703d8dc11de7821ceb088f21eed1e33debc6ea",
+		mapVars: ({ subredditIds: [subredditId] }) => ({ subredditId }),
+		mapResp: ({ subredditInfoById }) => ({ subredditsInfoByIds: [subredditInfoById] })
 	},
 	GetModUserNotes: {
 		operationName: "GetModUserNotes", // thank you u/RVL-003
@@ -737,7 +766,13 @@ export const gqlFedMap: GqlFedMapping = {
 	},
 	ModQueueItems: {
 		operationName: "ModQueueItemsWithSort",
-		sha256Hash: "7f6a5858865a3dcf6400438385d3948aa08b456abb7549473863b7771c205efd",
+		sha256Hash: "69b97baa9dfde245bda5deb5aadabfaf19932cb785b64c2d93a30a10cd7dfc79",
+		mapVars: ({ subredditNames, ...rest }) => ({
+			subredditIds: subredditNames.map((name: string) => subredditNameToId[name]),
+			includePostContentPostHint: true,
+			includePostContentThumbnailEnabled: true,
+			...rest
+		})
 	},
 	ModRemove: {
 		operationName: "ModActionRemoveContent",
@@ -763,7 +798,7 @@ export const gqlFedMap: GqlFedMapping = {
 		//	}
 		// }),
 		async process({ path, includeSources, ...rest }) {
-			const [{ postFeed }, { multireddit } = {}] = await Promise.all([
+			const [{ postFeed }, { multireddit }] = await Promise.all([
 				gqlFetch(
 					"MultiredditPosts", "29fd321afe5604976850089b011cec4438e73297a4feca7ecefc50acf3c00f53",
 					{ multiredditPath: path, ...rest }
@@ -775,7 +810,7 @@ export const gqlFedMap: GqlFedMapping = {
 			]);
 
 			const responseMultireddit: Record<string, any> = {
-				elements: postFeed.posts
+				elements: fixGqlListing(postFeed.posts)
 			};
 
 			if (includeSources && multireddit.__typename === "Multireddit") {
@@ -844,8 +879,8 @@ export const gqlFedMap: GqlFedMapping = {
 		sha256Hash: "4fd0ee0e581d1abb0d3fb583b8fa6fc16d354f855c62aeae2d733c39a6c976db",
 	},
 	PopularFeedElements: {
-		operationName: "PopularFeedElements", // seems like this is the only feed that has a perfect replacement. // update: nevermind
-		sha256Hash: "76dc900970f85958acd52cce3a8bdb8a6d9c04bdece16349aab2774ce9423719",
+		operationName: "PopularFeedElements",
+		sha256Hash: "728c0f9a4d12c17b8cffe07669bb1a8770b0f2ec0c84e040485f8fad2d9c417f",
 		mapVars: (vars) => ({
 			...vars,
 			advancedConfiguration: {
@@ -854,12 +889,28 @@ export const gqlFedMap: GqlFedMapping = {
 			},
 			experienceInputs: ["REONBOARDING_IN_FEED", "VIRAL_COMMUNITY_XPROMO", "ANNOUNCEMENT_IN_FEED"]
 		}),
-		mapResp: ({ postFeed }) => ({
-			identity: {},
-			popular: postFeed,
+		mapResp: ({ popular }) => ({
+			identity: null,
+			popular: {
+				elements: fixPopularElements(popular.elements),
+			},
 			recentPosts: [],
 			trendingSubreddits: []
 		})
+		/*
+		operationName: "Popular",
+		useShredditGqlProxy: true,
+		mapVars: ({ pageSize, ...rest }) => ({
+			first: pageSize,
+			navigationSessionId: "",
+			includeAwards: true,
+			...rest
+		}),
+		mapResp: ({ feed }) => ({
+			popular: {
+				elements: fixPopularElements(feed.elements)
+			}
+		}) */
 	},
 	/*
 	PostFeedAndOtherDiscussions: {
@@ -883,6 +934,7 @@ export const gqlFedMap: GqlFedMapping = {
 	ProfileDownvoted: {
 		operationName: "DownvotedPosts",
 		sha256Hash: "bef6215672dd62181aa6290cf13205f01ae35aa1bc8a684cd41dddebcb922bc6",
+		mapResp: ({ identity }) => ({ identity: { downvotedPosts: fixGqlListing(identity.downvotedPosts) } })
 	},
 	ProductOffers: {
 		operationName: "GlobalProductOffers",
@@ -896,29 +948,37 @@ export const gqlFedMap: GqlFedMapping = {
 	ProfileFollowers: {
 		operationName: "FollowedByRedditors",
 		sha256Hash: "0aa3ae012c3149330ade5eeb181a89588482bfa93fd546503c8fa365447c4cd3",
+		mapVars: ({ first, after, searchQuery }) => ({ limit: first, from: after, searchQuery }),
+		mapResp: ({ identity }) => ({
+			identity: {
+				followedByRedditorsInfo: identity.followedByRedditorsInfo,
+				redditor: {
+					moderatedSubreddits: {
+						pageInfo: {},
+						edges: []
+					}
+				}
+			}
+		})
 	},
 	ProfileHidden: {
 		operationName: "HiddenPosts",
 		sha256Hash: "dd50be43da2e469e529cb4c63c1d0f3c2f54c12d5e8f65a809b90ebaff0aa8e9",
+		mapResp: ({ identity }) => ({ identity: { hiddenPosts: fixGqlListing(identity.hiddenPosts) } })
 	},
 	ProfileHistoryPosts: {
 		operationName: "PostsByIds",
 		sha256Hash: "eb435514e5e7cbe599e34adb2d827d36832852dde767b74d96d917b812253124",
 		mapVars: ({ recentPostIds }) => ({ ids: recentPostIds }),
 		mapResp: ({ postsInfoByIds }) => ({
-			postsInfoByIds: postsInfoByIds.map((post: any) => {
-				if (post?.subreddit?.styles?.legacyIcon) post.subreddit.styles.legacyIcon.dimensions = {
-					width: 256,
-					height: 256
-				};
-				return post;
-			}),
+			postsInfoByIds: postsInfoByIds.map(fixGqlPost),
 			identity: { redditor: null }
 		})
 	},
 	ProfileSaved: {
-		operationName: "SavedPosts",
-		sha256Hash: "b4544bae60315844e871bd541c0e510814f9a4d25d5c3e9d02bf3248878d7aeb",
+		operationName: "SavedPostsDynamicQuery",
+		useShredditGqlProxy: true,
+		mapResp: ({ saved }) => ({ identity: { saved }})
 	},
 	ProfileTrophies: {
 		//operationName: "ProfileTrophies",
@@ -946,6 +1006,7 @@ export const gqlFedMap: GqlFedMapping = {
 	ProfileUpvoted: {
 		operationName: "UpvotedPosts",
 		sha256Hash: "2576b683a14896be80b6b3b0465a55b7a94ada8f062564d2bdc1e38975bb5837",
+		mapResp: ({ identity }) => ({ identity: { upvotedPosts: fixGqlListing(identity.upvotedPosts) } })
 	},
 	RedditorIdByName: {
 		operationName: "GetUserIdByName", // 2026 app
@@ -977,6 +1038,10 @@ export const gqlFedMap: GqlFedMapping = {
 	ReportComment: {
 		operationName: "ReportComment",
 		sha256Hash: "6b55eb68b0c8cb0d908cba2f9801d393003a41c347e98a4906c12d137532edf9",
+	},
+	ReportForm: {
+		operationName: "ReportForm",
+		useShredditGqlProxy: true,
 	},
 	ReportPost: {
 		operationName: "ReportPost",
@@ -1222,6 +1287,7 @@ export const gqlFedMap: GqlFedMapping = {
 	UpdateInboxActivitySeenState: {
 		operationName: "UpdateInboxActivitySeenState",
 		sha256Hash: "8a6ec796884e51eedd8c094c322173fe7cceefd33e8e84e48deaaa750bad7772",
+		mapVars: () => ({ input: { lastSentAt: (new Date()).toISOString() } })
 	},
 	UpdateModPnSettingStatus: {
 		operationName: "UpdateModPnSettingStatus",

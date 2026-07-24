@@ -1,4 +1,4 @@
-import type { InterceptorHandler } from "../../interceptor/xhr";
+import type { InterceptorHandler } from "../interceptXhr";
 import { getLogger } from "../../logging/logger";
 import { moreCommentsResponse, postCommentsResponse } from "./postCommentsPage";
 import { subredditPostsPage } from "./subredditPostsPage";

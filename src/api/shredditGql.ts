@@ -28,9 +28,10 @@ export default async function svcGqlFetch(operation: string, variables: any, opt
 		if (!options.parseJSON) return resp.responseText;
 
 		const data = JSON.parse(resp.responseText);
-		if (data.errors) {
+		if (data.errors?.length) {
 			logger.err(data.errors.length + " errors for " + operation, true, data.errors);
 			multiErrorToast(data.errors);
+			return data.data;
 		} else {
 			return data.data;
 		}

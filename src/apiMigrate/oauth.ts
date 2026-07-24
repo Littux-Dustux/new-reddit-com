@@ -1,5 +1,5 @@
 import { getRedditRequestHeaders, parseResponseAndStoreAuth, redditSession } from "../api/helpers";
-import type { InterceptorHandler } from "../interceptor/xhr";
+import type { InterceptorHandler } from "./interceptXhr";
 import { getLogger } from "../logging/logger";
 import { getState } from "../main";
 import { convertStateLoidToString } from "../state/utils";

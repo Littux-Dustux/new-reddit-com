@@ -38,7 +38,15 @@
 								: e.startsWith("devvit:")
 									? e.slice(7)
 									: e
+						}
+
+						const originalNormalizeSubreddit = importRedditModule('./src/reddit/helpers/graphql/normalizeSubredditFromGql/index.ts').a;
+						importRedditModule('./src/reddit/helpers/graphql/normalizeSubredditFromGql/index.ts').a = function (e) {
+							if (e && e.styles && e.styles.legacyIcon) {
+								e.styles.legacyIcon.dimensions = { height: 256, width: 256 };
 							}
+							return originalNormalizeSubreddit(e);
+						}
 					}
 				}]
 			);

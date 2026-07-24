@@ -19,8 +19,7 @@ export async function processGeneralSearch({ includePosts, postsAfter, includeCo
 				{ pageSize: 25, afterCursor: commentsAfter, ...vars },
 			),
 		);
-	includeCommunities && logger.wrn("Communities search is currently broken", true);
-	/*
+	includeCommunities && /* logger.wrn("Communities search is currently broken", true); */
 		searchPromises.push(
 			gqlFetch("SearchCommunities", "a3333069c1ead3ceec6d9bf4da4185ff584f69d0ba8b586e545b32ea62170932",
 				{ pageSize: communityRows, afterCursor: communitiesAfter, ...vars },
@@ -29,7 +28,7 @@ export async function processGeneralSearch({ includePosts, postsAfter, includeCo
 					node: {
 						publicDescription: description || {
 							markdown: publicDescriptionText,
-							richtext: ""
+							richtext: '{"document":[]}'
 						},
 						publicDescriptionText,
 						...rest
@@ -38,7 +37,6 @@ export async function processGeneralSearch({ includePosts, postsAfter, includeCo
 				return { search };
 			}),
 		);
-	*/
 
 	includeAuthors && logger.wrn("User search is currently broken", true);
 	/*

@@ -1,4 +1,4 @@
-import type { InterceptorHandler } from "../interceptor/xhr";
+import type { InterceptorHandler } from "./interceptXhr";
 import { getLogger } from "../logging/logger";
 
 const logger = getLogger("s3UploadPipe");

@@ -10,6 +10,8 @@ export const getVideoMediaMetadataGql = (data: any) => ({
 	y: data.height,
 });
 
+// export const getMediaMetadataFromGql: (gqlMedia: any) => Record<string, any> = window.importRedditModule('./src/reddit/helpers/graphql/normalizePostFromGql/index.ts').c;
+
 export const getMuxedMP4sDownloadRTJSON = (muxedMp4s: any) => [
 	{"e": "hr"},
 	{

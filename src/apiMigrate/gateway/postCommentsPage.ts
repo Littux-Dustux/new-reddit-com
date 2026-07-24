@@ -13,7 +13,7 @@ export const postCommentsResponse = async (postID: string, commentID: string | u
 
 		// @ts-ignore
 		const postFromState = getState().posts.models[postID];
-		if (!postFromState || postFromState.crosspostParentId || postFromState.thumbnail.url === "self") {
+		if (!postFromState || postFromState.crosspostParentId || postFromState.thumbnail.url === "self" || postFromState.thumbnail.url === "default") {
 			if (postFromState) {
 				postWithDevvit = gqlFetch("GetDevvitPostData", "c1b617abd8eec6232ae0c97893316d44a2f09cb7cef56c646680b2d9de0d8802", {
 					postId: postID,
@@ -67,7 +67,10 @@ export const postCommentsResponse = async (postID: string, commentID: string | u
 					threaded: "false",
 					raw_json: "1",
 					raw_media_syntax: "1",
-					context: "3"
+					context: "3",
+					//sort: "live",
+					//truncate: "20",
+					//depth: "6",
 			})
 		}`);
 		return {

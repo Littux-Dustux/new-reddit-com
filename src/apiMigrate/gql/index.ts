@@ -1,4 +1,4 @@
-import type { InterceptorHandler } from "../../interceptor/xhr";
+import type { InterceptorHandler } from "../interceptXhr";
 import { gqlFetch } from "../../api/gql";
 import { getLogger } from "../../logging/logger";
 import idMapping from './oldGqlIdNameMap.json';

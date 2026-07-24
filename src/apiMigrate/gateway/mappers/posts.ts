@@ -1,3 +1,4 @@
+import { getState } from "../../../main";
 import { getVoteStateNum } from "./common";
 
 // Originally, I had my own post mapper. But I found a "r2 normalize" function from a new reddit js bundle.
@@ -13,6 +14,7 @@ const getFlair = (data: any) => {
 			type: "richtext",
 			textColor: data.link_flair_text_color || "dark",
 			backgroundColor: data.link_flair_background_color || "",
+			cssClass: data.link_flair_css_class || null,
 			templateId: data.link_flair_template_id,
 		});
 	}
@@ -22,6 +24,7 @@ const getFlair = (data: any) => {
 			type: "text",
 			textColor: data.link_flair_text_color || "dark",
 			backgroundColor: data.link_flair_background_color || "",
+			cssClass: data.link_flair_css_class || null,
 			templateId: data.link_flair_template_id,
 		});
 	}
@@ -77,10 +80,10 @@ const getMedia = (data: any, devvitData?: any) => {
 			obfuscated: obfuscatedUrl,
 			gallery: {
 				items: (galleryData.items || []).map((it: any) => ({
-					caption: it.caption || null,
-					id: null,
+					caption: it.caption,
+					id: it.id,
 					mediaId: it.media_id,
-					adEvents: [],
+					adEvents: it.ad_events ?? [],
 				})),
 			},
 			mediaMetadata: data.media_metadata,
@@ -168,7 +171,9 @@ const getMedia = (data: any, devvitData?: any) => {
 		};
 	}
 
-	return null;
+	return {
+		richtextContent: data.rtjson
+	};
 };
 
 const getSource = (data: any) => {
@@ -216,6 +221,7 @@ export const processPost = (data: any, devvitData?: any) => ({
 	author: data.author,
 	authorId: data.author_fullname,
 	authorIsBlocked: data.author_is_blocked,
+	awardCountsById: (getState().posts.models as any)[data.name]?.awardCountsById,
 	bannedAtUTC: data.banned_at_utc,
 	bannedBy: data.banned_by,
 	belongsTo: {
@@ -227,7 +233,11 @@ export const processPost = (data: any, devvitData?: any) => ({
 	created: data.created_utc * 1000, // Reddit API returns seconds, UI usually needs ms
 	crosspostParentId: data.cross_post_parent_id || data.crosspost_parent_list?.[0]?.name || null,
 	crosspostRootId: data.cross_post_root_id || data.crosspost_parent_list?.[0]?.name || null,
-	discussionType: data.discussion_type || null,
+	discussionType: /\b(thread|megathread)\b/.test(data.title)
+		? "CHAT"
+		: data.discussion_type
+			? data.discussion_type.toUpperCase()
+			: null,
 	distinguishType: data.distinguished || null,
 	domain: data.domain,
 	domainOverride: data.domain_override || null,
@@ -244,19 +254,19 @@ export const processPost = (data: any, devvitData?: any) => ({
 	isBlank: !!data.is_blank,
 	isCreatedFromAdsUi: data.is_created_from_ads_ui,
 	isCrosspostable: data.is_crosspostable,
-	isGildable: data.can_gild,
+	isGildable: true, // data.can_gild,
 	isLocked: data.locked,
 	isMediaOnly: data.media_only,
 	isMeta: data.is_meta,
 	isNSFW: data.over_18,
 	isPinned: data.pinned,
 	isOriginalContent: data.is_original_content,
-	isScoreHidden: Boolean(data.hide_score),
+	isScoreHidden: false, // Boolean(data.hide_score),
 	isSpoiler: data.spoiler,
 	isSponsored: Boolean(data.promoted),
 	isStickied: data.stickied,
 	isSurveyAd: Boolean(data.is_survey_ad),
-	liveCommentsWebsocket: data.liveCommentsWebsocket || data.websocket_url,
+	liveCommentsWebsocket: data.name,  // data.liveCommentsWebsocket || data.websocket_url,
 	media: getMedia(data, devvitData),
 	modReports: data.mod_reports,
 	numComments: data.num_comments,
@@ -277,7 +287,7 @@ export const processPost = (data: any, devvitData?: any) => ({
 				width: data.preview.images[0].source.width,
 				height: data.preview.images[0].source.height,
 			}
-		: undefined,
+		: null,
 	removedBy: data.removed_by,
 	removedByCategory: data.removed_by_category,
 	saved: data.saved,

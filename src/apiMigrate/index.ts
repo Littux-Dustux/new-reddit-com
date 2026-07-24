@@ -1,5 +1,5 @@
 import { getLogger } from "../logging/logger";
-import { addInterceptor, type InterceptorHandler } from "../interceptor/xhr";
+import { addInterceptor, type InterceptorHandler } from "./interceptXhr";
 
 import { gqlMigrationInterceptor } from "./gql";
 import { gatewayMigratorInterceptor } from "./gateway";
@@ -18,6 +18,7 @@ export function initAPIMigratorInterceptors() {
 	addInterceptor("/", "POST", relativePathHandler);
 	addInterceptor("reddit-subreddit-uploaded-media.s3-accelerate.amazonaws.com", "POST", s3UploadPipeInterceptor);
 	addInterceptor("reddit-uploaded-media.s3-accelerate.amazonaws.com", "POST", s3UploadPipeInterceptor);
+	addInterceptor("reddit-uploaded-video.s3-accelerate.amazonaws.com", "POST", s3UploadPipeInterceptor);
 
 	logger.log("Initialized interceptors.");
 }

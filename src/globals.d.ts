@@ -19,4 +19,5 @@ declare interface Window {
 		subscribe: (listener: () => void) => () => void;
 	},
 	addInterceptor: typeof addInterceptor;
+	importRedditModule: (modulePath: string) => any;
 }

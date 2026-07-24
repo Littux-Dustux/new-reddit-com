@@ -3,6 +3,7 @@ import { initAPIMigratorInterceptors } from "./apiMigrate";
 import { gqlFetch } from "./api/gql";
 import experiments from "./state/experiments.json";
 import { getLoidState } from "./state/utils";
+import { patchWebSocket } from "./apiMigrate/liveChat";
 
 const logger = getLogger('init');
 
@@ -173,6 +174,7 @@ export const initialState = {
 				daysOfPremium: 31,
 				tiers: null,
 			},
+			/*
 			award_free_bravo: {
 				awardType: "GLOBAL",
 				awardSubType: "GLOBAL",
@@ -221,6 +223,7 @@ export const initialState = {
 				daysOfPremium: 0,
 				tiers: null,
 			},
+			*/
 		},
 		sortedUsable: {
 			api: { pending: {} },
@@ -2158,7 +2161,7 @@ export const initialState = {
 			liveBarRecommendationsEnabled: false,
 			loginOtpEnabled: false,
 			markMessagesRead: false,
-			nightmode: false,
+			nightmode: true,
 			openPostInNewTab: false,
 			over18: true,
 			reduceAnimationsFromAwards: false,
@@ -2445,6 +2448,7 @@ async function main() {
 	}
 
 	initAPIMigratorInterceptors();
+	patchWebSocket();
 	await addScript("https://www.redditstatic.com/desktop2x/Reddit.e6908df657b523d36c19.js");
 
 	const timer = setInterval(() => {
@@ -2456,7 +2460,7 @@ async function main() {
 			clearInterval(timer);
 			window.clientLoaded = true;
 			// right now, I manually send it using a bookmarklet
-			// window.dispatchEvent(new PopStateEvent('popstate'))
+			window.dispatchEvent(new PopStateEvent('popstate'))
 		}
 	}, 50);
 
