@@ -1,8 +1,6 @@
 import { getRedditRequestHeaders, parseResponseAndStoreAuth, redditSession } from "../api/helpers";
 import type { InterceptorHandler } from "./interceptXhr";
 import { getLogger } from "../logging/logger";
-import { getState } from "../main";
-import { convertStateLoidToString } from "../state/utils";
 import { convertHeadersStringToObject } from "../utils";
 
 const logger = getLogger("oauthPipe");
@@ -17,7 +15,6 @@ export const oauthPipeInterceptor: InterceptorHandler = async ({ url, method, he
 	}
 
 	if (redditSession) {
-		logger.dbg("State user.sessionTracker === lastRedditSession:", getState().user.sessionTracker === redditSession);
 		headers["x-reddit-session"] = redditSession;
 	} else {
 		delete headers["x-reddit-session"];

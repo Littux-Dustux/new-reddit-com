@@ -1,16 +1,11 @@
-import { getGIPHYGifsByIds as getRedditGIPHYGifsByIds } from "../../../api/giphy";
-import { gqlFetch } from "../../../api/gql";
-import { getLogger } from "../../../logging";
-import { getMuxedMP4sDownloadRTJSON, getVideoMediaMetadataGql, getVoteStateNum } from "./common";
-import { processPost } from "./posts";
-import { processSubreddit, processSubredditAboutInfo } from "./subreddit";
-import { getAuthorFlairFromR2Thing, processSubredditPostFlair, processSubredditUserFlair } from "./flair";
+import { getState } from "../../../main";
+import { getVoteStateNum } from "./common";
+import { getAuthorFlairFromR2Thing } from "./flair";
+import type { CommentListingPageState, ExtraComments } from "./listing";
 
-type CommentPosition = { id: string; type: string } | null;
+export type CommentPosition = { id: string; type: string } | null;
 
-const logger = getLogger("mapComments");
-
-const processSingleComment = (comment: any, post: any = {}, { next, prev }: { next: CommentPosition; prev: CommentPosition } = { next: null, prev: null }) => ({
+const processSingleComment = (comment: any, postId?: any) => ({
 	approvedAtUTC: comment.approved_at_utc,
 	approvedBy: comment.approved_by,
 	author: comment.author,
@@ -18,7 +13,7 @@ const processSingleComment = (comment: any, post: any = {}, { next, prev }: { ne
 	bannedAtUTC: comment.banned_at_utc,
 	bannedBy: comment.banned_by,
 	bodyMD: comment.body,
-	body: comment.body_html ?? "",
+	body: comment.body_html,
 	collapsed: comment.collapsed,
 	collapsedReason: comment.collapsed_reason,
 	collapsedBecauseCrowdControl: comment.collapsed_because_crowd_control,
@@ -46,21 +41,23 @@ const processSingleComment = (comment: any, post: any = {}, { next, prev }: { ne
 	isStickied: comment.stickied,
 	isScoreHidden: comment.score_hidden,
 	media: {
-		richtextContent: comment.rtjson,
+		richtextContent: comment.rtjson ?? {
+			document: [{"e": "text", "t": comment.body}]
+		},
 		type: "rtjson",
 		rteMode: comment.rte_mode,
 		mediaMetadata: comment.media_metadata,
 	},
 	modReports: comment.mod_reports,
-	next,
+	next: null,
 	numReports: comment.num_reports,
 	parentId: comment.parent_id,
 	permalink: comment.permalink,
-	prev,
+	prev: null,
 	profileImage: comment.profile_img,
-	postAuthor: post.author ?? comment.link_author ?? null,
-	postId: post.name ?? comment.link_id,
-	postTitle: post.title ?? comment.link_title ?? null,
+	postAuthor: comment.link_author ?? null,
+	postId: postId ?? comment.link_id,
+	postTitle: comment.link_title ?? null,
 	score: comment.score,
 	sendReplies: comment.send_replies,
 	subredditId: comment.subreddit_id,
@@ -69,237 +66,193 @@ const processSingleComment = (comment: any, post: any = {}, { next, prev }: { ne
 	voteState: getVoteStateNum(comment.likes),
 });
 
-const processMoreComment = (morecomments: any, post: any, { next, prev }: { next: CommentPosition; prev: CommentPosition }) => ({
+
+const processMoreComment = (morecomments: any, postId: string) => ({
 	depth: morecomments.depth,
 	id: "moreComments-" + morecomments.name,
-	next,
+	next: null,
 	numComments: morecomments.count,
 	parentId: morecomments.parent_id,
-	postId: post.name,
-	prev,
+	postId,
+	prev: null,
 	token: morecomments.children.join(","),
 });
 
-const processContinueThread = (morecomments: any, post: any, { next, prev }: { next: CommentPosition; prev: CommentPosition }) => ({
+
+const processContinueThread = (morecomments: any, postId: string) => ({
 	count: morecomments.count,
 	depth: morecomments.depth,
 	id: "continueThread-" + morecomments.parent_id,
-	next,
+	next: null,
 	parentId: morecomments.parent_id,
-	postId: post.name,
-	prev,
+	postId,
+	prev: null,
 });
 
-const getCommentPositionObject = (comment: any): CommentPosition => {
-	if (!comment) return null;
-	return {
-		id:
-			comment.kind === "more"
-				? comment.data.count === 0
-					? "continueThread-" + comment.data.parent_id
-					: "moreComments-" + comment.data.name
-				: comment.data.name,
-		type: comment.kind === "more" ? (comment.data.count === 0 ? "continueThread" : "moreComments") : "comment",
-	};
-};
 
-const recursiveProcessComments = async (
-	commentChildren: Record<string, any>[],
-	postData: Record<string, any>,
-	{
-		authorFlair = {},
-		comments = {},
-		continueThreads = {},
-		moreComments = {},
-	}: {
-		authorFlair?: Record<string, any>;
-		comments?: Record<string, any>;
-		continueThreads?: Record<string, any>;
-		moreComments?: Record<string, any>
-	},
-) => {
-	// some giphy comments don't have the proper metadata, and have {"status":"invalid"}. So we'll fetch it from GIPHY.
-	const brokenGiphyCommentMediaMetadatas: Record<string, any[]> = {};
-	const giphyIdsToFetch: Set<string> = new Set();
 
-	// reddit doesn't include videos in comments on the old API
-	const videoCommentIncompleteMedias: Record<string, any> = {};
-	const videoCommentIdsToFetch: string[] = [];
+export function addCommentToState(comment: any, state: CommentListingPageState) {
+	state.comments[comment.name] = processSingleComment(comment);
 
-	for (let i = 0; i < commentChildren.length; i++) {
-		const comment = commentChildren[i] as any;
-
-		authorFlair[comment.data.author] ??= getAuthorFlairFromR2Thing(comment.data);
-
-		const position = {
-			next: getCommentPositionObject(commentChildren[i + 1]),
-			prev: getCommentPositionObject(commentChildren[i - 1])
-		}
-
-		if (comment.kind === "more") {
-			if (comment.data.count === 0) {
-				continueThreads["continueThread-" + comment.data.parent_id] = processContinueThread(comment.data, postData, position);
-			} else {
-				moreComments["moreComments-" + comment.data.name] = processMoreComment(comment.data, postData, position);
-			}
-		} else {
-			const processedComment = processSingleComment(comment.data, postData, position);
-			comments[comment.data.name] = processedComment;
-
-			const [firstMediaKey, firstMedia]: [string, any] = (processedComment.media.mediaMetadata && Object.entries(processedComment.media.mediaMetadata)[0]) ?? [null, null];
-
-			if (firstMedia && firstMedia.status === "invalid" && firstMediaKey.startsWith("giphy|") ) {
-				const giphyId = firstMediaKey.split("|")[1] as string;
-				giphyIdsToFetch.add(giphyId);
-				(brokenGiphyCommentMediaMetadatas[giphyId] ??= []).push({
-					key: firstMediaKey,
-					mediaMetadata: processedComment.media.mediaMetadata
-				});
-			} else if (processedComment.media.richtextContent.document.some((node: any) => node.e === "video")) {
-				videoCommentIdsToFetch.push(processedComment.id);
-				videoCommentIncompleteMedias[processedComment.id] = processedComment.media;
-			}
-		}
-
-		/* threaded=false doesn't require recursive processing of comments.
-		if (comment.data.replies?.kind === "Listing") {
-			recursiveProcessComments(comment.data.replies.data.children, post, authorFlair, comments, moreComments);
-		} */
-	}
-
-	const commentFixerPromises: Promise<void>[] = [];
-
-	if (giphyIdsToFetch.size > 0)
-		commentFixerPromises.push(
-			getRedditGIPHYGifsByIds(giphyIdsToFetch).then(redditGiphyGifDatas => {
-				for (const giphyId of giphyIdsToFetch) {
-					const gifData = redditGiphyGifDatas[giphyId];
-					const brokenMediaMetadatas = brokenGiphyCommentMediaMetadatas[giphyId];
-
-					if (gifData && brokenMediaMetadatas) {
-						for (const { key, mediaMetadata } of brokenMediaMetadatas) {
-							gifData.id ??= key;
-							mediaMetadata[key] = gifData;
-						}
-					}
-				}
-			}).catch(e => {
-				logger.err("Error fetching GIPHY GIF data: " + (e as any).message);
-			})
-		);
-
-	if (videoCommentIdsToFetch.length > 0)
-		commentFixerPromises.push(
-			gqlFetch("CommentMediaDetails", "4228949b61fb4a9c17aed04edc4be641a7c48a12fbd506151afde1ce0e335857", { ids: videoCommentIdsToFetch })
-			.then(({ commentsByIds }) => {
-				for (const comment of commentsByIds) {
-					const incompleteMedia = videoCommentIncompleteMedias[comment.id];
-					const videoAsset = comment.content?.richtextMedia?.[0];
-
-					if (incompleteMedia && videoAsset?.status === "VALID") {
-						incompleteMedia.mediaMetadata = {
-							[videoAsset.id]: getVideoMediaMetadataGql(videoAsset)
-						};
-						const muxedMp4s = videoAsset.packagedMedia?.muxedMp4s;
-						if (muxedMp4s) {
-							incompleteMedia.richtextContent.document.push(...getMuxedMP4sDownloadRTJSON(muxedMp4s))
-						}
-					}
-				}
-			})
-		);
-
-	await Promise.all(commentFixerPromises);
-	return { authorFlair, comments, continueThreads, moreComments };
-};
-
-export async function postcomments(post: Record<string, any>, commentsChildren: Record<string, any>[], structuredStyles: any = null, postWithDevvit: any) {
-	const state: Record<string, any> = {
-		account: null,
-		authorFlair: {},
-		commentLists: {
-			[post.name]: {
-				head: null,
-				tail: null,
-			},
-		},
-		comments: {},
-		features: null,
-		moreComments: {},
-		postFlair: {},
-		postMeta: null,
-		posts: {},
-		profiles: {},
-		subreddits: {},
-		preferences: null,
-		continueThreads: {},
-		subredditAboutInfo: {},
-		structuredStyles,
-		userFlair: {},
-		subredditPermissions: null,
-	};
-
-	const posts = state.posts;
-	posts[post.name] = processPost(post, postWithDevvit?.devvit);
-
-	if (post.crosspost_parent_list?.[0]) {
-		const crossPost = post.crosspost_parent_list[0];
-		const subId = crossPost.subreddit_id || "";
-		posts[crossPost.name] = processPost(crossPost, postWithDevvit?.crosspostRoot?.postInfo?.devvit);
-
-		state.authorFlair[subId] ??= {};
-		state.authorFlair[subId][crossPost.author] = getAuthorFlairFromR2Thing(crossPost);
-
-		if (crossPost.sr_detail) {
-			state.subredditAboutInfo[subId] ??= processSubredditAboutInfo(crossPost.sr_detail);
-			state.subreddits[subId] ??= processSubreddit(crossPost.sr_detail);
-			state.postFlair[subId] ??= processSubredditPostFlair(crossPost.sr_detail);
-			state.userFlair[subId] ??= processSubredditUserFlair(crossPost.sr_detail);
-		}
-	}
-
-	const subId = post.subreddit_id || "";
+	const subId = comment.subreddit_id;
 	state.authorFlair[subId] ??= {};
-	state.authorFlair[subId][post.author] = getAuthorFlairFromR2Thing(post);
+	state.authorFlair[subId][comment.author] ??= getAuthorFlairFromR2Thing(comment);
 
-	if (post.sr_detail) {
-		state.subredditAboutInfo[subId] ??= processSubredditAboutInfo(post.sr_detail);
-		state.subreddits[subId] ??= processSubreddit(post.sr_detail);
-		state.postFlair[subId] ??= processSubredditPostFlair(post.sr_detail);
-		state.userFlair[subId] ??= processSubredditUserFlair(post.sr_detail);
-	}
-
-	if (commentsChildren.length === 0) {
-		return state;
-	}
-
-	const firstComment = commentsChildren[0];
-	const lastComment = /* commentsChildren.length <= 1 ? null : */ commentsChildren[commentsChildren.length - 1];
-
-	state.commentLists[post.name] = {
-		head: getCommentPositionObject(firstComment),
-		tail: getCommentPositionObject(lastComment),
+	state.postFlair[subId] ??= {
+		displaySettings: {
+			isEnabled: true,
+			position: "right"
+		}
 	};
 
-	await recursiveProcessComments(commentsChildren, post, {
-		authorFlair: state.authorFlair[subId],
-		comments: state.comments,
-		continueThreads: state.continueThreads,
-		moreComments: state.moreComments,
-	});
+	state.posts[comment.link_id] ??= {
+		author: comment.link_author,
+		belongsTo: {
+			id: comment.subreddit_id,
+			type: comment.subreddit_type === "user" ? "profile" : "subreddit",
+		},
+		events: [],
+		flair: comment.over_18
+			? [{ type: "nsfw", text: "nsfw" }]
+			: [],
+		id: comment.link_id,
+		isNSFW: comment.over_18,
+		isScoreHidden: true,
+		numComments: comment.num_comments,
+		postId: comment.link_id,
+		permalink: comment.link_permalink ?? `/r/${comment.subreddit}/comments/${comment.link_id?.slice(3)}/_/`,
+		score: 0,
+		source: {
+			displayText: comment.link_url
+				? (comment.link_url.startsWith('/') ? 'www.reddit.com' : new URL(comment.link_url).hostname)
+				: 'self.'+comment.subreddit,
+			url: comment.link_url ?? `https://www.reddit.com/r/${comment.subreddit}/comments/${comment.link_id?.slice(3)}/_/`,
+		},
+		thumbnail: {
+			width: 0,
+			height: 0,
+			url: "default",
+		},
+		title: comment.link_title,
+	};
+
+	state.subreddits[subId] ??= {
+		displayText: comment.subreddit_name_prefixed,
+		icon: {
+			width: 0,
+			height: 0,
+			url: null
+		},
+		id: comment.subreddit_id,
+		name: comment.subreddit,
+		isQuarantined: comment.quarantine,
+		type: comment.subreddit_type,
+		url: `/r/${comment.subreddit}/`
+	};
+}
+
+
+
+type CommentTreeState = {
+	authorFlair: Record<string, Record<string, any>>;
+	commentLists: Record<string, {
+		head: CommentPosition,
+		tail: CommentPosition,
+	}>;
+	comments: Record<string, any>;
+	continueThreads: Record<string, any>;
+	moreComments: Record<string, any>;
+};
+
+export function addCommentTreeToState(
+	commentChildren: Record<string, any>[],
+	postId: string,
+	state: CommentTreeState = {
+		authorFlair: {},
+		comments: {},
+		commentLists: {},
+		continueThreads: {},
+		moreComments: {},
+	},
+	extraComments?: ExtraComments,
+	_order: [string, any][] = [],
+): CommentTreeState {
+
+	const isTopLevelCall = _order.length === 0;
+	const subId = commentChildren[0]?.data.subreddit_id;
+	state.authorFlair[subId] ??= {};
+
+	for (const { kind, data: comment } of commentChildren) {
+		if (!comment.depth) {
+			const parentComment = state.comments[comment.parent_id] ?? (getState().features.comments.models as any)[comment.parent_id];
+			comment.depth = (parentComment?.depth ?? -1) + 1;
+		}
+
+		if (kind === "t1") {
+			const processedComment = processSingleComment(comment, postId);
+			_order.push(['comment', processedComment]);
+			state.comments[comment.name] = processedComment;
+			state.authorFlair[subId][comment.author] ??= getAuthorFlairFromR2Thing(comment);
+
+		} else if (comment.count === 0) {
+			const processedContinueThread = processContinueThread(comment, postId);
+			_order.push(['continueThread', processedContinueThread]);
+			state.continueThreads[`continueThread-${comment.parent_id}`] = processedContinueThread;
+
+		} else {
+			const processedMoreComment = processMoreComment(comment, postId);
+			_order.push(['moreComments', processedMoreComment]);
+			state.moreComments[`moreComments-${comment.name}`] = processedMoreComment;
+		}
+
+		if (comment.replies?.data?.children) {
+			addCommentTreeToState(comment.replies.data.children, postId, state, undefined, _order);
+		}
+	}
+
+	// if it is the top level call, add orders to the comments, moreComments, and continueThreads objects
+	if (isTopLevelCall) {
+		for (let i = 0; i < _order.length; i++) {
+			const currentItem = (_order[i] as [string, any])[1];
+			const [prevType, prevItem] = _order[i - 1] ?? [];
+			const [nextType, nextItem] = _order[i + 1] ?? [];
+
+			currentItem.prev = prevType && {
+				type: prevType,
+				id: prevItem.id,
+			};
+			currentItem.next = nextType && {
+				type: nextType,
+				id: nextItem.id,
+			};
+		}
+
+		const [firstType, firstItem] = _order[0] ?? [];
+		const [lastType, lastItem] = _order[_order.length - 1] ?? [];
+
+		if (extraComments) {
+			const itemBeforeExtraComments = state.comments[extraComments.parentId];
+			const itemAfterExtraCommentsPosition = itemBeforeExtraComments.next;
+
+			itemBeforeExtraComments.next = {
+				type: 'extraComments',
+				id: extraComments.id,
+			};
+			extraComments.prev = {
+				type: 'comment',
+				id: itemBeforeExtraComments.id,
+			};
+			extraComments.next = itemAfterExtraCommentsPosition;
+			extraComments.depth = lastItem.depth;
+		};
+
+		state.commentLists[postId] = {
+			head: firstType ? { type: firstType, id: firstItem.id } : null,
+			tail: extraComments
+				? { type: 'extraComments', id: extraComments.id }
+				: lastType ? { type: lastType, id: lastItem.id } : null,
+		};
+	}
 
 	return state;
-}
-
-export async function morecomments(things: Record<string, any>[], postId: string) {
-	return {
-		commentLists: {
-			[postId]: {
-				head: getCommentPositionObject(things[0]),
-				tail: getCommentPositionObject(things[things.length - 1]),
-			},
-		},
-		// full post object isn't needed, only post ID is needed
-		...(await recursiveProcessComments(things, { name: postId }, {})),
-	};
-}
+};

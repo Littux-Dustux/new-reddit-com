@@ -5,7 +5,7 @@ import { getREST } from "../../api/rest";
 import { subredditNameToId } from "../gateway/mappers/subreddit";
 import { gqlFetch } from "../../api/gql";
 import { fixAwardIconSize } from "./helpers/award";
-import { fixGqlListing, fixGqlPost, fixPopularElements } from "./helpers/post";
+import { fixGqlListing, fixGqlPost, fixPopularElements, handlePostFeedAndOtherDiscussions } from "./helpers/post";
 import { getState } from "../../main";
 
 export type OldOperation = (
@@ -766,13 +766,22 @@ export const gqlFedMap: GqlFedMapping = {
 	},
 	ModQueueItems: {
 		operationName: "ModQueueItemsWithSort",
-		sha256Hash: "69b97baa9dfde245bda5deb5aadabfaf19932cb785b64c2d93a30a10cd7dfc79",
+		sha256Hash: "344df6a0614db8898b0792a22823ce7984a2655f5c350c693f3eadcd1b2b7fb6",
 		mapVars: ({ subredditNames, ...rest }) => ({
 			subredditIds: subredditNames.map((name: string) => subredditNameToId[name]),
-			includePostContentPostHint: true,
-			includePostContentThumbnailEnabled: true,
 			...rest
-		})
+		}),
+		mapResp: ({ modQueueItems }) => {
+			for (const { node } of modQueueItems.edges) {
+				const verdictBy = node.commentInfo?.moderationInfo?.verdictByRedditorInfo;
+				if (verdictBy) {
+					node.commentInfo.moderationInfo.verdictBy = verdictBy;
+					delete node.commentInfo.moderationInfo.verdictByRedditorInfo;
+				}
+			};
+
+			return { modQueueItems };
+		}
 	},
 	ModRemove: {
 		operationName: "ModActionRemoveContent",
@@ -912,16 +921,10 @@ export const gqlFedMap: GqlFedMapping = {
 			}
 		}) */
 	},
-	/*
 	PostFeedAndOtherDiscussions: {
-		operationName: "GetDuplicatePosts", // found from 2024 reddit app, thankfully
-		sha256Hash: "fd557fdc121760c37dc2957d4cc103dd0eefa95926952c0adf6aad8afea1e54a",
-		mapVars: ({ postId, ...rest }) => ({ id: postId, ...rest })
-	},
-	*/
-	PostFeedAndOtherDiscussions: {
-		operationName: "<hardcoded>",
-		hardcodedResp: '{"data":{}}'
+		operationName: "SubredditFeed+GetDuplicatePosts",
+		process: handlePostFeedAndOtherDiscussions,
+		
 	},
 	PostGuidanceValidation: {
 		operationName: "ValidatePostGuidanceRules", // 2024 app

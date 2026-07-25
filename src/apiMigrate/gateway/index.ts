@@ -2,6 +2,8 @@ import type { InterceptorHandler } from "../interceptXhr";
 import { getLogger } from "../../logging/logger";
 import { moreCommentsResponse, postCommentsResponse } from "./postCommentsPage";
 import { subredditPostsPage } from "./subredditPostsPage";
+import { arcticShiftListing, genericListingR2 } from "./listingPage";
+import { conversationsListing } from "./mappers/listing";
 
 
 const logger = getLogger("gatewayAPI");
@@ -9,21 +11,46 @@ const logger = getLogger("gatewayAPI");
 export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: target, method: string }, data) => {
 	const url = new URL(target);
 	const params = Object.fromEntries(url.searchParams.entries());
-	const [operation, ...path] = url.pathname.split("/").slice(3);
+	const [operation, onTarget, ...path] = url.pathname.split("/").slice(3);
 
 	logger.dbg("Intercepted request to gateway API: " + operation + " " + url);
 	if (data) console.debug("Payload:", data);
 
 	switch (operation) {
 		case "subreddit":
+			return subredditPostsPage(onTarget as string, params);
 		case "subreddits":
-			return subredditPostsPage(path[0] as string, params);
+			return genericListingR2(`/r/${onTarget}/${params.sort ?? ''}.json`, params)
 		case "postcomments":
-			return postCommentsResponse(path[0] as string, path[1], params);
+			return postCommentsResponse(onTarget as string, path[0], params);
 		case "morecomments":
 			// https://gateway.reddit.com/desktopapi/v1/morecomments/t3_1u4d7zb?emotes_as_images=true&rtj=only&redditWebClient=web2x&app=web2x-client-production&profile_img=true&allow_over18=1&include=identity
 			// {"token":"orcih9a,orcjb7w,orcod95,orcykh8"}
-			return moreCommentsResponse(path[0] as string, JSON.parse(data).token);
+			return moreCommentsResponse(onTarget as string, JSON.parse(data).token);
+		case "user":
+			const [endpoint, postId] = path;
+			switch (endpoint) {
+				case "conversations":
+					return genericListingR2(`/user/${onTarget}/conversations.json`, params, conversationsListing)
+				case "morecomments":
+					return genericListingR2(
+						`/user/${onTarget}/more_comments/${postId}.json`,
+						{ limit: '15', ...params },
+						conversationsListing
+					)
+				case "comments":
+					return genericListingR2(`/user/${onTarget}/comments.json`, params)
+					//return arcticShiftListing(username, false, params.after)
+				case "posts":
+					//return genericListingR2(`/user/${username}/submitted.json`, params)
+					return arcticShiftListing(onTarget as string, true, params.after)
+				default:
+					logger.wrn(`No handler for gateway user API endpoint ${path[0]}`, true);
+					return {
+						jsonResponse: "{}",
+						status: 501
+					};
+			}
 		default:
 			logger.wrn("No handler for gateway API endpoint: " + url, true);
 			return {

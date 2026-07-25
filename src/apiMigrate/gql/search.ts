@@ -9,7 +9,7 @@ export async function processGeneralSearch({ includePosts, postsAfter, includeCo
 
 	includePosts &&
 		searchPromises.push(
-			gqlFetch("SearchPosts", "f6a72f7981ccddc228ca5b8cae53321acfe27e84c52b0619ae5d436ccfd1b025",
+			gqlFetch("SearchPosts", "8610e33521c90caa8d12576800c18b708ce0d19df3dfac8e2aad55d9860e4bf9",
 				{ pageSize: 25, afterCursor: postsAfter, ...vars },
 			),
 		);

@@ -1,6 +1,5 @@
 import { gqlFetch } from "../../../api/gql";
 
-export const structuredStylesLoadedSubs = new Set<string>();
 export const subredditNameToId: Record<string, string> = {};
 
 export const processModPermissionsGql = ({ id, name, modPermissions }: any) => {

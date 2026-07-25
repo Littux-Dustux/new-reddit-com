@@ -1,14 +1,31 @@
 import { gqlFetch } from "../../api/gql";
 import { getREST, postREST, RedditAPIError } from "../../api/rest";
+import { getLogger } from "../../logging";
 import { getState } from "../../main";
-import { postcomments, morecomments } from "./mappers/comments";
-import { structuredStylesLoadedSubs } from "./mappers/subreddit";
+import { moreComments, postAndCommentsListing, postComments, type CommentsPageState } from "./mappers/listing";
 
 
+const logger = getLogger('postComments');
 const devvitDataCacheOptions = { cache: true, maxCacheAge: 300e3 };
 
-export const postCommentsResponse = async (postID: string, commentID: string | undefined, params: Record<string, string>) => {
+export async function postCommentsResponse(postID: string, commentID: string | undefined, params: Record<string, string>) {
+	const subredditPrefix = params.subredditName ? "/r/" + params.subredditName : "";
 	try {
+		if (params.onOtherDiscussions === "true") {
+			params.id = postID;
+			const listing = await getREST(`/api/info.json?raw_json=1&${new URLSearchParams(params)}`);
+			return {
+				jsonResponse: JSON.stringify({
+					commentLists: {},
+					continueThreads: {},
+					moreComments: {},
+					postMeta: null,
+					...(await postAndCommentsListing(listing.data.children, null))
+				} as CommentsPageState),
+				status: 200,
+			}
+		}
+
 		let postWithDevvit;
 
 		// @ts-ignore
@@ -40,24 +57,16 @@ export const postCommentsResponse = async (postID: string, commentID: string | u
 			}
 		}
 
-		const fetchStructuredStyles = params.subredditName && (
-			!structuredStylesLoadedSubs.has(params.subredditName.toLowerCase())
-			|| params.include?.includes("structuredStyles")
-		);
-		const structuredStyles = fetchStructuredStyles
-			? getREST(`/api/v1/structured_styles/${params.subredditName}.json?raw_json=1`)
-			: null;
-
-		if (fetchStructuredStyles) {
-			structuredStylesLoadedSubs.add(params.subredditName?.toLowerCase() ?? '');
-		}
+		const structuredStyles = params.subredditName && params.include?.includes("structuredStyles")
+			? getREST(`/api/v1/structured_styles/${params.subredditName}.json?raw_json=1`).catch(e => {
+				logger.err(`Error fetching structuredStyles for subreddit '${params.subredditName}': ${e.message}`)
+			}) : null;
 
 		const [
 			{ data: { children: [{ data: postData }] }},
 			{ data: { children: comments }}
-		] = await getREST(`${
-				params.subredditName ? `/r/${params.subredditName}` : ''
-			}/comments/${postID.slice(3)}/_/${(commentID?.slice(3)) ?? ''}.json?${
+		] = await getREST(
+			`${subredditPrefix}/comments/${postID.slice(3)}/_/${(commentID?.slice(3)) ?? ''}.json?${
 				new URLSearchParams({
 					...params,
 					sr_detail: "1",
@@ -71,11 +80,11 @@ export const postCommentsResponse = async (postID: string, commentID: string | u
 					//sort: "live",
 					//truncate: "20",
 					//depth: "6",
-			})
+				})
 		}`);
 		return {
 			jsonResponse: JSON.stringify(
-				await postcomments(
+				await postComments(
 					postData,
 					comments,
 					await structuredStyles,
@@ -85,12 +94,16 @@ export const postCommentsResponse = async (postID: string, commentID: string | u
 			status: 200
 		};
 	} catch(e) {
+		
 		if (e instanceof RedditAPIError) {
 			return {
 				jsonResponse: e.rawPayload,
 				status: e.status
 			}
-		} else throw e;
+		} else {
+			logger.err(`Error fetching ${params.onOtherDiscussions === "true" ? "other discussions" : "comments"}: ${(e as any)?.message}`);
+			throw e;
+		}
 	}
 }
 
@@ -105,7 +118,7 @@ export const moreCommentsResponse = async (postID: string, childrenIDs: string) 
 			})
 		);
 		return {
-			jsonResponse: JSON.stringify(await morecomments(data.json.data.things, postID)),
+			jsonResponse: JSON.stringify(await moreComments(data.json.data.things, postID)),
 			status: 200
 		};
 	} catch(e) {

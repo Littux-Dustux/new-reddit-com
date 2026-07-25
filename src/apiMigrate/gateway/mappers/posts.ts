@@ -1,5 +1,9 @@
+import { markdown } from "snudown-js";
 import { getState } from "../../../main";
 import { getVoteStateNum } from "./common";
+import { getAuthorFlairFromR2Thing, processSubredditPostFlair, processSubredditUserFlair } from "./flair";
+import type { StateBase } from "./listing";
+import { processSubredditAboutInfo, processSubreddit } from "./subreddit";
 
 // Originally, I had my own post mapper. But I found a "r2 normalize" function from a new reddit js bundle.
 // I asked an AI to rewrite my function with information from reddit's own function
@@ -44,22 +48,6 @@ const getMedia = (data: any, devvitData?: any) => {
 	}
 
 	if (devvitData?.__typename === "DevvitPost") {
-		/* let numTries = 0;
-		const iframeCaptureInterval = setInterval(() => {
-			numTries++;
-			if (numTries > 20) {
-				console.error("Devvit iframe not found");
-			}
-			const embedIFrame = document.body.querySelector<HTMLIFrameElement>(
-				`.uI_hDmU5GSiudtABRz_37 #${data.name} ._3K6DCjWs2dQ93YYZDOHjib`
-			);
-			if (embedIFrame) {
-				clearInterval(iframeCaptureInterval);
-				embedIFrame.replaceWith(convertDevvitDataToIFrame(devvitData));
-				console.debug("Injected devvit iframe");
-			}
-		}, 300); */
-
 		return {
 			content: `devvit:http://${location.host}/embed.html?${encodeURIComponent(convertDevvitDataToIFrame(devvitData).outerHTML)}`,
 			type: "embed",
@@ -71,7 +59,6 @@ const getMedia = (data: any, devvitData?: any) => {
 		};
 	}
 
-	// 0. Gallery posts
 	if (data.is_gallery || data.gallery_data) {
 		const galleryData = data.gallery_data || { items: [] };
 
@@ -95,7 +82,6 @@ const getMedia = (data: any, devvitData?: any) => {
 		};
 	}
 
-	// 1. Text/Self Post
 	if (data.is_self) {
 		return {
 			content: data.selftext_html,
@@ -111,7 +97,6 @@ const getMedia = (data: any, devvitData?: any) => {
 		};
 	}
 
-	// 2. Embeds / Surveys
 	if ((data.secure_media && data.secure_media.oembed) || data.is_survey_ad) {
 		return {
 			content: data.secure_media_embed?.media_domain_url,
@@ -120,11 +105,11 @@ const getMedia = (data: any, devvitData?: any) => {
 			height: data.secure_media?.oembed?.height || 480,
 			obfuscated: obfuscatedUrl,
 			provider: data.secure_media?.oembed?.provider_name || "",
-			richtextContent: data.rtjson
+			richtextContent: data.rtjson,
+			markdownContent: data.selftext,
 		};
 	}
 
-	// 3. Native Reddit Video
 	if (data.media?.reddit_video) {
 		const v = data.media.reddit_video;
 		return {
@@ -137,11 +122,11 @@ const getMedia = (data: any, devvitData?: any) => {
 			width: v.width,
 			height: v.height,
 			type: "video",
-			richtextContent: data.rtjson
+			richtextContent: data.rtjson,
+			markdownContent: data.selftext,
 		};
 	}
 
-	// 4. Preview Images/Gifs
 	if (isPreviewEnabled) {
 		const images = data.preview.images[0];
 		const variants = images.variants || {};
@@ -156,7 +141,8 @@ const getMedia = (data: any, devvitData?: any) => {
 				gifBackgroundResolutions: images.resolutions,
 				obfuscated: obfuscatedUrl,
 				resolutions: variants.mp4.resolutions,
-				richtextContent: data.rtjson
+				richtextContent: data.rtjson,
+				markdownContent: data.selftext,
 			};
 		}
 
@@ -167,12 +153,16 @@ const getMedia = (data: any, devvitData?: any) => {
 			height: images.source.height,
 			obfuscated: obfuscatedUrl,
 			resolutions: variants.gif ? variants.gif.resolutions : images.resolutions,
-			richtextContent: data.rtjson
+			richtextContent: data.rtjson,
+			markdownContent: data.selftext,
 		};
 	}
 
 	return {
-		richtextContent: data.rtjson
+		type: data.rtjson ? 'rtjson' : 'text',
+		richtextContent: data.rtjson,
+		markdownContent: data.selftext,
+		content: data.selftext_html,
 	};
 };
 
@@ -306,6 +296,57 @@ export const processPost = (data: any, devvitData?: any) => ({
 	viewCount: data.view_count || 0,
 	voteState: getVoteStateNum(data.likes),
 });
+
+
+export function addPostToState(post: any, state: StateBase, postWithDevvit?: any) {
+	state.posts[post.name] = processPost(post, postWithDevvit?.devvit);
+
+	const subId = post.subreddit_id;
+	state.authorFlair[subId] ??= {};
+	state.authorFlair[subId][post.author] = getAuthorFlairFromR2Thing(post);
+
+	if (post.sr_detail) {
+		state.subredditAboutInfo[subId] ??= processSubredditAboutInfo(post.sr_detail);
+		state.subreddits[subId] ??= processSubreddit(post.sr_detail);
+		state.postFlair[subId] ??= processSubredditPostFlair(post.sr_detail);
+		state.userFlair[subId] ??= processSubredditUserFlair(post.sr_detail);
+
+	} else {
+		state.subreddits[subId] ??= {
+			displayText: post.subreddit_name_prefixed,
+			id: post.subreddit_id,
+			name: post.subreddit,
+			icon: {
+				width: 256,
+				height: 256,
+				url: "",
+			},
+			isQuarantined: post.quarantine,
+			subscribers: post.subreddit_subscribers,
+			type: post.subreddit_type,
+			url: `/r/${post.subreddit}/`
+		};
+		state.postFlair[subId] ??= {
+			displaySettings: {
+				isEnabled: true,
+				position: "right"
+			}
+		};
+		state.userFlair[subId] ??= {
+			displaySettings: {
+				isEnabled: true,
+				isUserEnabled: false,
+				position: "right"
+			}
+		};
+	}
+
+	const crossPost = post.crosspost_parent_list?.[0];
+	if (crossPost) {
+		addPostToState(crossPost, state, postWithDevvit?.crosspostRoot?.postInfo?.devvit);
+	}
+	return state;
+}
 
 
 export const convertDevvitDataToIFrame = (devvit: any): HTMLIFrameElement => {
