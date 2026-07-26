@@ -169,6 +169,8 @@ export type ExtraComments = {
 	prev: CommentPosition,
 };
 
+const printOrder = (order: [number, string][]) => order.map(([depth, id]) => `${'│'.repeat(depth)}[${depth}] ${id}`).join('\n');
+
 export async function conversationsListing(things: any[], afterToken: string) {
 	const state: ConversationsPageState = {
 		account: null,
@@ -196,9 +198,11 @@ export async function conversationsListing(things: any[], afterToken: string) {
 		if (post.pinned) state.pinned.push(post.name);
 
 		addPostToState(post, state);
-		if (!post.children?.data.children) continue;
+		const postChildren = post.children?.data.children;
+		if (!postChildren) continue;
 
-		addCommentTreeToState(post.children.data.children, post.name, state);
+		const collapsedChildren = post.collapsed_children?.data.children;
+		if (collapsedChildren) postChildren.push(...collapsedChildren);
 
 		if (post.has_extra_comments) {
 			const id: `extraComments-${string}` = `extraComments-${post.extra_comments_after}`;
@@ -211,13 +215,48 @@ export async function conversationsListing(things: any[], afterToken: string) {
 				prev: null,
 				next: null,
 			};
-			addCommentTreeToState(post.collapsed_children.data.children, post.name, state, state.extraComments[id]);
-		} else if (post.collapsed_children) {
-			addCommentTreeToState(post.collapsed_children.data.children, post.name, state);
+			addCommentTreeToState(postChildren, post.name, state, state.extraComments[id]);
+		} else {
+			addCommentTreeToState(postChildren, post.name, state);
 		}
 	};
 
 	await fixR2CommentsMedia(state.comments);
-	console.debug("conversationsListing", state);
+	console.debug("Conversations state:", state);
+
+	for (const postId of state.postIds) {
+		const commentLists = state.commentLists[postId];
+		if (!commentLists) continue;
+
+		const orderAsc: [number, string][] = [];
+		let nextItemPos = commentLists.head;
+		while (nextItemPos) {
+			const nextItem = nextItemPos.type === "comment" ? state.comments[nextItemPos.id] : state.extraComments[nextItemPos.id];
+			if (!nextItem) {
+				console.error(`Error: ${nextItemPos.id} not found in state for postId ${postId}`);
+				break;
+			}
+			orderAsc.push([nextItem.depth, nextItemPos.id]);
+			nextItemPos = nextItem.next;
+		} 
+
+		const orderDesc: [number, string][] = [];
+		let prevItemPos = commentLists.tail;
+		while (prevItemPos) {
+			const prevItem = prevItemPos.type === "comment" ? state.comments[prevItemPos.id] : state.extraComments[prevItemPos.id];
+			if (!prevItem) {
+				console.error(`Error: ${prevItemPos.id} not found in state for postId ${postId}`);
+				break;
+			}
+			orderDesc.push([prevItem.depth, prevItemPos.id]);
+			prevItemPos = prevItem.prev;
+		}
+
+		console.debug(`commentLists[${postId}] ${JSON.stringify(commentLists)}\norder:\n\n${printOrder(orderAsc)}`);
+
+		if (orderAsc.toString() !== orderDesc.reverse().toString()) {
+			console.error(`commentLists[${postId}] order mismatch!`);
+		}
+	};
 	return state;
 }

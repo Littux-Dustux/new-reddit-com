@@ -24,7 +24,7 @@ export async function genericListingR2(
 			status: 200,
 		}
 	} catch (e) {
-		logger.err(`Error fetching listing ${url}: ${e}`, true, e);
+		logger.crt(`Error fetching listing ${url}: ${e}`, e);
 		return {
 			jsonResponse: e instanceof RedditAPIError ? e.rawPayload : '{"status":500,"message":"Error fetching listing"}',
 			status: 500,
@@ -70,7 +70,7 @@ export async function arcticShiftListing(username: string, isPostPage: boolean, 
 			status: 200,
 		}
 	} catch (e) {
-		logger.err(`Error fetching arctic-shift listing for ${JSON.stringify({ username, isPostPage })}: ${e}`, true, e);
+		logger.crt(`Error fetching arctic-shift listing for ${JSON.stringify({ username, isPostPage })}: ${e}`, e);
 		return {
 			jsonResponse: e instanceof RedditAPIError ? e.rawPayload : '{"status":500,"message":"Error fetching listing"}',
 			status: 500,

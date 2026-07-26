@@ -18,15 +18,18 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 
 	switch (operation) {
 		case "subreddit":
-			return subredditPostsPage(onTarget as string, params);
 		case "subreddits":
-			return genericListingR2(`/r/${onTarget}/${params.sort ?? ''}.json`, params)
+			return subredditPostsPage(onTarget as string, params);
 		case "postcomments":
 			return postCommentsResponse(onTarget as string, path[0], params);
 		case "morecomments":
 			// https://gateway.reddit.com/desktopapi/v1/morecomments/t3_1u4d7zb?emotes_as_images=true&rtj=only&redditWebClient=web2x&app=web2x-client-production&profile_img=true&allow_over18=1&include=identity
 			// {"token":"orcih9a,orcjb7w,orcod95,orcykh8"}
 			return moreCommentsResponse(onTarget as string, JSON.parse(data).token);
+		case "mod":
+			return params.filtered === "true"
+				? genericListingR2(`/me/f/mod/${params.sort}.json`, params)
+				: genericListingR2(`/r/mod/${params.sort}.json`, params)
 		case "user":
 			const [endpoint, postId] = path;
 			switch (endpoint) {

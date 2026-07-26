@@ -94,14 +94,13 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 			status: 200
 		};
 	} catch(e) {
-		
 		if (e instanceof RedditAPIError) {
 			return {
 				jsonResponse: e.rawPayload,
 				status: e.status
 			}
 		} else {
-			logger.err(`Error fetching ${params.onOtherDiscussions === "true" ? "other discussions" : "comments"}: ${(e as any)?.message}`);
+			logger.crt(`Error fetching ${params.onOtherDiscussions === "true" ? "other discussions" : "comments"}: ${(e as any)?.message}`);
 			throw e;
 		}
 	}

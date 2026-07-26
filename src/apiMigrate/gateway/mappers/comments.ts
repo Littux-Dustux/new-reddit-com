@@ -184,7 +184,7 @@ export function addCommentTreeToState(
 
 	for (const { kind, data: comment } of commentChildren) {
 		if (!comment.depth) {
-			const parentComment = state.comments[comment.parent_id] ?? (getState().features.comments.models as any)[comment.parent_id];
+			const parentComment = state.comments[comment.parent_id];
 			comment.depth = (parentComment?.depth ?? -1) + 1;
 		}
 
@@ -228,29 +228,24 @@ export function addCommentTreeToState(
 		}
 
 		const [firstType, firstItem] = _order[0] ?? [];
-		const [lastType, lastItem] = _order[_order.length - 1] ?? [];
+		let [lastType, lastItem] = _order[_order.length - 1] ?? [];
 
 		if (extraComments) {
-			const itemBeforeExtraComments = state.comments[extraComments.parentId];
-			const itemAfterExtraCommentsPosition = itemBeforeExtraComments.next;
-
-			itemBeforeExtraComments.next = {
+			lastItem.next = {
 				type: 'extraComments',
 				id: extraComments.id,
 			};
-			extraComments.prev = {
-				type: 'comment',
-				id: itemBeforeExtraComments.id,
-			};
-			extraComments.next = itemAfterExtraCommentsPosition;
-			extraComments.depth = lastItem.depth;
+			extraComments.prev = { type: lastType as string, id: lastItem.id };
+
+			lastType = 'extraComments';
+			lastItem = extraComments;
+
+			//extraComments.depth = itemBeforeExtraComments.depth + 1;
 		};
 
 		state.commentLists[postId] = {
 			head: firstType ? { type: firstType, id: firstItem.id } : null,
-			tail: extraComments
-				? { type: 'extraComments', id: extraComments.id }
-				: lastType ? { type: lastType, id: lastItem.id } : null,
+			tail: lastType ? { type: lastType, id: lastItem.id } : null,
 		};
 	}
 

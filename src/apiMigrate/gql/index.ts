@@ -48,7 +48,7 @@ export const gqlMigrationInterceptor: InterceptorHandler = async (_, data: any) 
 		if (mapping.useShredditGqlProxy) {
 			gqlData = await svcGqlFetch(mapping.operationName, variables, { parseJSON: Boolean(mapping.mapResp) });
 		} else if (!mapping.sha256Hash) {
-			logger.err(opName + " doesn't have a sha256Hash, and uses gql-fed, so it can't be fetched. It is a mistake, so report it", true);
+			logger.crt(opName + " doesn't have a sha256Hash, and uses gql-fed, so it can't be fetched. It is a mistake, so report it");
 			return defaultResponse;
 		} else {
 			gqlData = await gqlFetch(mapping.operationName, mapping.sha256Hash, variables, { parseJSON: Boolean(mapping.mapResp) });

@@ -63,12 +63,12 @@ class Logger {
 		log({ level: "err", msg, func: this.funcName }, ...args);
 		withToast && toaster.showToast({ kind: toaster.ToastType.Error, text: `[${this.funcName}] ${msg}` }, 4000);
 	}
-	public crt(msg: string, withToast = true, ...args: any[]) {
+	public crt(msg: string, ...args: any[]) {
 		log({ level: "crt", msg, func: this.funcName }, ...args);
-		withToast && toaster.showToast({ kind: toaster.ToastType.Error, text: `[${this.funcName}] ${msg}` }, 10000);
+		toaster.showToast({ kind: toaster.ToastType.Error, text: `[${this.funcName}] ${msg}` }, 0);
 	}
-	public exception(msg: string, withToast = true) {
-		withToast && toaster.showToast({ kind: toaster.ToastType.Error, text: `[${this.funcName}] ${msg}` }, 10000);
+	public exception(msg: string, ...args: any[]) {
+		this.crt(msg, ...args);
 		throw new Error(msg);
 	}
 }
