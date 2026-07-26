@@ -169,7 +169,8 @@ export type ExtraComments = {
 	prev: CommentPosition,
 };
 
-const printOrder = (order: [number, string][]) => order.map(([depth, id]) => `${'│'.repeat(depth)}[${depth}] ${id}`).join('\n');
+const truncText = (text: string, limit: number) => text.length > limit ? text.slice(0, limit) + "…" : text;
+const printOrder = (order: [number, string, string][]) => order.map(([depth, id, body]) => `${'│'.repeat(depth)}[${depth}] ${id}: ${body ? truncText(body, 18) : '[deleted]'}`).join('\n');
 
 export async function conversationsListing(things: any[], afterToken: string) {
 	const state: ConversationsPageState = {
@@ -228,7 +229,7 @@ export async function conversationsListing(things: any[], afterToken: string) {
 		const commentLists = state.commentLists[postId];
 		if (!commentLists) continue;
 
-		const orderAsc: [number, string][] = [];
+		const orderAsc: [number, string, string][] = [];
 		let nextItemPos = commentLists.head;
 		while (nextItemPos) {
 			const nextItem = nextItemPos.type === "comment" ? state.comments[nextItemPos.id] : state.extraComments[nextItemPos.id];
@@ -236,11 +237,11 @@ export async function conversationsListing(things: any[], afterToken: string) {
 				console.error(`Error: ${nextItemPos.id} not found in state for postId ${postId}`);
 				break;
 			}
-			orderAsc.push([nextItem.depth, nextItemPos.id]);
+			orderAsc.push([nextItem.depth, nextItemPos.id, nextItem.media?.richtextContent.document[0]?.c[0]?.t]);
 			nextItemPos = nextItem.next;
 		} 
 
-		const orderDesc: [number, string][] = [];
+		const orderDesc: [number, string, string][] = [];
 		let prevItemPos = commentLists.tail;
 		while (prevItemPos) {
 			const prevItem = prevItemPos.type === "comment" ? state.comments[prevItemPos.id] : state.extraComments[prevItemPos.id];
@@ -248,7 +249,7 @@ export async function conversationsListing(things: any[], afterToken: string) {
 				console.error(`Error: ${prevItemPos.id} not found in state for postId ${postId}`);
 				break;
 			}
-			orderDesc.push([prevItem.depth, prevItemPos.id]);
+			orderDesc.push([prevItem.depth, prevItemPos.id, prevItem.media?.richtextContent.document[0]?.c[0]?.t]);
 			prevItemPos = prevItem.prev;
 		}
 
