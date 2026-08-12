@@ -1,12 +1,13 @@
 import modNoteCountFix from "./modNoteCountFix";
-import notificationsFix from "./notificationsFix";
-import { processGeneralSearch } from "./search";
+import { mapBadgeIndicators, notificationsInboxFix } from "./notificationsFix";
+import { fixSearchTypeaheadResp, processGeneralSearch } from "./search";
 import { getREST } from "../../api/rest";
 import { subredditNameToId } from "../gateway/mappers/subreddit";
 import { gqlFetch } from "../../api/gql";
 import { fixAwardIconSize } from "./helpers/award";
 import { fixGqlListing, fixGqlPost, fixPopularElements, handlePostFeedAndOtherDiscussions } from "./helpers/post";
 import { getState } from "../../main";
+import { addModSubToState } from "../../state/addModeratedSubs";
 
 export type OldOperation = (
 	| "CreatorStats"
@@ -334,6 +335,8 @@ export const gqlFedMap: GqlFedMapping = {
 	AllModerators: {
 		operationName: "GetModeratorList",
 		sha256Hash: "00b15ca6088f3aef8c887f54f4d70bbec5312cfef3a2a54a5efa8dbfb2b9cd83",
+		mapVars: ({ subredditName }) => ({ name: subredditName }),
+		mapResp: ({ subredditInfoByName }) => ({ subreddit: subredditInfoByName }),
 	},
 	AllUserMultireddits: {
 		operationName: "MyMultireddits",
@@ -379,18 +382,7 @@ export const gqlFedMap: GqlFedMapping = {
 		sha256Hash: "6e5b40ea4193a6fcfd6890518f4cdde524e434243d055c33a552af2e42e0a433",
 		//operationName: "BadgeCountV2",
 		//sha256Hash: "73bcdf5b9296d1a6dbd344d4fd1989a2f50428d45bdb98a498e05e81879cc979",
-		mapResp: ({ badgeIndicators }) => ({
-			badgeIndicators: {
-				messageTab: badgeIndicators.messageTab,
-				activityTab: badgeIndicators.activityTab,
-				inboxTab: badgeIndicators.inboxTab,
-				chatUnreadMessages: {"count":0,"style":"NUMBERED"},
-				chatUnreadMentions: {"count":0,"style":"NUMBERED"},
-				chatV2UnreadMessages: {"count": badgeIndicators.chatTab.count,"style":"NUMBERED"},
-				chatHasNewMessages: {"isShowing": badgeIndicators.chatHasNewMessages.isShowing,"style":"FILLED"},
-				chatUnacceptedInvites: {"count":0,"style":"NUMBERED"}
-			}
-		})
+		mapResp: mapBadgeIndicators
 	},
 	BlockAwarder: {
 		operationName: "BlockAwarderByAwardingId",
@@ -516,6 +508,11 @@ export const gqlFedMap: GqlFedMapping = {
 		operationName: "BlockedUsers",
 		sha256Hash: "fa5eb1e1571640206b77152f9f8f104e2aada8c53fdb420ba0202393f0f9ea0d",
 	},
+	FetchContentControls: {
+		operationName: "GetPostRequirements",
+		sha256Hash: "0465f6238026c63c1688696b323fb987de6372459b8f873bf36fd6a8a4e38421",
+		mapResp: ({ subredditInfoById }) => ({ subreddit: subredditInfoById }),
+	},
 	FetchEligibleUXExperiences: {
 		operationName: "<hardcoded>",
 		hardcodedResp: hardcodedQuery("eligibleUxExperiences"),
@@ -531,6 +528,8 @@ export const gqlFedMap: GqlFedMapping = {
 	FetchModerationLogActions: {
 		operationName: "GetModLog", // not sure if this is the correct mapping
 		sha256Hash: "4b8dadf5786d05bef6375bea1ae1666e5c2033858aad2f02ef5f4bcc86e0e45f",
+		mapVars: ({ subredditName, ...rest }) => ({ subredditId: subredditNameToId[subredditName], ...rest }),
+		mapResp: ({ subredditInfoById }) => ({ subreddit: subredditInfoById })
 	},
 	FetchSpecialEvents: {
 		operationName: "<hardcoded>",
@@ -653,9 +652,19 @@ export const gqlFedMap: GqlFedMapping = {
 	},
 	GetModPnSettingsLayout: {
 		operationName: "GetModPnSettingsLayout", // used the 2026 one here because it's probably more suitable
-		sha256Hash: "63b8a9fe8b50c8a4f343777fd6703d8dc11de7821ceb088f21eed1e33debc6ea",
-		mapVars: ({ subredditIds: [subredditId] }) => ({ subredditId }),
-		mapResp: ({ subredditInfoById }) => ({ subredditsInfoByIds: [subredditInfoById] })
+		async process({ subredditIds: [subredditId]}) {
+			const { subredditInfoById } = await gqlFetch(
+				"GetModPnSettingsLayout",
+				"63b8a9fe8b50c8a4f343777fd6703d8dc11de7821ceb088f21eed1e33debc6ea",
+				{ subredditId },
+			);
+			subredditInfoById.id = subredditId;
+			return JSON.stringify({
+				data: {
+					subredditsInfoByIds: [subredditInfoById]
+				}
+			});
+		}
 	},
 	GetModUserNotes: {
 		operationName: "GetModUserNotes", // thank you u/RVL-003
@@ -767,8 +776,9 @@ export const gqlFedMap: GqlFedMapping = {
 	ModQueueItems: {
 		operationName: "ModQueueItemsWithSort",
 		sha256Hash: "344df6a0614db8898b0792a22823ce7984a2655f5c350c693f3eadcd1b2b7fb6",
-		mapVars: ({ subredditNames, ...rest }) => ({
+		mapVars: ({ subredditNames, sort, ...rest }) => ({
 			subredditIds: subredditNames.map((name: string) => subredditNameToId[name]),
+			sortType: sort,
 			...rest
 		}),
 		mapResp: ({ modQueueItems }) => {
@@ -863,12 +873,12 @@ export const gqlFedMap: GqlFedMapping = {
 	NotificationInboxFeed: {
 		operationName: "GetInboxNotificationFeed",
 		sha256Hash: "531bb584ee0c17b0c43adf71729afa433ba683d009632406dc9d169a8fa424d0",
-		...notificationsFix
+		...notificationsInboxFix
 	},
 	NotificationInboxFeedSlimmed: {
 		operationName: "GetInboxNotificationFeed",
 		sha256Hash: "531bb584ee0c17b0c43adf71729afa433ba683d009632406dc9d169a8fa424d0",
-		...notificationsFix
+		...notificationsInboxFix
 	},
 	NotificationSettingsLayoutByChannel: {
 		operationName: "GetNotificationSettingsLayoutByChannel",
@@ -1061,6 +1071,7 @@ export const gqlFedMap: GqlFedMapping = {
 	SearchTypeaheadByType: {
 		operationName: "SearchTypeaheadByType",
 		sha256Hash: "cac956cef6365ab1af09d09d1188025f785de35c1c5a1a11e19f3f20ab8622ca",
+		mapResp: fixSearchTypeaheadResp,
 	},
 	SetSocialLinks: {
 		operationName: "SetSocialLinks",
@@ -1137,9 +1148,10 @@ export const gqlFedMap: GqlFedMapping = {
 	},
 	SubredditPage: {
 		operationName: "SubredditFeedElements",
-		sha256Hash: "97046e2a48050f10a507db354a8da60955ffccb586dcf63163bdfc6610d5cf7a",
+		hardcodedResp: '{"data":{"subredditInfoByName":null}}',
+		/* sha256Hash: "97046e2a48050f10a507db354a8da60955ffccb586dcf63163bdfc6610d5cf7a",
 		mapVars: ({ name, ...rest }) => ({ subredditName: name, includeSubredditInPosts: true, ...rest }),
-		mapResp: ({ postFeed }: any) => ({ subredditInfoByName: postFeed })
+		mapResp: ({ postFeed }: any) => ({ subredditInfoByName: postFeed }) */
 	},
 	SubredditRecommendations: {
 		operationName: "GetRelatedCommunityRecommendations", // 2026 app
@@ -1150,9 +1162,10 @@ export const gqlFedMap: GqlFedMapping = {
 		sha256Hash: "f14c4d85da795fe5912abd822173b451d207d358a66ca6ddaea3404009b63ad3",
 	},
 	SubredditRules: {
-		operationName: "GetSubredditRules", // 2026 app
-		sha256Hash: "78fe58aab4e5f0e8dca0dea1c3615aa0d421e9687e12a1d325b59ae36faaefdf",
-		mapVars: ({ subredditName }) => ({ name: subredditName })
+		operationName: "GetRules", // 2026 app
+		sha256Hash: "4902196475197c7a61271b7381b0229f42cd698929899be77b878a90e15fa5b8",
+		mapVars: ({ subredditName }) => ({ subredditId: subredditNameToId[subredditName] }),
+		mapResp: ({ subredditInfoById }) => ({ subreddit: subredditInfoById })
 	},
 	SubredditScheduledPosts: {
 		operationName: "ScheduledPostsForSubreddit",
@@ -1217,7 +1230,7 @@ export const gqlFedMap: GqlFedMapping = {
 					pageInfo: identity.subscribedSubreddits.pageInfo,
 					edges: identity.subscribedSubreddits.edges.map(({ node }: any) => ({
 						node: {
-							...node,
+							...(addModSubToState(node)),
 							styles: {
 								...node.styles,
 								legacyIcon: node.styles.legacyIcon ? {

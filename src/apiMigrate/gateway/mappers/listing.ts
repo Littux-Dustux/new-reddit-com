@@ -1,5 +1,5 @@
 import { addPostToState } from "./posts";
-import { processModPermissionsGql, processSubredditAboutInfoGql, processSubredditGql } from "./subreddit";
+import { addGqlSubredditToState, processModPermissionsGql, processSubredditAboutInfoGql, processSubredditGql } from "./subreddit";
 import { processSubredditPostFlairGql, processSubredditUserFlairGql } from "./flair";
 import { addCommentToState, addCommentTreeToState, type CommentPosition } from "./comments";
 import { fixR2CommentsMedia } from "../utils";
@@ -60,8 +60,8 @@ export interface ConversationsPageState extends PostListingPageState {
 export async function postAndCommentsListing(
 	things: Record<string, any>[],
 	afterToken: string | null,
-	{ gqlSubredditAboutInfo, structuredStyles, userFlairsV2, postFlairsV2 }: {
-		gqlSubredditAboutInfo?: any,
+	{ gqlSubredditInfo, structuredStyles, userFlairsV2, postFlairsV2 }: {
+		gqlSubredditInfo?: any,
 		structuredStyles?: any,
 		userFlairsV2?: any,
 		postFlairsV2?: any
@@ -89,14 +89,7 @@ export async function postAndCommentsListing(
 		userFlair: {},
 	};
 
-	if (gqlSubredditAboutInfo) {
-		const id = gqlSubredditAboutInfo.id;
-		state.subredditAboutInfo[id] = processSubredditAboutInfoGql(gqlSubredditAboutInfo);
-		state.subreddits[id] = processSubredditGql(gqlSubredditAboutInfo);
-		state.postFlair[id] = processSubredditPostFlairGql(gqlSubredditAboutInfo, postFlairsV2);
-		state.userFlair[id] = processSubredditUserFlairGql(gqlSubredditAboutInfo, userFlairsV2);
-		state.subredditPermissions = processModPermissionsGql(gqlSubredditAboutInfo);
-	};
+	addGqlSubredditToState(state, gqlSubredditInfo, userFlairsV2, postFlairsV2);
 
 	for (const { kind, data } of things) {
 		if (kind === "t3") {
@@ -119,7 +112,11 @@ export async function postAndCommentsListing(
 
 
 
-export async function postComments(post: Record<string, any>, commentsChildren: Record<string, any>[], structuredStyles: any = null, postWithDevvit: any) {
+export async function postComments(
+	post: Record<string, any>,
+	commentsChildren: Record<string, any>[],
+	{ structuredStyles, postWithDevvit, gqlSubredditInfo, postFlairsV2, userFlairsV2 }: any
+) {
 	const state: CommentsPageState = {
 		account: null,
 		authorFlair: {},
@@ -140,11 +137,9 @@ export async function postComments(post: Record<string, any>, commentsChildren: 
 		subredditPermissions: null,
 	};
 
+	addGqlSubredditToState(state, gqlSubredditInfo, userFlairsV2, postFlairsV2);
 	addPostToState(post, state, postWithDevvit);
-
-	if (commentsChildren.length !== 0) {
-		addCommentTreeToState(commentsChildren, post.name, state);
-	}
+	addCommentTreeToState(commentsChildren, post.name, state);
 
 	await fixR2CommentsMedia(state.comments);
 	return state;
@@ -237,7 +232,7 @@ export async function conversationsListing(things: any[], afterToken: string) {
 				console.error(`Error: ${nextItemPos.id} not found in state for postId ${postId}`);
 				break;
 			}
-			orderAsc.push([nextItem.depth, nextItemPos.id, nextItem.media?.richtextContent.document[0]?.c[0]?.t]);
+			orderAsc.push([nextItem.depth, nextItemPos.id, nextItem.media?.richtextContent.document[0]?.c?.[0]?.t]);
 			nextItemPos = nextItem.next;
 		} 
 
@@ -249,7 +244,7 @@ export async function conversationsListing(things: any[], afterToken: string) {
 				console.error(`Error: ${prevItemPos.id} not found in state for postId ${postId}`);
 				break;
 			}
-			orderDesc.push([prevItem.depth, prevItemPos.id, prevItem.media?.richtextContent.document[0]?.c[0]?.t]);
+			orderDesc.push([prevItem.depth, prevItemPos.id, prevItem.media?.richtextContent.document[0]?.c?.[0]?.t]);
 			prevItemPos = prevItem.prev;
 		}
 

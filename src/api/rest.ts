@@ -103,7 +103,8 @@ export interface RequestOptions {
 	data?: any;
 	headers?: Record<string, string>;
 	/** If true, uses getCache/setCache. Only works for GET requests. */
-	cacheMaxAge?: number;
+	cacheMaxAge?: number | undefined;
+	anonymous?: boolean;
 }
 
 
@@ -115,7 +116,9 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 	const isGet = method === "GET";
 
 	const cacheKey = endpoint;
-	if (isGet && typeof options.cacheMaxAge === "number" && options.cacheMaxAge >= -1) {
+	const enableCache = isGet && typeof options.cacheMaxAge === "number" && options.cacheMaxAge >= -1;
+
+	if (enableCache) {
 		const cached = getCache(cacheKey, options.cacheMaxAge);
 		if (cached) return cached as T;
 	}
@@ -128,7 +131,7 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 	}
 
 	const headers: Record<string, string> = {
-		...(await getRedditRequestHeaders()),
+		...(await getRedditRequestHeaders(options.anonymous)),
 		...options.headers,
 	};
 
@@ -149,7 +152,8 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 		url,
 		headers,
 		data: (requestData as any),
-		anonymous: true
+		anonymous: true,
+		timeout: 30_000,
 	});
 	parseResponseAndStoreAuth(response.responseHeaders);
 
@@ -165,7 +169,7 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 	const result = parsed ?? response.responseText;
 
 	// Cache the successful result if requested
-	if (isGet && options.cacheMaxAge !== undefined && options.cacheMaxAge >= -1) {
+	if (enableCache) {
 		setCache(cacheKey, result);
 	}
 
@@ -175,7 +179,7 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 /**
  * Convenience method for GET requests with caching
  */
-export async function getREST<T = any>(endpoint: string, cacheMaxAge: number = 0): Promise<T> {
+export async function getREST<T = any>(endpoint: string, cacheMaxAge?: number): Promise<T> {
 	return redditRequest<T>(endpoint, { method: "GET", cacheMaxAge });
 }
 
@@ -185,3 +189,7 @@ export async function getREST<T = any>(endpoint: string, cacheMaxAge: number = 0
 export async function postREST<T = any>(endpoint: string, data: any): Promise<T> {
 	return redditRequest<T>(endpoint, { method: "POST", data });
 }
+
+(window as any).redditRequest = redditRequest;
+(window as any).getREST = getREST;
+(window as any).postREST = postREST;

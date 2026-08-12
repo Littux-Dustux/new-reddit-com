@@ -10,11 +10,12 @@ export async function gqlFetch<T = any>(
 	operationName: string,
 	sha256Hash: string,
 	variables: any,
-	options: { parseJSON?: boolean, cache?: boolean, maxCacheAge?: number } = { parseJSON: true, cache: false, maxCacheAge: 5 * 60_000 },
+	options: { parseJSON?: boolean, cache?: boolean, maxCacheAge?: number, anonymous?: boolean } = {},
 ): Promise<T> {
 	options.parseJSON ??= true;
 	options.cache ??= false;
 	options.maxCacheAge ??= 5 * 60_000;
+	options.anonymous ??= false;
 
 	const payload = JSON.stringify(variables);
 	const cacheKey = operationName + "~" + payload;
@@ -32,32 +33,46 @@ export async function gqlFetch<T = any>(
 
 	logger.log(`${operationName}: ${payload?.slice(0, 160)}`);
 
-	const resp = await window.gmFetch({
-		method: "POST",
-		url: "https://gql-fed.reddit.com?" + operationName,
-		headers: {
-			"Content-Type": "application/json",
-			...(await getRedditRequestHeaders())
-		},
-		data: JSON.stringify({
-			operationName,
-			variables,
-			extensions: {
-				persistedQuery: {
-					version: 1,
-					sha256Hash,
-				},
+	let resp;
+
+	try {
+		resp = await window.gmFetch({
+			method: "POST",
+			url: "https://cf.gql-fed.reddit.com?" + operationName,
+			headers: {
+				"Content-Type": "application/json",
+				"User-Agent": "Reddit/Version 2026.03.0/Build 2603061/Android 13",
+				"X-Reddit-Translations": "enabled",
+				...(await getRedditRequestHeaders(options.anonymous))
 			},
-		}),
-		anonymous: true,
-	});
+			data: JSON.stringify({
+				operationName,
+				variables,
+				extensions: {
+					persistedQuery: {
+						version: 1,
+						sha256Hash,
+					},
+				},
+			}),
+			anonymous: true,
+			timeout: 30_000,
+		});
+	} catch(e) {
+		throw new TypeError(`${(e as Tampermonkey.ErrorResponse).error}`)
+	}
 
 	parseResponseAndStoreAuth(resp.responseHeaders);
 
 	if (resp.status !== 200) logger.err(`Status code ${resp.status} with ${operationName}`);
 
 	let data: any;
-	if (resp.status !== 200 || options.parseJSON) {
+	if (resp.status !== 200
+		|| options.parseJSON
+		|| operationName.startsWith("Mod")
+		|| operationName.startsWith("Create")
+		|| operationName.startsWith("Update")
+	) {
 		data = JSON.parse(resp.responseText);
 		if (data.errors) {
 			logger.err(data.errors.length + " errors for " + operationName, true, data.errors);
@@ -76,3 +91,5 @@ export async function gqlFetch<T = any>(
 	if (options.cache) setCache(cacheKey, data.data);
 	return data.data;
 };
+
+(window as any).gqlFetch = gqlFetch;

@@ -114,3 +114,6 @@ export function unsubscribe(id: string) {
 		websocket?.close();
 	} */
 }
+
+(window as any).gqlSubscribe = subscribe;
+(window as any).gqlUnsubscribe = unsubscribe;

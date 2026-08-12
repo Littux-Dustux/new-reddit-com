@@ -3,6 +3,7 @@ export const reduceFlairsV2R2 = (flairsV2: any[]) => {
 	const templateIds: string[] = [];
 	for (const postFlair of flairsV2) {
 		templates[postFlair.id] = {
+			id: postFlair.id,
 			allowableContent: postFlair.allowable_content,
 			backgroundColor: postFlair.background_color,
 			cssClass: postFlair.css_class,
@@ -29,7 +30,7 @@ export const processSubredditPostFlair = (data: any) => ({
 });
 
 export const processSubredditPostFlairGql = (data: any, postFlairsV2: any[]) => ({
-	displaySettings: { isEnabled: data.postFlairSettings.isEnabled, position: "right" },
+	displaySettings: { isEnabled: data.postFlairSettings?.isEnabled ?? true, position: "right" },
 	permissions: { canAssignOwn: true },
 	...(postFlairsV2 && reduceFlairsV2R2(postFlairsV2)),
 });
@@ -57,7 +58,7 @@ export const processSubredditUserFlairGql = ({ authorFlairSettings, modPermissio
 				backgroundColor: authorFlair.template.backgroundColor,
 				templateId: authorFlair.template.id,
 				textColor: authorFlair.template.textColor,
-				type: authorFlair.template.richtext?.length ? "richtext" : "text",
+				type: authorFlair.template.richtext ? "richtext" : "text",
 			}
 		: null,
 	...(userFlairsV2 && reduceFlairsV2R2(userFlairsV2))

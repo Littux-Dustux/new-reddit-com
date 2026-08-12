@@ -63,7 +63,8 @@ export async function getGIPHYGifsByIds(ids: Iterable<string>): Promise<Record<s
 		apiPromises.push(fetch(`https://api.giphy.com/v1/gifs?ids=${chunk.join(",")}&fields=id,url,images.fixed_height&api_key=${GIPHY_API_KEY}`, {
 			headers: {
 				Accept: "application/json"
-			}
+			},
+			signal: AbortSignal.timeout(10_000),
 		}));
 	}
 

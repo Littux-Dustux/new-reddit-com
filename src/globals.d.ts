@@ -12,6 +12,7 @@ declare interface Window {
 	tokenCache: { token: string, expires: number };
 	gmFetch: (req: Tampermonkey.Request) => Promise<Tampermonkey.Response<any>>;
 	getToken: () => Promise<string>;
+	getAnonymousToken: () => Promise<string>;
 	getRedditCookie: () => Promise<string>;
 	store: {
 		dispatch: (options: { type: string, payload?: any }) => void;

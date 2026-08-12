@@ -69,7 +69,7 @@ class Logger {
 	}
 	public exception(msg: string, ...args: any[]) {
 		this.crt(msg, ...args);
-		throw new Error(msg);
+		return new Error(msg);
 	}
 }
 

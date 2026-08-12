@@ -2,6 +2,7 @@ import { getState } from "../../../main";
 import { getVoteStateNum } from "./common";
 import { getAuthorFlairFromR2Thing } from "./flair";
 import type { CommentListingPageState, ExtraComments } from "./listing";
+import { markdownToRichText } from "./richtext";
 
 export type CommentPosition = { id: string; type: string } | null;
 
@@ -10,6 +11,7 @@ const processSingleComment = (comment: any, postId?: any) => ({
 	approvedBy: comment.approved_by,
 	author: comment.author,
 	authorId: comment.author_fullname,
+	authorIsBlocked: comment.author_is_blocked,
 	bannedAtUTC: comment.banned_at_utc,
 	bannedBy: comment.banned_by,
 	bodyMD: comment.body,
@@ -41,9 +43,7 @@ const processSingleComment = (comment: any, postId?: any) => ({
 	isStickied: comment.stickied,
 	isScoreHidden: comment.score_hidden,
 	media: {
-		richtextContent: comment.rtjson ?? {
-			document: [{"e": "text", "t": comment.body}]
-		},
+		richtextContent: comment.rtjson ?? markdownToRichText(comment.body, comment.media_metadata),
 		type: "rtjson",
 		rteMode: comment.rte_mode,
 		mediaMetadata: comment.media_metadata,
@@ -63,6 +63,7 @@ const processSingleComment = (comment: any, postId?: any) => ({
 	subredditId: comment.subreddit_id,
 	treatmentTags: comment.treatment_tags,
 	userReports: comment.user_reports,
+	unrepliableReason: comment.unrepliable_reason,
 	voteState: getVoteStateNum(comment.likes),
 });
 
@@ -94,61 +95,64 @@ const processContinueThread = (morecomments: any, postId: string) => ({
 export function addCommentToState(comment: any, state: CommentListingPageState) {
 	state.comments[comment.name] = processSingleComment(comment);
 
+	const appState = getState();
 	const subId = comment.subreddit_id;
 	state.authorFlair[subId] ??= {};
 	state.authorFlair[subId][comment.author] ??= getAuthorFlairFromR2Thing(comment);
 
-	state.postFlair[subId] ??= {
-		displaySettings: {
-			isEnabled: true,
-			position: "right"
-		}
-	};
+	if (!appState.postFlair[subId])
+		state.postFlair[subId] ??= {
+			displaySettings: {
+				isEnabled: true,
+				position: "right"
+			}
+		};
 
-	state.posts[comment.link_id] ??= {
-		author: comment.link_author,
-		belongsTo: {
+	if (!appState.posts.models[comment.link_id])
+		state.posts[comment.link_id] ??= {
+			author: comment.link_author ?? '[deleted]',
+			belongsTo: {
+				id: comment.subreddit_id,
+				type: comment.subreddit_type === "user" ? "profile" : "subreddit",
+			},
+			events: [],
+			flair: comment.over_18
+				? [{ type: "nsfw", text: "nsfw" }]
+				: [],
+			id: comment.link_id,
+			isNSFW: comment.over_18,
+			isScoreHidden: true,
+			numComments: comment.num_comments,
+			postId: comment.link_id,
+			permalink: comment.link_permalink ?? `/r/${comment.subreddit}/comments/${comment.link_id?.slice(3)}/_/`,
+			score: 0,
+			source: {
+				displayText: comment.link_url
+					? (comment.link_url.startsWith('/') ? 'www.reddit.com' : new URL(comment.link_url).hostname)
+					: 'self.'+comment.subreddit,
+				url: comment.link_url ?? `https://www.reddit.com/r/${comment.subreddit}/comments/${comment.link_id?.slice(3)}/_/`,
+			},
+			thumbnail: {
+				width: 0,
+				height: 0,
+				url: "default",
+			},
+			title: comment.link_title ?? '[deleted]',
+		};
+	if (!appState.subreddits.models[subId])
+		state.subreddits[subId] ??= {
+			displayText: comment.subreddit_name_prefixed,
+			icon: {
+				width: 0,
+				height: 0,
+				url: null
+			},
 			id: comment.subreddit_id,
-			type: comment.subreddit_type === "user" ? "profile" : "subreddit",
-		},
-		events: [],
-		flair: comment.over_18
-			? [{ type: "nsfw", text: "nsfw" }]
-			: [],
-		id: comment.link_id,
-		isNSFW: comment.over_18,
-		isScoreHidden: true,
-		numComments: comment.num_comments,
-		postId: comment.link_id,
-		permalink: comment.link_permalink ?? `/r/${comment.subreddit}/comments/${comment.link_id?.slice(3)}/_/`,
-		score: 0,
-		source: {
-			displayText: comment.link_url
-				? (comment.link_url.startsWith('/') ? 'www.reddit.com' : new URL(comment.link_url).hostname)
-				: 'self.'+comment.subreddit,
-			url: comment.link_url ?? `https://www.reddit.com/r/${comment.subreddit}/comments/${comment.link_id?.slice(3)}/_/`,
-		},
-		thumbnail: {
-			width: 0,
-			height: 0,
-			url: "default",
-		},
-		title: comment.link_title,
-	};
-
-	state.subreddits[subId] ??= {
-		displayText: comment.subreddit_name_prefixed,
-		icon: {
-			width: 0,
-			height: 0,
-			url: null
-		},
-		id: comment.subreddit_id,
-		name: comment.subreddit,
-		isQuarantined: comment.quarantine,
-		type: comment.subreddit_type,
-		url: `/r/${comment.subreddit}/`
-	};
+			name: comment.subreddit,
+			isQuarantined: comment.quarantine,
+			type: comment.subreddit_type,
+			url: `/r/${comment.subreddit}/`
+		};
 }
 
 

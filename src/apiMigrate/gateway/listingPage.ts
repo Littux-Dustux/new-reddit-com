@@ -12,7 +12,7 @@ export async function genericListingR2(
 	try {
 		params.raw_json = '1';
 		if (!params.limit && !params.after) {
-			params.limit = '25';
+			params.limit = '15';
 		}
 		url += "?" + new URLSearchParams(params);
 
@@ -35,38 +35,57 @@ export async function genericListingR2(
 
 export async function arcticShiftListing(username: string, isPostPage: boolean, after?: string | null) {
 	try {
+		const pageSize = !after
+			? isPostPage ? 10 : 5
+			: isPostPage ? 25 : 50;
+
 		const params: Record<string, string> = {
 			author: username,
-			limit: '50',
+			limit: '' + pageSize,
 			sort: 'desc',
-			md2html: 'true',
-		};
+		}
+
 		if (after) {
 			params.before = after;
-		};
-		
-		const { data } = await (await fetch(`https://arctic-shift.photon-reddit.com/api/${isPostPage ? 'posts' : 'comments'}/search?${new URLSearchParams(params)}`)).json();
-		
+		}
+		if (isPostPage) {
+			params.md2html = 'true';
+		}
+
+		const { data, error } = await (
+			await fetch(
+				`https://arctic-shift.photon-reddit.com/api/${isPostPage ? 'posts' : 'comments'}/search?${new URLSearchParams(params)}`
+			)
+		).json();
+
+		if (error) {
+			logger.err(`Error while fetching from arctic-shift: ${error}`);
+			return {
+				jsonResponse: JSON.stringify({
+					status: 500,
+					message: error,
+				}),
+				status: 500,
+			}
+		}
+
 		showToast({
 			kind: 2,
 			text: `Fetched ${data.length} ${isPostPage ? 'posts' : 'comments'} for u/${username} from arctic-shift`
 		});
 
-		const lastItem = data[data.length - 1];
-		
+		const lastItem = data.length === pageSize ? data[data.length - 1] : null;
+
 		return {
 			jsonResponse: JSON.stringify(
 				await postAndCommentsListing(
-					data.map((item: any) => {
-						item = {
-							kind: isPostPage ? 't3' : 't1',
-							data: item,
-						};
-						return item;
-					}),
+					data.map((item: any) => ({
+						kind: isPostPage ? 't3' : 't1',
+						data: item,
+					})),
 					lastItem ? new Date(lastItem.created_utc * 1000).toISOString() : null
-				)
-			),
+				).then(state => { logger.dbg("State:", state); return state; })
+			), 
 			status: 200,
 		}
 	} catch (e) {

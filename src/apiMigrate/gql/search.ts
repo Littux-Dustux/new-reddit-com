@@ -11,7 +11,14 @@ export async function processGeneralSearch({ includePosts, postsAfter, includeCo
 		searchPromises.push(
 			gqlFetch("SearchPosts", "8610e33521c90caa8d12576800c18b708ce0d19df3dfac8e2aad55d9860e4bf9",
 				{ pageSize: 25, afterCursor: postsAfter, ...vars },
-			),
+			).then((data) => {
+				for (const { node: { flair } } of data.search.general.posts.edges) {
+					if (flair && !flair.richtext && flair.type === "richtext") {
+						flair.type = "text";
+					}
+				};
+				return data;
+			}),
 		);
 	includeComments &&
 		searchPromises.push(
@@ -59,4 +66,11 @@ export async function processGeneralSearch({ includePosts, postsAfter, includeCo
 	};
 	console.debug("Output", output);
 	return JSON.stringify(output);
+}
+
+export function fixSearchTypeaheadResp(data: any) {
+	for (const profile of data.search.typeaheadByType.profiles) {
+		profile.name = profile.redditorInfo?.name;
+	}
+	return data;
 }

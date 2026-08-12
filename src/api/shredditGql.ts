@@ -22,6 +22,7 @@ export default async function svcGqlFetch(operation: string, variables: any, opt
 			csrf_token: window.csrfToken,
 		}),
 		anonymous: false,
+		timeout: 30_000,
 	});
 
 	if (resp.status === 200) {
@@ -45,3 +46,5 @@ export default async function svcGqlFetch(operation: string, variables: any, opt
 		throw new RedditAPIError(resp.status, `Error fetching shreddit gql operation ${operation} (status: ${resp.status})`, "GQL_ERROR", resp.responseText);
 	}
 }
+
+(window as any).svcGqlFetch = svcGqlFetch;

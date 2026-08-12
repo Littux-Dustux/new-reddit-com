@@ -4,6 +4,7 @@ import { moreCommentsResponse, postCommentsResponse } from "./postCommentsPage";
 import { subredditPostsPage } from "./subredditPostsPage";
 import { arcticShiftListing, genericListingR2 } from "./listingPage";
 import { conversationsListing } from "./mappers/listing";
+import { getState } from "../../main";
 
 
 const logger = getLogger("gatewayAPI");
@@ -38,15 +39,20 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 				case "morecomments":
 					return genericListingR2(
 						`/user/${onTarget}/more_comments/${postId}.json`,
-						{ limit: '15', ...params },
+						{ ...params, limit: '100' },
 						conversationsListing
 					)
 				case "comments":
-					return genericListingR2(`/user/${onTarget}/comments.json`, params)
-					//return arcticShiftListing(username, false, params.after)
+					return onTarget?.toLowerCase() === getState().user.account?.displayText?.toLowerCase()
+						? genericListingR2(
+							`/user/${onTarget}/comments.json`,
+							{ ...params, limit: '100' }
+						)
+						: arcticShiftListing(onTarget as string, false, params.after)
 				case "posts":
-					//return genericListingR2(`/user/${username}/submitted.json`, params)
-					return arcticShiftListing(onTarget as string, true, params.after)
+					return onTarget?.toLowerCase() === getState().user.account?.displayText?.toLowerCase()
+						? genericListingR2(`/user/${onTarget}/submitted.json`, params)
+						: arcticShiftListing(onTarget as string, true, params.after)
 				default:
 					logger.wrn(`No handler for gateway user API endpoint ${path[0]}`, true);
 					return {

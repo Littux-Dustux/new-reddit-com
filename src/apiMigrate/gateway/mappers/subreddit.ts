@@ -1,5 +1,10 @@
 import { gqlFetch } from "../../../api/gql";
+import { getLogger } from "../../../logging";
+import { getState } from "../../../main";
+import { processSubredditPostFlairGql, processSubredditUserFlairGql } from "./flair";
+import type { SubredditListingStateBase } from "./listing";
 
+const logger = getLogger('gateway:map:subreddit');
 export const subredditNameToId: Record<string, string> = {};
 
 export const processModPermissionsGql = ({ id, name, modPermissions }: any) => {
@@ -62,6 +67,7 @@ export const processSubredditAboutInfoGql = (data: any) => {
 		accountsActive: 0,
 		advertiserCategory: "NoThanks",
 		allOriginalContent: false,
+		allowedMediaInComments: data.allowedMediaInComments,
 		contentCategory: "",
 		created: Date.parse(data.createdAt) / 1000,
 		detectedLanguage: data.detectedLanguage,
@@ -138,9 +144,9 @@ export const processSubredditGql = (data: any) => ({
 	primaryColor: data.styles?.primaryColor,
 	subscribers: data.subscribersCount,
 	title: data.title,
-	type: data.type.toLowerCase(),
+	type: data.type?.toLowerCase(),
 	url: "/" + data.prefixedName + "/",
-	whitelistStatus: data.whitelistStatus.toLowerCase(),
+	whitelistStatus: data.whitelistStatus?.toLowerCase(),
 	wls: 6,
 });
 
@@ -211,3 +217,30 @@ export const convertUnavailableSubredditToGatewayError = async (data: any) => {
 		status: data.forbiddenReason === "BANNED" ? 404 : 403
 	}
 };
+
+
+type SubredditState = {
+	subredditAboutInfo: Record<string, any>,
+	subreddits: Record<string, any>,
+	postFlair: Record<string, any>,
+	userFlair: Record<string, any>,
+	subredditPermissions?: Record<string, any> | null,
+}
+
+export const addGqlSubredditToState = (state: SubredditState, gqlSubreddit: any, userFlairsV2?: any, postFlairsV2?: any) => {
+	if (!gqlSubreddit) return;
+
+	const id = gqlSubreddit.id;
+
+	if (gqlSubreddit.__typename === "Subreddit") {
+		state.subredditAboutInfo[id] = processSubredditAboutInfoGql(gqlSubreddit);
+		state.subreddits[id] = processSubredditGql(gqlSubreddit);
+		state.postFlair[id] = processSubredditPostFlairGql(gqlSubreddit, postFlairsV2);
+		state.userFlair[id] = processSubredditUserFlairGql(gqlSubreddit, userFlairsV2);
+		state.subredditPermissions ??= processModPermissionsGql(gqlSubreddit);
+	} else {
+		logger.dbg(`Loading subreddit info for r/${gqlSubreddit.name} from state`);
+		state.subredditAboutInfo[id] = (getState().subreddits.about as any)[id];
+		state.subreddits[id] = (getState().subreddits.models as any)[id];
+	}
+}

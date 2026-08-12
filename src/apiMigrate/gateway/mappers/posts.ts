@@ -1,6 +1,6 @@
 import { markdown } from "snudown-js";
 import { getState } from "../../../main";
-import { getVoteStateNum } from "./common";
+import { antiGifFuckGifs, getVoteStateNum } from "./common";
 import { getAuthorFlairFromR2Thing, processSubredditPostFlair, processSubredditUserFlair } from "./flair";
 import type { StateBase } from "./listing";
 import { processSubredditAboutInfo, processSubreddit } from "./subreddit";
@@ -73,7 +73,7 @@ const getMedia = (data: any, devvitData?: any) => {
 					adEvents: it.ad_events ?? [],
 				})),
 			},
-			mediaMetadata: data.media_metadata,
+			mediaMetadata: antiGifFuckGifs(data.media_metadata),
 			crossPostRootId: data.cross_post_root_id || null,
 			crossPostParentId: data.cross_post_parent_id || null,
 			numCrossposts: data.num_crossposts || 0,
@@ -158,12 +158,14 @@ const getMedia = (data: any, devvitData?: any) => {
 		};
 	}
 
-	return {
-		type: data.rtjson ? 'rtjson' : 'text',
-		richtextContent: data.rtjson,
-		markdownContent: data.selftext,
-		content: data.selftext_html,
-	};
+	return data.selftext || data.selftext_html || data.rtjson?.document.length
+		? {
+			type: data.rtjson ? 'rtjson' : 'text',
+			richtextContent: data.rtjson,
+			markdownContent: data.selftext,
+			content: data.selftext_html,
+		}
+		: null;
 };
 
 const getSource = (data: any) => {
@@ -301,6 +303,7 @@ export const processPost = (data: any, devvitData?: any) => ({
 export function addPostToState(post: any, state: StateBase, postWithDevvit?: any) {
 	state.posts[post.name] = processPost(post, postWithDevvit?.devvit);
 
+	const appState = getState();
 	const subId = post.subreddit_id;
 	state.authorFlair[subId] ??= {};
 	state.authorFlair[subId][post.author] = getAuthorFlairFromR2Thing(post);
@@ -308,37 +311,42 @@ export function addPostToState(post: any, state: StateBase, postWithDevvit?: any
 	if (post.sr_detail) {
 		state.subredditAboutInfo[subId] ??= processSubredditAboutInfo(post.sr_detail);
 		state.subreddits[subId] ??= processSubreddit(post.sr_detail);
-		state.postFlair[subId] ??= processSubredditPostFlair(post.sr_detail);
-		state.userFlair[subId] ??= processSubredditUserFlair(post.sr_detail);
+		if (!appState.postFlair[subId])
+			state.postFlair[subId] ??= processSubredditPostFlair(post.sr_detail);
+		if (!appState.features.userFlair[subId])
+			state.userFlair[subId] ??= processSubredditUserFlair(post.sr_detail);
 
 	} else {
-		state.subreddits[subId] ??= {
-			displayText: post.subreddit_name_prefixed,
-			id: post.subreddit_id,
-			name: post.subreddit,
-			icon: {
-				width: 256,
-				height: 256,
-				url: "",
-			},
-			isQuarantined: post.quarantine,
-			subscribers: post.subreddit_subscribers,
-			type: post.subreddit_type,
-			url: `/r/${post.subreddit}/`
-		};
-		state.postFlair[subId] ??= {
-			displaySettings: {
-				isEnabled: true,
-				position: "right"
-			}
-		};
-		state.userFlair[subId] ??= {
-			displaySettings: {
-				isEnabled: true,
-				isUserEnabled: false,
-				position: "right"
-			}
-		};
+		if (!appState.subreddits.models[subId])
+			state.subreddits[subId] ??= {
+				displayText: post.subreddit_name_prefixed,
+				id: post.subreddit_id,
+				name: post.subreddit,
+				icon: {
+					width: 256,
+					height: 256,
+					url: "",
+				},
+				isQuarantined: post.quarantine,
+				subscribers: post.subreddit_subscribers,
+				type: post.subreddit_type,
+				url: `/r/${post.subreddit}/`
+			};
+		if (!appState.postFlair[subId])
+			state.postFlair[subId] ??= {
+				displaySettings: {
+					isEnabled: true,
+					position: "right"
+				}
+			};
+		if (!appState.features.userFlair[subId])
+			state.userFlair[subId] ??= {
+				displaySettings: {
+					isEnabled: true,
+					isUserEnabled: false,
+					position: "right"
+				}
+			};
 	}
 
 	const crossPost = post.crosspost_parent_list?.[0];
