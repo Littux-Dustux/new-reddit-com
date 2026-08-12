@@ -19,7 +19,6 @@
     "vite-plugin-dts": "^4.5.4"
   },
   "dependencies": {
-    "commonmark": "^0.31.2",
-    "snudown-js": "^4.1.0"
+    "commonmark": "^0.31.2"
   }
 }

@@ -11,9 +11,6 @@ importers:
       commonmark:
         specifier: ^0.31.2
         version: 0.31.2
-      snudown-js:
-        specifier: ^4.1.0
-        version: 4.1.0
     devDependencies:
       '@types/commonmark':
         specifier: ^0.27.10
@@ -584,9 +581,6 @@ packages:
     resolution: {integrity: sha512-1bCSESV6Pv+i21Hvpxp3Dx+pSD8lIPt8uVjRrxAUt/nbswYc+tK6Y2btiULjd4+fnq15PX+nqQDC7Oft7WkwcA==}
     engines: {node: '>=10'}
     hasBin: true
-
-  snudown-js@4.1.0:
-    resolution: {integrity: sha512-qoglcYnRHtx+cTeRqTH48hs34F0qFDMBSL7tmsPn7OVZ3Akf01BBwQ81bbcvfp+1ZX6/9eMGtt6XsbgSdFVGcg==}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -1205,8 +1199,6 @@ snapshots:
   semver@7.5.4:
     dependencies:
       lru-cache: 6.0.0
-
-  snudown-js@4.1.0: {}
 
   source-map-js@1.2.1: {}
 

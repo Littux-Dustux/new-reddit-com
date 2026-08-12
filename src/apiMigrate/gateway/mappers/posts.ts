@@ -1,12 +1,9 @@
-import { markdown } from "snudown-js";
 import { getState } from "../../../main";
 import { antiGifFuckGifs, getVoteStateNum } from "./common";
 import { getAuthorFlairFromR2Thing, processSubredditPostFlair, processSubredditUserFlair } from "./flair";
 import type { StateBase } from "./listing";
 import { processSubredditAboutInfo, processSubreddit } from "./subreddit";
 
-// Originally, I had my own post mapper. But I found a "r2 normalize" function from a new reddit js bundle.
-// I asked an AI to rewrite my function with information from reddit's own function
 
 const getFlair = (data: any) => {
 	const flair = [];
