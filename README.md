@@ -6,6 +6,10 @@ Network requests are routed through the userscript manager, so to see them, you 
 
 ---
 
+# How to use
+
+See: <https://www.reddit.com/r/ReturnNewReddit/comments/1vmgvmt/beautiful_right_now_you_can_enjoy_it_too/>
+
 # DISCLAIMER
 
 This project is an independent, open-source work and is not affiliated with, authorized, maintained, sponsored, or endorsed by **Reddit Inc.**

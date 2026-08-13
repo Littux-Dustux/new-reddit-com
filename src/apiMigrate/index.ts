@@ -19,6 +19,7 @@ export function initAPIMigratorInterceptors() {
 	addInterceptor("reddit-subreddit-uploaded-media.s3-accelerate.amazonaws.com", "POST", s3UploadPipeInterceptor);
 	addInterceptor("reddit-uploaded-media.s3-accelerate.amazonaws.com", "POST", s3UploadPipeInterceptor);
 	addInterceptor("reddit-uploaded-video.s3-accelerate.amazonaws.com", "POST", s3UploadPipeInterceptor);
+	addInterceptor("reddit-uploaded-emoji.s3-accelerate.amazonaws.com", "POST", s3UploadPipeInterceptor);
 
 	logger.log("Initialized interceptors.");
 }

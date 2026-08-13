@@ -1040,9 +1040,8 @@ export const gqlFedMap: GqlFedMapping = {
 		sha256Hash: "c4332a3bb82908fc1383b8e44132c2e12e2104f8cf4256f09df96fdf110a6a1f",
 	},
 	RegisterWebPushToken: {
-		operationName: "RegisterMobilePushToken",
-		sha256Hash: "35313b81bfbb621c426b2f2ec276db3db476a5d8362a1ddbeec982a01dc74977",
-		mapResp: ({ registerMobilePushToken }) => ({ registerWebPushToken: registerMobilePushToken }),
+		operationName: "RegisterPushToken",
+		useShredditGqlProxy: true,
 	},
 	RemoveAward: {
 		operationName: "RemoveAward",
