@@ -2,7 +2,6 @@ import { gqlFetch } from "../../../api/gql";
 import { getLogger } from "../../../logging";
 import { getState } from "../../../main";
 import { processSubredditPostFlairGql, processSubredditUserFlairGql } from "./flair";
-import type { SubredditListingStateBase } from "./listing";
 
 const logger = getLogger('gateway:map:subreddit');
 export const subredditNameToId: Record<string, string> = {};
@@ -32,22 +31,32 @@ export const processModPermissionsGql = ({ id, name, modPermissions }: any) => {
 export const processSubredditAboutInfo = (data: any) => ({
 	acceptFollowers: data.accept_followers,
 	accountsActive: 0,
-	advertiserCategory: "NoThanks",
-	allOriginalContent: false,
-	allowedPostTypes: { links: true, images: true, videos: true, text: true, spoilers: true, polls: true, galleries: true, talks: false },
+	advertiserCategory: data.advertiser_category,
+	allOriginalContent: data.all_original_content,
+	allowedPostTypes: {
+		links: data.submission_type === "any" || data.submission_type === "link",
+		images: data.allow_images,
+		videos: data.allow_videos,
+		text: data.submission_type === "any" || data.submission_type === "self",
+		spoilers: data.spoilers_enabled,
+		polls: data.allow_polls,
+		galleries: data.allow_galleries,
+		talks: false
+	},
 	allowedMediaInComments: data.allowed_media_in_comments.map((str: string) => str.toUpperCase()),
 	contentCategory: "",
 	created: data.created_utc,
 	disableContributorRequests: data.disable_contributor_requests,
-	emojisEnabled: true,
+	emojisEnabled: data.emojis_enabled ?? true,
 	hasExternalAccount: false,
-	isCrosspostableSubreddit: false,
+	isCrosspostableSubreddit: data.is_crosspostable_subreddit,
 	isMediaInCommentsSettingShown: data.should_show_media_in_comments_setting ?? true,
-	originalContentTagEnabled: false,
+	notificationLevel: data.notification_level?.toUpperCase(),
+	originalContentTagEnabled: data.original_content_tag_enabled,
 	publicDescription: data.public_description,
 	restrictCommenting: data.restrict_commenting,
 	restrictPosting: data.restrict_posting,
-	shouldArchivePosts: false,
+	shouldArchivePosts: data.should_archive_posts,
 	showMedia: data.show_media,
 	submitLinkLabel: data.submit_link_label,
 	submitTextLabel: data.submit_text_label,
@@ -219,12 +228,13 @@ export const convertUnavailableSubredditToGatewayError = async (data: any) => {
 };
 
 
-type SubredditState = {
+export type SubredditState = {
 	subredditAboutInfo: Record<string, any>,
 	subreddits: Record<string, any>,
 	postFlair: Record<string, any>,
 	userFlair: Record<string, any>,
 	subredditPermissions?: Record<string, any> | null,
+	structuredStyles?: any,
 }
 
 export const addGqlSubredditToState = (state: SubredditState, gqlSubreddit: any, userFlairsV2?: any, postFlairsV2?: any) => {

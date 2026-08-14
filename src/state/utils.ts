@@ -26,7 +26,7 @@ document.addEventListener('click', async (e: any) => {
 
 	const url = new URL(anchor.href);
 
-	if (redditDomains.has(url.host) && (url.pathname.includes("/s/") || url.pathname.includes("/comments/"))) {
+	if (redditDomains.has(url.host)) {
 		e.preventDefault();
 
 		let fullPath;
@@ -42,7 +42,7 @@ document.addEventListener('click', async (e: any) => {
 			fullPath = url.pathname + url.search + url.hash;
 		}
 
-		logger.log(`Redirecting link to internal route: ${fullPath}`);
+		logger.log(`Redirecting link to internal route: ${fullPath}`, true);
 		window.store.dispatch({
 			type: "@@router/CALL_HISTORY_METHOD",
 			payload: {

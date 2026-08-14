@@ -5,6 +5,7 @@ import { subredditPostsPage } from "./subredditPostsPage";
 import { arcticShiftListing, genericListingR2 } from "./listingPage";
 import { conversationsListing } from "./mappers/listing";
 import { getState } from "../../main";
+import { duplicates, submitPage } from "./submitPage";
 
 
 const logger = getLogger("gatewayAPI");
@@ -60,6 +61,15 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 						status: 501
 					};
 			}
+
+		// https://gateway.reddit.com/desktopapi/v1/submitpage?redditWebClient=web2x&app=web2x-client-production&allow_over18=1&include=identity%2CstructuredStyles%2CprefsSubreddit&subreddit=6TEEN
+		case "submitpage":
+			return submitPage(params);
+
+		//https://gateway.reddit.com/desktopapi/v1/duplicates/1vn9637?allow_over18=1&include=&crossposts_only=true&sort=new&sr=6TEEN
+		case "duplicates":
+			return duplicates(onTarget as string, params);
+
 		default:
 			logger.wrn("No handler for gateway API endpoint: " + url, true);
 			return {

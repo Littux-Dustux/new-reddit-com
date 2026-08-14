@@ -1,6 +1,5 @@
 import { addPostToState } from "./posts";
-import { addGqlSubredditToState, processModPermissionsGql, processSubredditAboutInfoGql, processSubredditGql } from "./subreddit";
-import { processSubredditPostFlairGql, processSubredditUserFlairGql } from "./flair";
+import { addGqlSubredditToState } from "./subreddit";
 import { addCommentToState, addCommentTreeToState, type CommentPosition } from "./comments";
 import { fixR2CommentsMedia } from "../utils";
 

@@ -31,7 +31,7 @@ export const processSubredditPostFlair = (data: any) => ({
 
 export const processSubredditPostFlairGql = (data: any, postFlairsV2: any[]) => ({
 	displaySettings: { isEnabled: data.postFlairSettings?.isEnabled ?? true, position: "right" },
-	permissions: { canAssignOwn: true },
+	permissions: { canAssignOwn: Boolean(postFlairsV2) },
 	...(postFlairsV2 && reduceFlairsV2R2(postFlairsV2)),
 });
 
