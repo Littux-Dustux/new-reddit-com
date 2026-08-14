@@ -1,8 +1,6 @@
 import { getLogger } from "./logging";
 import { initAPIMigratorInterceptors } from "./apiMigrate";
-import { gqlFetch } from "./api/gql";
-import { state as initialState, stateHydrationPromise } from "./state";
-import { getLoidState } from "./state/utils";
+import { hydrateState, state as initialState, isLoggedIn } from "./state";
 import { patchWebSocket } from "./apiMigrate/liveChat";
 
 const logger = getLogger('init');
@@ -46,9 +44,15 @@ const addScript = (url: string): Promise<HTMLScriptElement> => {
 async function main() {
 	await userscriptLoaded;
 	logger.dbg("Userscript loaded, loading client...");
+	if (!window.__MODREDDITCOM_REVIVED__.event.detail.accessToken) {
+		logger.err("Access token hasn't been fetched by the userscript. Falling back to anonymous token.");
+		isLoggedIn.value = false;
+	} else {
+		isLoggedIn.value = true;
+		await hydrateState();
+		logger.dbg("State hydrated");
+	}
 
-	await stateHydrationPromise;
-	logger.dbg("State hydrated");
 	(window as any).___r = initialState;
 
 	const container: any = document.getElementById("2x-container");
@@ -69,13 +73,24 @@ async function main() {
 			clearInterval(timer);
 			window.clientLoaded = true;
 
+			// Hack to load the required chunks
+			const originalPath = location.pathname + location.search + location.hash;
+
 			window.store.dispatch({
 				type: "@@router/CALL_HISTORY_METHOD",
 				payload: {
-					method: "push",
-					args: [location.pathname]
+					method: "replace",
+					args: ["/"],
 				}
 			});
+
+			setTimeout(() => window.store.dispatch({
+				type: "@@router/CALL_HISTORY_METHOD",
+				payload: {
+					method: "replace",
+					args: [originalPath]
+				}
+			}), 200);
 		}
 	}, 50);
 

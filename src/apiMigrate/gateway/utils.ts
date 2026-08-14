@@ -7,6 +7,7 @@ import { convertUnavailableSubredditToGatewayError, subredditNameToId } from "./
 import { getState } from "../../main";
 import { markdownToRichText } from "./mappers/richtext";
 import { FormattingFlag } from "./mappers/richtext_types";
+import { isLoggedIn } from "../../state";
 
 const logger = getLogger('apiMigrate:gateway:utils');
 
@@ -137,11 +138,13 @@ export async function fetchSubredditPageExtra(
 		}
 	}
 
-	let includeUserFlairs = true, includePostFlairs = true;
-	const id = subredditNameToId[subredditName.toLocaleLowerCase()];
-	if (id) {
-		includeUserFlairs = (getState().features.userFlair as any)[id]?.permissions.canAssignOwn;
-		includePostFlairs = (getState().postFlair as any)[id]?.displaySettings.isEnabled;
+	let includeUserFlairs = isLoggedIn.value, includePostFlairs = isLoggedIn.value;
+	if (isLoggedIn) {
+		const id = subredditNameToId[subredditName.toLocaleLowerCase()];
+		if (id) {
+			includeUserFlairs = (getState().features.userFlair as any)[id]?.permissions.canAssignOwn;
+			includePostFlairs = (getState().postFlair as any)[id]?.displaySettings.isEnabled;
+		}
 	}
 
 	const [structuredStyles, postFlairsV2, userFlairsV2, gqlSubredditInfo] = await Promise.all([

@@ -1,5 +1,6 @@
 import { getLogger } from "../logging/logger";
 import { multiErrorToast } from "../logging/toast";
+import { isLoggedIn } from "../state";
 import { getCache, setCache } from "./caching";
 import { getRedditRequestHeaders, parseResponseAndStoreAuth } from "./helpers";
 import { RedditAPIError } from "./rest";
@@ -15,7 +16,7 @@ export async function gqlFetch<T = any>(
 	options.parseJSON ??= true;
 	options.cache ??= false;
 	options.maxCacheAge ??= 5 * 60_000;
-	options.anonymous ??= false;
+	options.anonymous ??= !isLoggedIn.value;
 
 	const payload = JSON.stringify(variables);
 	const cacheKey = operationName + "~" + payload;
@@ -58,8 +59,12 @@ export async function gqlFetch<T = any>(
 			anonymous: true,
 			timeout: 30_000,
 		});
-	} catch(e) {
-		throw new TypeError(`${(e as Tampermonkey.ErrorResponse).error}`)
+	} catch(e: any) {
+		if (e?.error) {
+			throw new TypeError(`Error fetching gql data: ${(e as Tampermonkey.ErrorResponse).error}`)
+		} else {
+			throw e;
+		}
 	}
 
 	parseResponseAndStoreAuth(resp.responseHeaders);

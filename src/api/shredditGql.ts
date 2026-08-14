@@ -7,6 +7,8 @@ const logger = getLogger("api:gql-shreddit");
 export default async function svcGqlFetch(operation: string, variables: any, options: { parseJSON?: boolean } = {}) {
 	options.parseJSON ??= true;
 
+	logger.log(`${operation}: ${(JSON.stringify(variables)).slice(0, 160)}`);
+
 	const resp = await window.gmFetch({
 		method: "POST",
 		url: "https://www.reddit.com/svc/shreddit/graphql?" + operation,

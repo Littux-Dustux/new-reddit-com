@@ -8,6 +8,7 @@ import { convertHeadersStringToObject } from "../utils";
 import { getState } from "../main";
 import { getLoidState } from "../state/utils";
 import { getRedditRequestHeaders, parseResponseAndStoreAuth } from "./helpers";
+import { isLoggedIn } from "../state";
 
 const logger = getLogger('api:rest');
 
@@ -112,6 +113,8 @@ export interface RequestOptions {
  * Base function to make authenticated requests to oauth.reddit.com.
  */
 export async function redditRequest<T = any>(endpoint: string, options: RequestOptions = {}): Promise<T> {
+	options.anonymous ??= !isLoggedIn.value;
+
 	const method = options.method || "GET";
 	const isGet = method === "GET";
 
@@ -124,11 +127,6 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 	}
 
 	const url = endpoint.startsWith("http") ? endpoint : `https://oauth.reddit.com${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
-
-	const token = await window.getToken();
-	if (!token) {
-		throw new RedditAPIError(401, "No authentication token available", "NO_TOKEN");
-	}
 
 	const headers: Record<string, string> = {
 		...(await getRedditRequestHeaders(options.anonymous)),
@@ -154,6 +152,7 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 		data: (requestData as any),
 		anonymous: true,
 		timeout: 30_000,
+		redirect: "error",
 	});
 	parseResponseAndStoreAuth(response.responseHeaders);
 

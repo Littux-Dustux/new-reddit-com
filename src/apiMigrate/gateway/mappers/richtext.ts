@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Parser, Node as CMNode } from "commonmark";
 import type {
 	Document,

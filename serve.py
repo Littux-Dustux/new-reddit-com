@@ -6,8 +6,10 @@ import sys
 import threading
 from time import time
 from typing import Any
-
-import requests
+import urllib.request
+import urllib.error
+from http.cookiejar import CookieJar
+from urllib.request import Request
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -101,26 +103,34 @@ def get_access_token():
 
     try:
         # May be blocked in the future
-        response = None
         try:
             print("Fetching embed.reddit.com")
-            response = requests.head(url="https://embed.reddit.com/r/reddit.com/comments/87/abcd", headers={
-                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:153.0) Gecko/20100101 Firefox/153.0"
-            })
+            cookie_jar = CookieJar()
+            opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookie_jar))
+
+            request = Request(
+                url="https://embed.reddit.com/r/reddit.com/comments/87/abcd",
+                method='HEAD',
+                headers={"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:153.0) Gecko/20100101 Firefox/153.0"}
+            )
+            opener.open(request)
             print("Fetched embed.reddit.com")
+        except urllib.error.HTTPError as e:
+            raise Exception(f"Got status code {e.code} when fetching webpage.")
         except Exception as e:
             raise Exception(f"Error fetching webpage: {e}")
 
-        if response.status_code != 200:
-            raise Exception(f"Got status code {response.status_code} when fetching webpage.")
-
-        token_v2 = next(x for x in response.cookies if x.name == 'token_v2')
+        # Extract cookies from the jar
+        cookies = {cookie.name: cookie for cookie in cookie_jar}
+        token_v2 = cookies.get('token_v2')
         if not token_v2:
             raise Exception("token_v2 cookie not found in response.")
 
         cached_token = {
             "accessToken": token_v2.value,
-            "expiresAt": token_v2.expires * 1000
+            "expiresAt": token_v2.expires * 1000,
+            "loid": cookies.get('loid').value if cookies.get('loid') else None,
+            "sessionTracker": cookies.get('session_tracker').value if cookies.get('session_tracker') else None,
         }
         print("Got new anonymous access token:", cached_token)
         return cached_token

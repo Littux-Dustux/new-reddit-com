@@ -1,10 +1,11 @@
 import { getLogger } from "../logging";
 import { getState } from "../main";
+import { isLoggedIn } from "../state";
 import { getLoidState } from "../state/utils";
 import { convertHeadersStringToObject } from "../utils";
 
-export let redditSession: string | undefined = undefined;
-export let loid: string | undefined = undefined;
+export let redditSession: { value: string | null } = { value: null };
+export let loid: { value: string | null } = { value: null };
 
 export const parseResponseAndStoreAuth = (headers: string | Record<string, string>) => {
 	const responseHeaders = typeof headers === "string"
@@ -14,12 +15,12 @@ export const parseResponseAndStoreAuth = (headers: string | Record<string, strin
 	const xRedditSession = responseHeaders.get("x-reddit-session");
 	const xRedditLoid = responseHeaders.get("x-reddit-loid");
 
-	if (xRedditLoid && loid !== xRedditLoid) {
-		loid = xRedditLoid;
+	if (xRedditLoid && loid.value !== xRedditLoid) {
+		loid.value = xRedditLoid;
 		getState().user.loid = getLoidState(xRedditLoid);
 	}
-	if (xRedditSession && redditSession !== xRedditSession) {
-		redditSession = xRedditSession;
+	if (xRedditSession && redditSession.value !== xRedditSession) {
+		redditSession.value = xRedditSession;
 		getState().user.sessionTracker = xRedditSession;
 	}
 }
@@ -32,32 +33,33 @@ export const getRedditRequestHeaders = async (anonymous: boolean = false) => {
 		"Referer": "https://new.reddit.com/",
 	}
 
-	if (anonymous) {
-		headers['Authorization'] = `Bearer ${await getAnonymousToken()}`;
-	} else {
-		headers['Authorization'] = `Bearer ${await window.getToken()}`;
-		headers['x-reddit-loid'] = loid ?? window.loid;
-		if (redditSession) headers['x-reddit-session'] = redditSession;
+	headers['Authorization'] = `Bearer ${await (anonymous ? getAnonymousToken : window.getToken)()}`;
+
+	if (!anonymous || !isLoggedIn.value) {
+		headers['x-reddit-loid'] = loid.value ?? window.loid;
+		if (redditSession.value) headers['x-reddit-session'] = redditSession.value;
 	}
 
 	return headers;
 }
 
 
-type Token = {
+
+type TokenResponse = { error: null; data: TokenResponseData; } | { error: string; data: null };
+type TokenResponseData = {
 	accessToken: string;
 	expiresAt: number;
+	loid: string;
+	sessionTracker: string;
 }
 
-type TokenResponse = { error: null; data: Token; } | { error: string; data: null };
-
 const logger = getLogger('api:helpers');
-let cachedToken: Token = {
+let cachedToken = {
 	accessToken: "",
 	expiresAt: 0,
 };
 
-async function getAnonymousToken(): Promise<string> {
+export async function getAnonymousToken(): Promise<string> {
 	if (cachedToken && cachedToken.expiresAt > Date.now()) {
 		return cachedToken.accessToken;
 	}
@@ -69,7 +71,26 @@ async function getAnonymousToken(): Promise<string> {
 	}
 
 	logger.log("Fetched new anonymous access token");
-	cachedToken = data;
+	cachedToken = {
+		accessToken: data.accessToken,
+		expiresAt: data.expiresAt,
+	};
+
+	if (!isLoggedIn.value) {
+		window.tokenCache = {
+			token: data.accessToken,
+			expires: data.expiresAt,
+		}
+		if (!loid.value) {
+			loid.value = data.loid;
+			window.loid = data.loid;
+			getState().user.loid = getLoidState(loid.value);
+		}
+		if (!redditSession.value) {
+			redditSession.value = data.sessionTracker;
+			getState().user.sessionTracker = data.sessionTracker;
+		}
+	};
 	return cachedToken.accessToken;
 }
 

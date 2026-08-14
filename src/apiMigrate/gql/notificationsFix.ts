@@ -1,10 +1,16 @@
 import { gqlFetch } from "../../api/gql";
 import { getState } from "../../main";
+import { convertAnnouncementToNotification } from "./helpers/notifications";
 
 let clearLoadedTimeout: number | undefined;
 
 export const notificationsInboxFix = {
-	mapVars: ({ first, ...rest }: any) => ({ pageSize: first, subredditIconMaxWidth: 64, includeAnnouncement: false, ...rest }),
+	mapVars: ({ first, ...rest }: any) => ({
+		pageSize: first === 5 ? 10 : 25,
+		subredditIconMaxWidth: 64,
+		includeAnnouncement: true, 
+		...rest
+	}),
 	mapResp: ({ notificationInbox }: any) => {
 		// To not be stuck with old notifications until reload
 		if (clearLoadedTimeout) {
@@ -17,9 +23,11 @@ export const notificationsInboxFix = {
 			}, 40e3);
 		};
 		
-		notificationInbox.elements.edges = notificationInbox.elements.edges.filter(
-			({ node }: any) => node.__typename === "InboxNotification"
-		);
+		for (const edge of notificationInbox.elements.edges) {
+			if (edge.node.__typename === "InboxAnnouncement") {
+				edge.node = convertAnnouncementToNotification(edge.node);
+			}
+		};
 		return { notificationInbox };
 	}
 }

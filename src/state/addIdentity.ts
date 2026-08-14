@@ -1,4 +1,4 @@
-import { state } from ".";
+import { isLoggedIn, state } from ".";
 import { gqlFetch } from "../api/gql";
 import { getREST } from "../api/rest";
 import type { State } from "../main";
@@ -171,8 +171,11 @@ const convertPrefsV1ToState = (prefs: PrefsV1): PrefsState => ({
 });
 
 export async function addPrefsV1ToState(state: State) {
-	const prefs = await getREST<PrefsV1>("/api/v1/me/prefs?raw_json=1");
-	state.user.prefs = convertPrefsV1ToState(prefs);
+	try {
+		const prefs = await getREST<PrefsV1>("/api/v1/me/prefs?raw_json=1");
+		if (!prefs) return;
+		state.user.prefs = convertPrefsV1ToState(prefs);
+	} catch {}
 };
 
 

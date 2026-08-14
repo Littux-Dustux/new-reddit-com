@@ -51,7 +51,7 @@ class Logger {
 		log({ level: "inf", msg, func: this.funcName }, ...args);
 		withToast && toaster.showToast({ kind: toaster.ToastType.SuccessCommunityGreen, text: `[${this.funcName}] ${msg}` }, 1000);
 	}
-	public log(msg: string, withToast = true, ...args: any[]) {
+	public log(msg: string, withToast = false, ...args: any[]) {
 		log({ level: "log", msg, func: this.funcName }, ...args);
 		withToast && toaster.showToast({ kind: toaster.ToastType.SuccessCommunity, text: `[${this.funcName}] ${msg}` }, 1000);
 	}

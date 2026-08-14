@@ -13,6 +13,12 @@ const defaultResponse = {
 	status: 200,
 };
 
+const shutUpOperations = new Set<OldOperation>([
+	"SubredditPageExtra", "CommentsPageExtra", "RedditorMultireddits",
+	"SubredditChatChannelRecommendations", "GetTournaments",
+	"CommentsPageLastAuthorModNotes", "ModQueueTriggers", "PostIsTrackingCrossposts"
+]);
+
 export const gqlMigrationInterceptor: InterceptorHandler = async (_, data: any) => {
 	let { id, variables }: { id: string; variables: any } = JSON.parse(data);
 	const opName = (idMapping as Record<string, string>)[id] as OldOperation;
@@ -23,7 +29,7 @@ export const gqlMigrationInterceptor: InterceptorHandler = async (_, data: any) 
 
 	const mapping = gqlFedMap[opName];
 	if (!mapping) {
-		logger.err(opName + " hasn't been ported to gql-fed yet", undefined, variables);
+		logger.err(opName + " hasn't been ported to gql-fed yet", !shutUpOperations.has(opName), variables);
 		return defaultResponse;
 	}
 

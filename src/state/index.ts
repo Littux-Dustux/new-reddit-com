@@ -768,44 +768,7 @@ export const state = {
 	trophies: {},
 	uploads: {},
 	user: {
-		account: {
-			accountIcon: "https://i.redd.it/snoovatar/avatars/nftv2_bmZ0X2VpcDE1NToxMzdfZTY0YmI3ZGQwYTEzYWY2MjJlMGRlNjQ1NmQxYmJhZGM4ZDFlYzA5ZF80MDk2_rare_85a84975-0333-49e7-ba53-f957e144be02-headshot.png",
-			canCreateSubreddit: true,
-			coins: 0xFFFFFFFF,
-			created: 1645968649,
-			displayText: "Littux",
-			goldExpiration: 1722545776,
-			hasExternalAccount: false,
-			hasGoldSubscription: true,
-			hasPaypalSubscription: false,
-			hasStripeSubscription: true,
-			hasUnreadMail: true,
-			hasUnreadModmail: true,
-			hasUnreadOldModmail: true,
-			hasUserProfile: true,
-			hasVerifiedEmail: true,
-			id: "t2_lbvcrez58",
-			inboxCount: 1630,
-			inRedesignBeta: true,
-			isEmployee: true,
-			isFPR: false,
-			isGold: true,
-			isMod: true,
-			isNameEditable: false,
-			isPasswordSet: true,
-			isSuspended: false,
-			karma: { fromAwardsReceived: 0, fromAwardsGiven: 0, fromComments: 45250, fromPosts: 45594, total: 90844 },
-			nightmode: true,
-			profileId: "t5_9jsumn",
-			seenLayoutSwitch: true,
-			seenRedesignModal: false,
-			seenSubredditChatFtux: false,
-			showRecentPosts: true,
-			showTrending: true,
-			snoovatarFullBodyAsset: "https://i.redd.it/snoovatar/avatars/nftv2_bmZ0X2VpcDE1NToxMzdfZTY0YmI3ZGQwYTEzYWY2MjJlMGRlNjQ1NmQxYmJhZGM4ZDFlYzA5ZF80MDk2_rare_85a84975-0333-49e7-ba53-f957e144be02.png",
-			suspensionExpirationUtc: null,
-			url: "/user/Littux",
-		},
+		account: null as null | Record<string, any>,
 		accountSettings: { changeEmail: { api: { error: null, pending: false } }, sendResetEmail: { api: { pending: false, emailSent: false } } },
 		blocked: {
 			api: {},
@@ -1078,8 +1041,12 @@ export const state = {
 	},
 };
 
-export const stateHydrationPromise = Promise.all([
+export const hydrateState = () => Promise.all([
 	addUserRels(state),
 	addIdentityToState(state),
 	addPrefsV1ToState(state),
-])
+]);
+
+export let isLoggedIn = {
+	value: false,
+};

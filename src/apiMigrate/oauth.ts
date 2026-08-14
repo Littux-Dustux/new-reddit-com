@@ -10,14 +10,8 @@ export const oauthPipeInterceptor: InterceptorHandler = async ({ url, method, he
 	//data: typeof data === "string" ? data : data && JSON.stringify(data);
 
 	const headers: Record<string, string> = {
-		...requestHeaders,
+		"Content-Type": requestHeaders['Content-Type'] ?? requestHeaders['content-type'],
 		...(await getRedditRequestHeaders())
-	}
-
-	if (redditSession) {
-		headers["x-reddit-session"] = redditSession;
-	} else {
-		delete headers["x-reddit-session"];
 	}
 
 	const response = await window.gmFetch({

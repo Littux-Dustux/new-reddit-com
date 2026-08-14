@@ -1,5 +1,5 @@
 import { gqlFetch } from "../api/gql";
-import { getLogger } from "../logging";
+import { getLogger, showToast, ToastType } from "../logging";
 
 type StateLoid = { loid: string, loidCreated: string, version: number, blob: string };
 
@@ -26,7 +26,7 @@ document.addEventListener('click', async (e: any) => {
 
 	const url = new URL(anchor.href);
 
-	if (anchor.classList.contains("_3t5uN8xUmg0TOwRCOGQEcU") || (redditDomains.has(url.host) && (url.pathname.includes("/s/") || url.pathname.includes("/comments/")))) {
+	if (redditDomains.has(url.host) && (url.pathname.includes("/s/") || url.pathname.includes("/comments/"))) {
 		e.preventDefault();
 
 		let fullPath;
@@ -34,11 +34,12 @@ document.addEventListener('click', async (e: any) => {
 		if (url.hostname === "redd.it") {
 			fullPath = "/comments" + url.pathname;
 		} else if (url.pathname.includes("/s/")) {
+			showToast({ kind: ToastType.Custom, text: "Resolving share URL..." });
 			fullPath = new URL((await gqlFetch(
-				"ShareUrl", "424a761fb3d80ef2ec18a7dfaa867a9a1acf44df218e526c4538850dc7415c86", { shortUrl: url.toString() }
+				"ShareUrl", "424a761fb3d80ef2ec18a7dfaa867a9a1acf44df218e526c4538850dc7415c86", { shortUrl: anchor.href }
 			)).shareUrl.url).pathname;
 		} else {
-			fullPath = url.pathname + url.search + url.hash
+			fullPath = url.pathname + url.search + url.hash;
 		}
 
 		logger.log(`Redirecting link to internal route: ${fullPath}`);
