@@ -1,5 +1,5 @@
 import { addPostToState } from "./posts";
-import { addGqlSubredditToState } from "./subreddit";
+import { addGqlSubredditToState, addR2SubredditToState } from "./subreddit";
 import { addCommentToState, addCommentTreeToState, type CommentPosition } from "./comments";
 import { fixR2CommentsMedia } from "../utils";
 
@@ -59,12 +59,17 @@ export interface ConversationsPageState extends PostListingPageState {
 export async function postAndCommentsListing(
 	things: Record<string, any>[],
 	afterToken: string | null,
-	{ gqlSubredditInfo, structuredStyles, userFlairsV2, postFlairsV2 }: {
-		gqlSubredditInfo?: any,
-		structuredStyles?: any,
+	{ subredditInfo, isSubredditR2, structuredStyles, userFlairsV2, postFlairsV2 }: {
+		subredditInfo: any,
+		structuredStyles: any,
+		isSubredditR2: boolean,
 		userFlairsV2?: any,
 		postFlairsV2?: any
-	} = {}
+	} = {
+		subredditInfo: null,
+		structuredStyles: null,
+		isSubredditR2: false,
+	}
 ) {
 	const state: SubredditListingStateBase & PostListingPageState & CommentListingPageState = {
 		account: null,
@@ -88,7 +93,7 @@ export async function postAndCommentsListing(
 		userFlair: {},
 	};
 
-	addGqlSubredditToState(state, gqlSubredditInfo, userFlairsV2, postFlairsV2);
+	(isSubredditR2 ? addR2SubredditToState : addGqlSubredditToState)(state, subredditInfo, userFlairsV2, postFlairsV2);
 
 	for (const { kind, data } of things) {
 		if (kind === "t3") {
@@ -114,7 +119,14 @@ export async function postAndCommentsListing(
 export async function postComments(
 	post: Record<string, any>,
 	commentsChildren: Record<string, any>[],
-	{ structuredStyles, postWithDevvit, gqlSubredditInfo, postFlairsV2, userFlairsV2 }: any
+	{ structuredStyles, postWithDevvit, subredditInfo, isSubredditR2, postFlairsV2, userFlairsV2 }: {
+		structuredStyles: AnyRecord | null,
+		subredditInfo: AnyRecord | null,
+		isSubredditR2: boolean,
+		postFlairsV2?: any[] | null,
+		userFlairsV2?: any[] | null,
+		postWithDevvit?: AnyRecord,
+	}
 ) {
 	const state: CommentsPageState = {
 		account: null,
@@ -136,7 +148,7 @@ export async function postComments(
 		subredditPermissions: null,
 	};
 
-	addGqlSubredditToState(state, gqlSubredditInfo, userFlairsV2, postFlairsV2);
+	(isSubredditR2 ? addR2SubredditToState : addGqlSubredditToState)(state, subredditInfo, userFlairsV2, postFlairsV2);
 	addPostToState(post, state, postWithDevvit);
 	addCommentTreeToState(commentsChildren, post.name, state);
 

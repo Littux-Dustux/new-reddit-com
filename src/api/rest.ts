@@ -178,8 +178,8 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 /**
  * Convenience method for GET requests with caching
  */
-export async function getREST<T = any>(endpoint: string, cacheMaxAge?: number): Promise<T> {
-	return redditRequest<T>(endpoint, { method: "GET", cacheMaxAge });
+export async function getREST<T = any>(endpoint: string, cacheMaxAge?: number, anonymous?: boolean): Promise<T> {
+	return redditRequest<T>(endpoint, { method: "GET", cacheMaxAge, anonymous: anonymous ?? false });
 }
 
 /**

@@ -464,6 +464,11 @@ export const gqlFedMap: GqlFedMapping = {
 		operationName: "CreatorStats",
 		sha256Hash: "1967e4edfd77d0e37d7d384c7f4e67307a0b91e31e87569e3d8d31a4f461df7d"
 	},
+	CrowdControlLevelInfo: {
+		operationName: "CrowdControlForPost", // iOS app
+		sha256Hash: "52a4fc7c2fbfd85f8c9d498b3524795b9f0c047f112a1a03c636ad2cbc6a2c02",
+		mapVars: ({ postId }) => ({ id: postId })
+	},
 	CustomerSurveyConfig: {
 		operationName: "<hardcoded>",
 		hardcodedResp: hardcodedQuery('customerSurveyConfig')
@@ -960,7 +965,7 @@ export const gqlFedMap: GqlFedMapping = {
 	},
 	ProfileFollowers: {
 		operationName: "FollowedByRedditors",
-		sha256Hash: "0aa3ae012c3149330ade5eeb181a89588482bfa93fd546503c8fa365447c4cd3",
+		sha256Hash: "cd7f3a824a09e34fb5765767494f37b725ffad2172e479a7b188786f8425ec72", // iOS app
 		mapVars: ({ first, after, searchQuery }) => ({ limit: first, from: after, searchQuery }),
 		mapResp: ({ identity }) => ({
 			identity: {
@@ -1020,6 +1025,10 @@ export const gqlFedMap: GqlFedMapping = {
 		operationName: "UpvotedPosts",
 		sha256Hash: "2576b683a14896be80b6b3b0465a55b7a94ada8f062564d2bdc1e38975bb5837",
 		mapResp: ({ identity }) => ({ identity: { upvotedPosts: fixGqlListing(identity.upvotedPosts) } })
+	},
+	ProxyAuthor: {
+		operationName: "ProxyAuthor", // iOS app
+		sha256Hash: "8a264414bd43e257113b8749ff7be8609f3ad8d183bf637643614506d018656e",
 	},
 	RedditorIdByName: {
 		operationName: "GetUserIdByName", // 2026 app

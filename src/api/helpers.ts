@@ -6,6 +6,7 @@ import { convertHeadersStringToObject } from "../utils";
 
 export let redditSession: { value: string | null } = { value: null };
 export let loid: { value: string | null } = { value: null };
+let anonLoid: string | null = null;
 
 export const parseResponseAndStoreAuth = (headers: string | Record<string, string>) => {
 	const responseHeaders = typeof headers === "string"
@@ -38,6 +39,8 @@ export const getRedditRequestHeaders = async (anonymous: boolean = false) => {
 	if (!anonymous || !isLoggedIn.value) {
 		headers['x-reddit-loid'] = loid.value ?? window.loid;
 		if (redditSession.value) headers['x-reddit-session'] = redditSession.value;
+	} else if (anonLoid) {
+		headers['x-reddit-loid'] = anonLoid;
 	}
 
 	return headers;
@@ -90,6 +93,8 @@ export async function getAnonymousToken(): Promise<string> {
 			redditSession.value = data.sessionTracker;
 			getState().user.sessionTracker = data.sessionTracker;
 		}
+	} else {
+		anonLoid = data.loid;
 	};
 	return cachedToken.accessToken;
 }

@@ -1,13 +1,14 @@
-import { getLogger } from "../../logging";
+import { getLogger, showToast } from "../../logging";
 import { getGIPHYGifsByIds } from "../../api/giphy";
 import { gqlFetch } from "../../api/gql";
 import { getVideoMediaMetadataGql, getMuxedMP4sDownloadRTJSON } from "./mappers/common";
-import { getREST } from "../../api/rest";
-import { convertUnavailableSubredditToGatewayError, subredditNameToId } from "./mappers/subreddit";
+import { getREST, RedditAPIError } from "../../api/rest";
+import { convertUnavailableGqlSubredditToGatewayError, subredditNameToId } from "./mappers/subreddit";
 import { getState } from "../../main";
 import { markdownToRichText } from "./mappers/richtext";
 import { FormattingFlag } from "./mappers/richtext_types";
 import { isLoggedIn } from "../../state";
+import { blockedByUserNames } from "./listingPage";
 
 const logger = getLogger('apiMigrate:gateway:utils');
 
@@ -20,12 +21,12 @@ export async function fixR2CommentsMedia(comments: Record<string, any>) {
 	const videoCommentIncompleteMedias: Record<string, any> = {};
 	const videoCommentIdsToFetch: string[] = [];
 
-	// to get blocked user comments from arctic-shift
-	const arcticShiftRefetchIds: string[] = [];
+	// get blocked user comments
+	const blockedIds: string[] = [];
 
 	for (const comment of Object.values(comments)) {
-		if (comment.unrepliableReason === "NEAR_BLOCKER") {
-			arcticShiftRefetchIds.push(comment.id);
+		if (comment.unrepliableReason === "NEAR_BLOCKER" && comment.media.richtextContent.document[0]?.c?.[0]?.t === "[unavailable]") {
+			blockedIds.push(comment.id);
 			continue;
 		}
 
@@ -48,66 +49,79 @@ export async function fixR2CommentsMedia(comments: Record<string, any>) {
 
 	const commentFixerPromises: Promise<void>[] = [];
 
-	if (giphyIdsToFetch.size > 0) commentFixerPromises.push(
-		getGIPHYGifsByIds(giphyIdsToFetch).then(redditGiphyGifDatas => {
-			for (const giphyId of giphyIdsToFetch) {
-				const gifData = redditGiphyGifDatas[giphyId];
-				const brokenMediaMetadatas = brokenGiphyCommentMediaMetadatas[giphyId];
+	if (giphyIdsToFetch.size > 0) {
+		logger.log(`Fetching ${giphyIdsToFetch.size} GIFs from GIPHY...`, true);
+		commentFixerPromises.push(
+			getGIPHYGifsByIds(giphyIdsToFetch).then(redditGiphyGifDatas => {
+				for (const giphyId of giphyIdsToFetch) {
+					const gifData = redditGiphyGifDatas[giphyId];
+					const brokenMediaMetadatas = brokenGiphyCommentMediaMetadatas[giphyId];
 
-				if (gifData && brokenMediaMetadatas) {
-					for (const { key, mediaMetadata } of brokenMediaMetadatas) {
-						gifData.id ??= key;
-						mediaMetadata[key] = gifData;
+					if (gifData && brokenMediaMetadatas) {
+						for (const { key, mediaMetadata } of brokenMediaMetadatas) {
+							gifData.id ??= key;
+							mediaMetadata[key] = gifData;
+						}
 					}
 				}
-			}
-		}).catch(e => {
-			logger.err("Error fetching GIPHY GIF data: " + (e as any).message);
-		})
-	);
+			}).catch(e => {
+				logger.err("Error fetching GIPHY GIF data: " + (e as any).message);
+			})
+		);
+	}
 
-	if (videoCommentIdsToFetch.length > 0) commentFixerPromises.push(
-		gqlFetch("CommentMediaDetails", "4228949b61fb4a9c17aed04edc4be641a7c48a12fbd506151afde1ce0e335857", { ids: videoCommentIdsToFetch })
-		.then(({ commentsByIds }) => {
-			for (const comment of commentsByIds) {
-				const incompleteMedia = videoCommentIncompleteMedias[comment.id];
-				const videoAsset = comment.content?.richtextMedia?.[0];
+	if (videoCommentIdsToFetch.length > 0) {
+		logger.log(`Loading ${videoCommentIdsToFetch.length} comments with videos...`, true);
+		commentFixerPromises.push(
+			gqlFetch("CommentMediaDetails", "4228949b61fb4a9c17aed04edc4be641a7c48a12fbd506151afde1ce0e335857", { ids: videoCommentIdsToFetch })
+			.then(({ commentsByIds }) => {
+				for (const comment of commentsByIds) {
+					const incompleteMedia = videoCommentIncompleteMedias[comment.id];
+					const videoAsset = comment.content?.richtextMedia?.[0];
 
-				if (incompleteMedia && videoAsset?.status === "VALID") {
-					incompleteMedia.mediaMetadata = {
-						[videoAsset.id]: getVideoMediaMetadataGql(videoAsset)
+					if (incompleteMedia && videoAsset?.status === "VALID") {
+						incompleteMedia.mediaMetadata = {
+							[videoAsset.id]: getVideoMediaMetadataGql(videoAsset)
+						};
+						const muxedMp4s = videoAsset.packagedMedia?.muxedMp4s;
+						if (muxedMp4s) {
+							incompleteMedia.richtextContent.document.push(...getMuxedMP4sDownloadRTJSON(muxedMp4s))
+						}
+					}
+				}
+			}).catch(e => {
+				logger.err("Error fetching videos in comments: " + (e as any).message);
+			})
+		);
+	}
+
+	if (blockedIds.length > 0) {
+		logger.log(`Loading ${blockedIds.length} comments from blocked user`, true);
+		commentFixerPromises.push(
+			getREST(`/api/info.json?id=${blockedIds.join(",")}&raw_json=1&profile_img=1&rtj=only`, -1, true)
+			.then(({ data: { children }}) => {
+				for (const { data: { name, author, author_fullname, profile_img, rtjson }} of children) {
+					const noticeText = `Comment ${name} loaded from logged-out API (why: u/${author} blocked you)`;
+					blockedByUserNames.add(author.toLowerCase());
+
+					const comment = comments[name];
+					comment.author = author;
+					comment.authorId = author_fullname;
+					comment.profileImage = profile_img;
+					comment.media.richtextContent = {
+						document: rtjson.document.concat(
+							{ e: "hr" },
+							{ e: "par", c: [
+								{ e: "text", t: noticeText, f: [[FormattingFlag.italic, 0, noticeText.length]] }
+							]}
+						)
 					};
-					const muxedMp4s = videoAsset.packagedMedia?.muxedMp4s;
-					if (muxedMp4s) {
-						incompleteMedia.richtextContent.document.push(...getMuxedMP4sDownloadRTJSON(muxedMp4s))
-					}
 				}
-			}
-		}).catch(e => {
-			logger.err("Error fetching videos in comments: " + (e as any).message);
-		})
-	);
-
-	if (arcticShiftRefetchIds.length > 0) commentFixerPromises.push(
-		fetch(`https://arctic-shift.photon-reddit.com/api/comments/ids?ids=${arcticShiftRefetchIds.join(",")}&fields=id,retrieved_on,author,author_fullname,body`)
-		.then(resp => resp.json())
-		.then(({ data, error }) => {
-			if (error) throw { message: error };
-			for (const { id, retrieved_on, author, author_fullname, body } of data) {
-				const comment = comments[`t1_${id}`];
-				comment.author = author;
-				comment.authorId = author_fullname;
-				const retrievedText = `Retrieved by arctic-shift on ${new Date(retrieved_on * 1000).toLocaleString()} (why: u/${author} blocked you)`;
-				comment.media.richtextContent = {
-					document: markdownToRichText(body, comment.media.mediaMetadata).document.concat([
-						{ e: "hr" }, { e: "par", c: [{ e: "text", t: retrievedText, f: [[FormattingFlag.italic, 0, retrievedText.length]] }] }
-					])
-				}
-			}
-		}).catch(e => {
-			logger.err("Error fetching arctic-shift comments data: " + (e as any).message);
-		})
-	);
+			}).catch(e => {
+				logger.err("Error fetching blocked comments data: " + (e as any).message);
+			})
+		);
+	};
 
 	await Promise.all(commentFixerPromises);
 	return comments;
@@ -117,13 +131,15 @@ export async function fixR2CommentsMedia(comments: Record<string, any>) {
 export async function fetchSubredditPageExtra(
 	subredditName: string | null | undefined,
 	includeStructuredStyles: boolean = true,
-): Promise<{ structuredStyles: any, gqlSubredditInfo: any, postFlairsV2: any, userFlairsV2: any }> {
+	fetchR2Subreddit: boolean,
+): Promise<{ structuredStyles: any, subredditInfo: any, isSubredditR2: boolean, postFlairsV2: any, userFlairsV2: any }> {
 
 	if (!subredditName) return {
 		structuredStyles: null,
-		gqlSubredditInfo: null,
+		subredditInfo: null,
 		postFlairsV2: null,
 		userFlairsV2: null,
+		isSubredditR2: false,
 	}
 
 	if (!includeStructuredStyles) {
@@ -131,9 +147,10 @@ export async function fetchSubredditPageExtra(
 		if (id) {
 			return {
 				structuredStyles: null,
-				gqlSubredditInfo: { __typename: "__USE_CACHE__", id, name: subredditName },
+				subredditInfo: { __typename: "__USE_CACHE__", id, name: subredditName },
 				userFlairsV2: null,
 				postFlairsV2: null,
+				isSubredditR2: false,
 			}
 		}
 	}
@@ -147,7 +164,7 @@ export async function fetchSubredditPageExtra(
 		}
 	}
 
-	const [structuredStyles, postFlairsV2, userFlairsV2, gqlSubredditInfo] = await Promise.all([
+	const [structuredStyles, postFlairsV2, userFlairsV2, gqlOrR2SubredditInfo] = await Promise.all([
 		includeStructuredStyles && getREST(`/api/v1/structured_styles/${subredditName}.json?raw_json=1`)
 		.catch(e => logger.err(`Error fetching structuredStyles for r/${subredditName}: ${e.message}`, true, e)),
 
@@ -157,35 +174,56 @@ export async function fetchSubredditPageExtra(
 		includeUserFlairs && getREST(`/r/${subredditName}/api/user_flair_v2.json?raw_json=1`)
 		.catch(e => logger.err(`Error fetching user flairs for r/${subredditName}: ${e.message}`, true, e)),
 
-		gqlFetch(
-			"SubredditInfoByName",
-			"6b9c1679e69097e1c6df364adc11183afe6e2b6545dd1c0c1cc8f7490448c3e5",
-			{
+		fetchR2Subreddit
+			? getREST(`/r/${subredditName}/about.json?raw_json=1`).catch(e => {
+				if (e instanceof RedditAPIError) return e;
+				logger.err(`Error fetching r2 subreddit info for r/${subredditName}: ${e.message}`, true, e);
+			})
+			: gqlFetch("SubredditInfoByName", "6b9c1679e69097e1c6df364adc11183afe6e2b6545dd1c0c1cc8f7490448c3e5", {
 				subredditName,
 				loggedOutIsOptedIn: true,
 				filterGated: true,
 				includeRecapFields: false,
 				includeWelcomePage: false,
 				includeDevvitData: false,
-			}
-		)
-		.catch(e => logger.err(`Error fetching gql subreddit info for r/${subredditName}: ${e.message}`, true, e)),
+			}).catch(e => logger.err(
+				`Error fetching gql subreddit info for r/${subredditName}: ${e.message}`, true, e
+			)),
 	]);
 
 
-	const subredditInfoByName = gqlSubredditInfo?.subredditInfoByName;
-	subredditNameToId[subredditName.toLowerCase()] = subredditInfoByName?.id;
+	if (fetchR2Subreddit) {
+		if (gqlOrR2SubredditInfo instanceof RedditAPIError) {
+			throw {
+				jsonResponse: JSON.stringify({
+					reason: gqlOrR2SubredditInfo.status === 404
+						? "NOT_FOUND"
+						: gqlOrR2SubredditInfo.reason.toUpperCase(),
+					data: {},
+				}),
+				status: gqlOrR2SubredditInfo.status,
+			}
+		} else if (gqlOrR2SubredditInfo.kind === "t5") {
+			subredditNameToId[gqlOrR2SubredditInfo.data.display_name.toLowerCase()] = gqlOrR2SubredditInfo.data.name;
+		} else throw gqlOrR2SubredditInfo;
 
-	if (!subredditInfoByName || subredditInfoByName.__typename !== "Subreddit") {
-		const gatewayError = await convertUnavailableSubredditToGatewayError(subredditInfoByName);
-		logger.dbg("Unavailable subreddit", { subredditInfoByName, gatewayError });
-		throw gatewayError;
+	} else {
+		const subredditInfoByName = gqlOrR2SubredditInfo?.subredditInfoByName;
+		
+		if (!subredditInfoByName || subredditInfoByName.__typename !== "Subreddit") {
+			const gatewayError = await convertUnavailableGqlSubredditToGatewayError(subredditInfoByName);
+			logger.dbg("Unavailable gql subreddit", { subredditInfoByName, gatewayError });
+			throw gatewayError;
+		}
+
+		subredditNameToId[subredditName.toLowerCase()] = subredditInfoByName.id;
 	}
 
 	return {
 		structuredStyles,
 		postFlairsV2,
 		userFlairsV2,
-		gqlSubredditInfo: subredditInfoByName,
+		subredditInfo: fetchR2Subreddit ? gqlOrR2SubredditInfo.data : gqlOrR2SubredditInfo.subredditInfoByName,
+		isSubredditR2: fetchR2Subreddit,
 	};
 }

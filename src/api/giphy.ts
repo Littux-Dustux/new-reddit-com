@@ -77,7 +77,7 @@ export async function getGIPHYGifsByIds(ids: Iterable<string>): Promise<Record<s
 			throw new Error(`${response.status}: ${data.meta.msg}: ${data.meta.error_code}`);
 		}
 
-		logger.log(`GET (${data.meta.status} ${data.meta.msg}): ${data.data.length} GIFs fetched`, true);
+		logger.log(`GET (${data.meta.status} ${data.meta.msg}): ${data.data.length} GIFs fetched`);
 
 		for (const gif of data.data) {
 			idToGif[gif.id] = {

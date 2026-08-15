@@ -22,11 +22,10 @@ export const reduceFlairsV2R2 = (flairsV2: any[]) => {
 }
 
 
-export const processSubredditPostFlair = (data: any) => ({
-	displaySettings: { isEnabled: data.link_flair_enabled, position: data.link_flair_position },
-	permissions: { canAssignOwn: true },
-	//templates: {},
-	//templateIds: [],
+export const processSubredditPostFlair = (data: any, postFlairsV2: any[]) => ({
+	displaySettings: { isEnabled: data.link_flair_enabled, position: data.link_flair_position ?? "right" },
+	permissions: { canAssignOwn: data.can_assign_link_flair ?? true },
+	...(postFlairsV2 && reduceFlairsV2R2(postFlairsV2)),
 });
 
 export const processSubredditPostFlairGql = (data: any, postFlairsV2: any[]) => ({
@@ -36,12 +35,23 @@ export const processSubredditPostFlairGql = (data: any, postFlairsV2: any[]) => 
 });
 
 
-export const processSubredditUserFlair = (data: any) => ({
-	displaySettings: { isUserEnabled: false, isEnabled: true, position: "right" },
-	permissions: { canUserChange: false, canAssignOwn: false },
-	applied: null,
-	templates: {},
-	templateIds: [],
+export const processSubredditUserFlair = (data: any, userFlairsV2: any[]) => ({
+	// very confusing
+	displaySettings: {
+		isUserEnabled: data.user_sr_flair_enabled,
+		isEnabled: data.user_flair_enabled_in_sr,
+		position: data.user_flair_position ?? "right",
+	},
+	permissions: { canUserChange: data.user_can_flair_in_sr, canAssignOwn: data.can_assign_user_flair },
+	applied: data.user_flair_text ? {
+		text: data.user_flair_text,
+		richtext: data.user_flair_richtext,
+		backgroundColor: data.user_flair_background_color,
+		templateId: data.user_flair_template_id,
+		textColor: data.user_flair_text_color,
+		type: data.user_flair_type,
+	} : null,
+	...(userFlairsV2 && reduceFlairsV2R2(userFlairsV2)),
 });
 
 export const processSubredditUserFlairGql = ({ authorFlairSettings, modPermissions, authorFlair }: any, userFlairsV2: any[]) => ({

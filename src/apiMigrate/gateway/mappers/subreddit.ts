@@ -1,7 +1,7 @@
 import { gqlFetch } from "../../../api/gql";
 import { getLogger } from "../../../logging";
 import { getState } from "../../../main";
-import { processSubredditPostFlairGql, processSubredditUserFlairGql } from "./flair";
+import { processSubredditPostFlair, processSubredditPostFlairGql, processSubredditUserFlair, processSubredditUserFlairGql } from "./flair";
 
 const logger = getLogger('gateway:map:subreddit');
 export const subredditNameToId: Record<string, string> = {};
@@ -160,7 +160,7 @@ export const processSubredditGql = (data: any) => ({
 });
 
 
-export const convertUnavailableSubredditToGatewayError = async (data: any) => {
+export const convertUnavailableGqlSubredditToGatewayError = async (data: any) => {
 	if (!data) {
 		return {
 			jsonResponse: JSON.stringify({
@@ -253,4 +253,15 @@ export const addGqlSubredditToState = (state: SubredditState, gqlSubreddit: any,
 		state.subredditAboutInfo[id] = (getState().subreddits.about as any)[id];
 		state.subreddits[id] = (getState().subreddits.models as any)[id];
 	}
+}
+
+export const addR2SubredditToState = (state: SubredditState, r2Subreddit: any, userFlairsV2?: any, postFlairsV2?: any) => {
+	if (!r2Subreddit) return;
+
+	const id = r2Subreddit.name;
+
+	state.subredditAboutInfo[id] = processSubredditAboutInfo(r2Subreddit);
+	state.subreddits[id] = processSubreddit(r2Subreddit);
+	state.postFlair[id] = processSubredditPostFlair(r2Subreddit, postFlairsV2);
+	state.userFlair[id] = processSubredditUserFlair(r2Subreddit, userFlairsV2);
 }

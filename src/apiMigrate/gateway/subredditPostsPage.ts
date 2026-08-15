@@ -21,7 +21,7 @@ export async function subredditPostsPage(subredditOrSubreddits: string, params: 
 		const [listing, subredditPageExtra] = await Promise.all([
 			getREST(`/r/${subredditOrSubreddits}/${sort}.json?${new URLSearchParams(params)}`),
 			shouldFetchSubreddit
-				? await fetchSubredditPageExtra(subredditOrSubreddits, params.include?.includes("structuredStyles"))
+				? await fetchSubredditPageExtra(subredditOrSubreddits, params.include?.includes("structuredStyles"), false)
 				: undefined,
 		]);
 

@@ -22,3 +22,6 @@ declare interface Window {
 	addInterceptor: typeof addInterceptor;
 	importRedditModule: (modulePath: string) => any;
 }
+
+type AnyRecord = Record<string, any>;
+type StrRecord = Record<string, string>;

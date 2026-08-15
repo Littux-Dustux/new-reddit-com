@@ -49,11 +49,11 @@ class Logger {
 	}
 	public inf(msg: string, withToast = true, ...args: any[]) {
 		log({ level: "inf", msg, func: this.funcName }, ...args);
-		withToast && toaster.showToast({ kind: toaster.ToastType.SuccessCommunityGreen, text: `[${this.funcName}] ${msg}` }, 1000);
+		withToast && toaster.showToast({ kind: toaster.ToastType.SuccessCommunityGreen, text: `[${this.funcName}] ${msg}` }, 3000);
 	}
 	public log(msg: string, withToast = false, ...args: any[]) {
 		log({ level: "log", msg, func: this.funcName }, ...args);
-		withToast && toaster.showToast({ kind: toaster.ToastType.SuccessCommunity, text: `[${this.funcName}] ${msg}` }, 1000);
+		withToast && toaster.showToast({ kind: toaster.ToastType.SuccessCommunity, text: `[${this.funcName}] ${msg}` }, 3000);
 	}
 	public wrn(msg: string, withToast = true, ...args: any[]) {
 		log({ level: "wrn", msg, func: this.funcName }, ...args);
@@ -61,7 +61,7 @@ class Logger {
 	}
 	public err(msg: string, withToast = true, ...args: any[]) {
 		log({ level: "err", msg, func: this.funcName }, ...args);
-		withToast && toaster.showToast({ kind: toaster.ToastType.Error, text: `[${this.funcName}] ${msg}` }, 4000);
+		withToast && toaster.showToast({ kind: toaster.ToastType.Error, text: `[${this.funcName}] ${msg}` }, 5000);
 	}
 	public crt(msg: string, ...args: any[]) {
 		log({ level: "crt", msg, func: this.funcName }, ...args);

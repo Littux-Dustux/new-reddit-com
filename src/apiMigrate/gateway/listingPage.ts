@@ -1,5 +1,5 @@
 import { getREST, RedditAPIError } from "../../api/rest";
-import { getLogger, showToast } from "../../logging";
+import { getLogger, showToast, ToastType } from "../../logging";
 import { conversationsListing, postAndCommentsListing } from "./mappers/listing";
 
 const logger = getLogger('genericListing');
@@ -8,15 +8,24 @@ export async function genericListingR2(
 	url: string,
 	params: Record<string, string>,
 	fn: typeof postAndCommentsListing | typeof conversationsListing = postAndCommentsListing,
+	anonymousAuth?: boolean,
 ) {
 	try {
 		params.raw_json = '1';
+		params.consent = 'true';
 		if (!params.limit && !params.after) {
 			params.limit = '15';
 		}
 		url += "?" + new URLSearchParams(params);
 
-		const { data } = await getREST(url);
+		if (anonymousAuth) {
+			showToast({
+				kind: ToastType.Custom,
+				text: "Note: this person has blocked you, so the content has been fetched from the API logged-out, meaning your actions like upvotes will be missing.",
+			}, 10e3);
+		}
+
+		const { data } = await getREST(url, undefined, anonymousAuth);
 		return {
 			jsonResponse: JSON.stringify(
 				await fn(data.children, data.after)
@@ -96,3 +105,5 @@ export async function arcticShiftListing(username: string, isPostPage: boolean, 
 		}
 	}
 }
+
+export const blockedByUserNames = new Set<string>();

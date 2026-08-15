@@ -90,7 +90,7 @@ async function main() {
 					method: "replace",
 					args: [originalPath]
 				}
-			}), 200);
+			}), 100);
 		}
 	}, 50);
 

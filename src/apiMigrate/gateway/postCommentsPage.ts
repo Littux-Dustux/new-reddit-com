@@ -10,8 +10,18 @@ const logger = getLogger('postComments');
 const devvitDataCacheOptions = { cache: true, maxCacheAge: 300e3 };
 
 export async function postCommentsResponse(postID: string, commentID: string | undefined, params: Record<string, string>) {
+	const postFromState = getState().posts.models[postID];
+	const isProfile = postFromState
+		? postFromState.belongsTo.type === "profile"
+		: location.pathname.startsWith('/user/') || null;
+
+	const subredditPrefix = (isProfile === null || !params.subredditName) ? '' : (
+		isProfile ? `/user/${params.subredditName}` : `/r/${params.subredditName}`
+	);
+	const subredditName = isProfile ? `u_${params.subredditName}` : params.subredditName;
+
 	try {
-		if (params.onOtherDiscussions === "true") {
+		if (params.truncate === '0') {
 			params.id = postID;
 			const listing = await getREST(`/api/info.json?raw_json=1&${new URLSearchParams(params)}`);
 			return {
@@ -28,8 +38,6 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 
 		let postWithDevvit;
 
-		// @ts-ignore
-		const postFromState = getState().posts.models[postID];
 		if (!postFromState || postFromState.crosspostParentId || postFromState.thumbnail.url === "self" || postFromState.thumbnail.url === "default") {
 			if (postFromState) {
 				postWithDevvit = gqlFetch("GetDevvitPostData", "c1b617abd8eec6232ae0c97893316d44a2f09cb7cef56c646680b2d9de0d8802", {
@@ -57,12 +65,12 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 			}
 		}
 
-		const subredditPageExtra = params.subredditName && params.include?.includes("structuredStyles")
-			? fetchSubredditPageExtra(params.subredditName)
+		const subredditPageExtra = subredditName && params.include?.includes("structuredStyles")
+			? fetchSubredditPageExtra(subredditName, !isProfile, Boolean(isProfile))
 			: null;
 
 		const listing = await getREST(
-			`/comments/${postID.slice(3)}/_/${(commentID?.slice(3)) ?? ''}.json?${
+			`${subredditPrefix}/comments/${postID.slice(3)}/_/${(commentID?.slice(3)) ?? ''}.json?${
 				new URLSearchParams({
 					...params,
 					//sr_detail: "1",
@@ -87,7 +95,10 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 					listing[1].data.children,
 					{
 						postWithDevvit:	(await postWithDevvit)?.postInfoById,
-						...(await subredditPageExtra),
+						...(subredditPageExtra
+							? await subredditPageExtra
+							: { structuredStyles: null, subredditInfo: null, isSubredditR2: false }
+						),
 					}
 				)
 			),

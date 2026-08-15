@@ -2,7 +2,7 @@ import { getREST, RedditAPIError } from "../../api/rest";
 import { getLogger } from "../../logging";
 import { postAndCommentsListing } from "./mappers/listing";
 import { addPostToState } from "./mappers/posts";
-import { addGqlSubredditToState, processSubreddit, processSubredditAboutInfo, type SubredditState } from "./mappers/subreddit";
+import { addGqlSubredditToState, addR2SubredditToState, type SubredditState } from "./mappers/subreddit";
 import { fetchSubredditPageExtra } from "./utils";
 
 const logger = getLogger('gateway:submitPage');
@@ -15,39 +15,18 @@ export async function submitPage({ include, subreddit }: any) {
 		postFlair: {},
 		userFlair: {},
 		structuredStyles: null,
-	}
+	};
 
-	if (subreddit.startsWith("u_")) {
-		try {
-			const { data } = await getREST(`/r/${subreddit}/about.json?raw_json=1`);
-			state.subredditAboutInfo[data.name] = processSubredditAboutInfo(data);
-			state.subreddits[data.name] = processSubreddit(data);
-			return {
-				jsonResponse: JSON.stringify(state),
-				status: 200,
-			}
-		} catch(e) {
-			if (e instanceof RedditAPIError) {
-				return {
-					jsonResponse: JSON.stringify({
-						reason: e.status === 404 ? "NOT_FOUND" : e.status.toString().toUpperCase(),
-						data: {},
-					}),
-					status: e.status,
-				}
-			} else {
-				logger.crt(`Error fetching user subreddit submit page: ${(e as any)?.message ?? JSON.stringify(e)}`, e);
-				throw e;
-			}
-		}
-	}
+	const isProfile = subreddit.startsWith("u_");
 
 	try {
-		const subredditExtra = await fetchSubredditPageExtra(subreddit, include.includes("structuredStyles"));
-		state.structuredStyles = subredditExtra.structuredStyles;
-		addGqlSubredditToState(
-			state, subredditExtra.gqlSubredditInfo, subredditExtra.userFlairsV2, subredditExtra.postFlairsV2
+		const subredditExtra = await fetchSubredditPageExtra(
+			subreddit, include.includes("structuredStyles"), isProfile
 		);
+		(isProfile ? addR2SubredditToState : addGqlSubredditToState)(
+			state, subredditExtra.subredditInfo, subredditExtra.userFlairsV2, subredditExtra.postFlairsV2
+		);
+		state.structuredStyles = subredditExtra.structuredStyles;
 		return {
 			jsonResponse: JSON.stringify(state),
 			status: 200,

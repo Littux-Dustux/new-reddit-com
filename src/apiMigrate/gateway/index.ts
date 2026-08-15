@@ -2,18 +2,19 @@ import type { InterceptorHandler } from "../interceptXhr";
 import { getLogger } from "../../logging/logger";
 import { moreCommentsResponse, postCommentsResponse } from "./postCommentsPage";
 import { subredditPostsPage } from "./subredditPostsPage";
-import { arcticShiftListing, genericListingR2 } from "./listingPage";
+import { arcticShiftListing, blockedByUserNames, genericListingR2 } from "./listingPage";
 import { conversationsListing } from "./mappers/listing";
 import { getState } from "../../main";
 import { duplicates, submitPage } from "./submitPage";
 
 
 const logger = getLogger("gatewayAPI");
+const emptyResponse = { jsonResponse: "{}", status: 501 };
 
 export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: target, method: string }, data) => {
 	const url = new URL(target);
 	const params = Object.fromEntries(url.searchParams.entries());
-	const [operation, onTarget, ...path] = url.pathname.split("/").slice(3);
+	const [operation, onTarget, ...path] = url.pathname.split("/").slice(3) as [string, string, string, string];
 
 	logger.dbg("Intercepted request to gateway API: " + operation + " " + url);
 	if (data) console.debug("Payload:", data);
@@ -36,12 +37,15 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 			const [endpoint, postId] = path;
 			switch (endpoint) {
 				case "conversations":
-					return genericListingR2(`/user/${onTarget}/conversations.json`, params, conversationsListing)
+					return genericListingR2(`/user/${onTarget}/conversations.json`,
+						params, conversationsListing, blockedByUserNames.has(onTarget.toLowerCase()),
+					)
 				case "morecomments":
 					return genericListingR2(
 						`/user/${onTarget}/more_comments/${postId}.json`,
 						{ ...params, limit: '100' },
-						conversationsListing
+						conversationsListing,
+						blockedByUserNames.has(onTarget.toLowerCase()),
 					)
 				case "comments":
 					return onTarget?.toLowerCase() === getState().user.account?.displayText?.toLowerCase()
@@ -70,11 +74,12 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 		case "duplicates":
 			return duplicates(onTarget as string, params);
 
+		case "sidebar_insertion":
+		case "comments_page_insertion":
+			return emptyResponse;
+
 		default:
 			logger.wrn("No handler for gateway API endpoint: " + url, true);
-			return {
-				jsonResponse: "{}",
-				status: 501
-			};
+			return emptyResponse;
 	}
 }
