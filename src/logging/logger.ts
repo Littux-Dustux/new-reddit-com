@@ -61,7 +61,7 @@ class Logger {
 	}
 	public err(msg: string, withToast = true, ...args: any[]) {
 		log({ level: "err", msg, func: this.funcName }, ...args);
-		withToast && toaster.showToast({ kind: toaster.ToastType.Error, text: `[${this.funcName}] ${msg}` }, 5000);
+		withToast && toaster.showToast({ kind: toaster.ToastType.Error, text: `[${this.funcName}] ${msg}` }, 7000);
 	}
 	public crt(msg: string, ...args: any[]) {
 		log({ level: "crt", msg, func: this.funcName }, ...args);

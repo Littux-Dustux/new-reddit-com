@@ -17,6 +17,13 @@ export async function submitPage({ include, subreddit }: any) {
 		structuredStyles: null,
 	};
 
+	if (!subreddit) {
+		return {
+			jsonResponse: JSON.stringify(state),
+			status: 200,
+		}
+	};
+
 	const isProfile = subreddit.startsWith("u_");
 
 	try {

@@ -1,13 +1,13 @@
 import { gqlFetch } from "../api/gql";
 import { getREST } from "../api/rest";
-import type { State } from "../main";
+import { getState, type State } from "../main";
 
 
-export default async function(state: State) {
+export default async function() {
 	const { data: { children: blockedRels }} = await getREST("/prefs/blocked.json?raw_json=1&include_icon_img=1")
 		.catch(() => ({ data: { children: [] }}));
 
-	state.user.blocked.data = blockedRels;
+	getState().user.blocked.data = blockedRels;
 	/*
 	state.user.whitelist.data = identity.allowlistedRedditorsInfo.edges.map(({ node }: any) => ({
 		date: 0,

@@ -14,7 +14,7 @@ const defaultResponse = {
 };
 
 const shutUpOperations = new Set<OldOperation>([
-	"SubredditPageExtra", "CommentsPageExtra", "RedditorMultireddits",
+	"SubredditPageExtra", "CommentsPageExtra", "RedditorMultireddits", "GetPostReactInfo",
 	"SubredditChatChannelRecommendations", "GetTournaments",
 	"CommentsPageLastAuthorModNotes", "ModQueueTriggers", "PostIsTrackingCrossposts"
 ]);

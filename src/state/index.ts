@@ -1041,11 +1041,12 @@ export const state = {
 	},
 };
 
-export const hydrateState = () => Promise.all([
-	addUserRels(state),
-	addIdentityToState(state),
-	addPrefsV1ToState(state),
-]);
+export const hydrateState = () => {
+	addPrefsV1ToState();
+	addUserRels();
+	return addIdentityToState(state);
+};
+
 
 export let isLoggedIn = {
 	value: false,

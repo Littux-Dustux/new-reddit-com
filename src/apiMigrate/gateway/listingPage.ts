@@ -8,13 +8,13 @@ export async function genericListingR2(
 	url: string,
 	params: Record<string, string>,
 	fn: typeof postAndCommentsListing | typeof conversationsListing = postAndCommentsListing,
-	anonymousAuth?: boolean,
+	anonymousAuth: boolean = false,
 ) {
 	try {
 		params.raw_json = '1';
 		params.consent = 'true';
 		if (!params.limit && !params.after) {
-			params.limit = '15';
+			params.limit = params.layout === 'card' ? '15' : '25';
 		}
 		url += "?" + new URLSearchParams(params);
 
@@ -25,7 +25,7 @@ export async function genericListingR2(
 			}, 10e3);
 		}
 
-		const { data } = await getREST(url, undefined, anonymousAuth);
+		const { data } = await getREST(url, { anonymous: anonymousAuth });
 		return {
 			jsonResponse: JSON.stringify(
 				await fn(data.children, data.after)
@@ -45,7 +45,7 @@ export async function genericListingR2(
 export async function arcticShiftListing(username: string, isPostPage: boolean, after?: string | null) {
 	try {
 		const pageSize = !after
-			? isPostPage ? 10 : 5
+			? isPostPage ? 10 : 20
 			: isPostPage ? 25 : 50;
 
 		const params: Record<string, string> = {
@@ -71,7 +71,7 @@ export async function arcticShiftListing(username: string, isPostPage: boolean, 
 			logger.err(`Error while fetching from arctic-shift: ${error}`);
 			return {
 				jsonResponse: JSON.stringify({
-					status: 500,
+					error: 500,
 					message: error,
 				}),
 				status: 500,
@@ -92,7 +92,7 @@ export async function arcticShiftListing(username: string, isPostPage: boolean, 
 						kind: isPostPage ? 't3' : 't1',
 						data: item,
 					})),
-					lastItem ? new Date(lastItem.created_utc * 1000).toISOString() : null
+					lastItem ? '' + lastItem.created_utc : null,
 				).then(state => { logger.dbg("State:", state); return state; })
 			), 
 			status: 200,
@@ -107,3 +107,4 @@ export async function arcticShiftListing(username: string, isPostPage: boolean, 
 }
 
 export const blockedByUserNames = new Set<string>();
+export const isUserCurationActive = new Map<string, Promise<boolean>>();

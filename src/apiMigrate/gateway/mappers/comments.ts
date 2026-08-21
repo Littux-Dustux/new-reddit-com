@@ -31,6 +31,7 @@ const processSingleComment = (comment: any, postId?: any) => ({
 	id: comment.name,
 	ignoreReports: comment.ignore_reports,
 	isAdmin: comment.distinguished === "admin",
+	isAuthorCakeday: comment.author_cakeday,
 	isAuthorPremium: Boolean(comment.author_premium),
 	isApproved: comment.approved,
 	isDeleted: comment.collapsed_reason_code === "DELETED" || (comment.author === "[deleted]" && comment.body === "[deleted]"),

@@ -13,6 +13,9 @@ export default defineConfig({
 			output: {
 				inlineDynamicImports: true, // avoid chunks
 			},
+			treeshake: {
+				moduleSideEffects: true,
+			}
 		},
 		target: "es2020",
 		sourcemap: true,

@@ -73,7 +73,7 @@ export const processSubredditAboutInfoGql = (data: any) => {
 	>(data.allowedPostTypes);
 	return {
 		acceptFollowers: !data.isQuarantined,
-		accountsActive: 0,
+		accountsActive: "Unknown",
 		advertiserCategory: "NoThanks",
 		allOriginalContent: false,
 		allowedMediaInComments: data.allowedMediaInComments,
@@ -243,10 +243,10 @@ export const addGqlSubredditToState = (state: SubredditState, gqlSubreddit: any,
 	const id = gqlSubreddit.id;
 
 	if (gqlSubreddit.__typename === "Subreddit") {
-		state.subredditAboutInfo[id] = processSubredditAboutInfoGql(gqlSubreddit);
-		state.subreddits[id] = processSubredditGql(gqlSubreddit);
-		state.postFlair[id] = processSubredditPostFlairGql(gqlSubreddit, postFlairsV2);
-		state.userFlair[id] = processSubredditUserFlairGql(gqlSubreddit, userFlairsV2);
+		state.subredditAboutInfo[id] ??= processSubredditAboutInfoGql(gqlSubreddit);
+		state.subreddits[id] ??= processSubredditGql(gqlSubreddit);
+		state.postFlair[id] ??= processSubredditPostFlairGql(gqlSubreddit, postFlairsV2);
+		state.userFlair[id] ??= processSubredditUserFlairGql(gqlSubreddit, userFlairsV2);
 		state.subredditPermissions ??= processModPermissionsGql(gqlSubreddit);
 	} else {
 		logger.dbg(`Loading subreddit info for r/${gqlSubreddit.name} from state`);
@@ -260,8 +260,8 @@ export const addR2SubredditToState = (state: SubredditState, r2Subreddit: any, u
 
 	const id = r2Subreddit.name;
 
-	state.subredditAboutInfo[id] = processSubredditAboutInfo(r2Subreddit);
-	state.subreddits[id] = processSubreddit(r2Subreddit);
-	state.postFlair[id] = processSubredditPostFlair(r2Subreddit, postFlairsV2);
-	state.userFlair[id] = processSubredditUserFlair(r2Subreddit, userFlairsV2);
+	state.subredditAboutInfo[id] ??= processSubredditAboutInfo(r2Subreddit);
+	state.subreddits[id] ??= processSubreddit(r2Subreddit);
+	state.postFlair[id] ??= processSubredditPostFlair(r2Subreddit, postFlairsV2);
+	state.userFlair[id] ??= processSubredditUserFlair(r2Subreddit, userFlairsV2);
 }

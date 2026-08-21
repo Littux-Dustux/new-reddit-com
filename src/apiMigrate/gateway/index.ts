@@ -2,10 +2,12 @@ import type { InterceptorHandler } from "../interceptXhr";
 import { getLogger } from "../../logging/logger";
 import { moreCommentsResponse, postCommentsResponse } from "./postCommentsPage";
 import { subredditPostsPage } from "./subredditPostsPage";
-import { arcticShiftListing, blockedByUserNames, genericListingR2 } from "./listingPage";
+import { arcticShiftListing, blockedByUserNames, genericListingR2, isUserCurationActive } from "./listingPage";
 import { conversationsListing } from "./mappers/listing";
 import { getState } from "../../main";
 import { duplicates, submitPage } from "./submitPage";
+import { shouldUseArcticShiftHistory } from "./utils";
+import { showToast, ToastType } from "../../logging";
 
 
 const logger = getLogger("gatewayAPI");
@@ -37,8 +39,20 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 			const [endpoint, postId] = path;
 			switch (endpoint) {
 				case "conversations":
+					const lowerCased = onTarget.toLowerCase();
+					/* if (await shouldUseArcticShiftHistory(lowerCased)) {
+						showToast({
+							kind: ToastType.Error,
+							text: `u/${onTarget} likes to keep their posts and comments hidden. Visit the Posts or Comments tab if you don't care about their preferences.`
+						}, 15e3);
+
+						return {
+							jsonResponse: "{}",
+							status: 403,
+						};
+					} */
 					return genericListingR2(`/user/${onTarget}/conversations.json`,
-						params, conversationsListing, blockedByUserNames.has(onTarget.toLowerCase()),
+						params, conversationsListing, blockedByUserNames.has(lowerCased),
 					)
 				case "morecomments":
 					return genericListingR2(
@@ -48,16 +62,23 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 						blockedByUserNames.has(onTarget.toLowerCase()),
 					)
 				case "comments":
-					return onTarget?.toLowerCase() === getState().user.account?.displayText?.toLowerCase()
-						? genericListingR2(
+					return await shouldUseArcticShiftHistory(onTarget.toLowerCase())
+						? arcticShiftListing(onTarget, false, params.after)
+						: genericListingR2(
 							`/user/${onTarget}/comments.json`,
 							{ ...params, limit: '100' }
 						)
-						: arcticShiftListing(onTarget as string, false, params.after)
 				case "posts":
-					return onTarget?.toLowerCase() === getState().user.account?.displayText?.toLowerCase()
-						? genericListingR2(`/user/${onTarget}/submitted.json`, params)
-						: arcticShiftListing(onTarget as string, true, params.after)
+					return await shouldUseArcticShiftHistory(onTarget.toLowerCase())
+						// ? arcticShiftListing(onTarget, true, params.after)
+						? genericListingR2('/search', {
+							q: `author:${onTarget}`,
+							sort: params.sort || "new",
+							t: params.t || "all",
+							include_over_18: params.allow_over18 ?? '0',
+							...params
+						})
+						: genericListingR2(`/user/${onTarget}/submitted.json`, params)
 				default:
 					logger.wrn(`No handler for gateway user API endpoint ${path[0]}`, true);
 					return {

@@ -8,7 +8,7 @@ import { getState } from "../../main";
 import { markdownToRichText } from "./mappers/richtext";
 import { FormattingFlag } from "./mappers/richtext_types";
 import { isLoggedIn } from "../../state";
-import { blockedByUserNames } from "./listingPage";
+import { blockedByUserNames, isUserCurationActive } from "./listingPage";
 
 const logger = getLogger('apiMigrate:gateway:utils');
 
@@ -98,7 +98,7 @@ export async function fixR2CommentsMedia(comments: Record<string, any>) {
 	if (blockedIds.length > 0) {
 		logger.log(`Loading ${blockedIds.length} comments from blocked user`, true);
 		commentFixerPromises.push(
-			getREST(`/api/info.json?id=${blockedIds.join(",")}&raw_json=1&profile_img=1&rtj=only`, -1, true)
+			getREST(`/api/info.json?id=${blockedIds.join(",")}&raw_json=1&profile_img=1&rtj=only`, { anonymous: true })
 			.then(({ data: { children }}) => {
 				for (const { data: { name, author, author_fullname, profile_img, rtjson }} of children) {
 					const noticeText = `Comment ${name} loaded from logged-out API (why: u/${author} blocked you)`;
@@ -168,10 +168,10 @@ export async function fetchSubredditPageExtra(
 		includeStructuredStyles && getREST(`/api/v1/structured_styles/${subredditName}.json?raw_json=1`)
 		.catch(e => logger.err(`Error fetching structuredStyles for r/${subredditName}: ${e.message}`, true, e)),
 
-		includePostFlairs && getREST(`/r/${subredditName}/api/link_flair_v2.json?raw_json=1`)
+		includePostFlairs && getREST(`/r/${subredditName}/api/link_flair_v2.json?raw_json=1`, { expectStatusCode: 403 })
 		.catch(e => logger.err(`Error fetching post flairs for r/${subredditName}: ${e.message}`, true, e)),
 
-		includeUserFlairs && getREST(`/r/${subredditName}/api/user_flair_v2.json?raw_json=1`)
+		includeUserFlairs && getREST(`/r/${subredditName}/api/user_flair_v2.json?raw_json=1`, { expectStatusCode: 403 })
 		.catch(e => logger.err(`Error fetching user flairs for r/${subredditName}: ${e.message}`, true, e)),
 
 		fetchR2Subreddit
@@ -226,4 +226,17 @@ export async function fetchSubredditPageExtra(
 		subredditInfo: fetchR2Subreddit ? gqlOrR2SubredditInfo.data : gqlOrR2SubredditInfo.subredditInfoByName,
 		isSubredditR2: fetchR2Subreddit,
 	};
+}
+
+
+export const shouldUseArcticShiftHistory = async (username: string) => {
+	if (username === getState().user.account?.displayText.toLowerCase()) return true;
+	if (isUserCurationActive.has(username)) return isUserCurationActive.get(username);
+
+	const { redditorInfoByName } = await gqlFetch("UserProfile", "27ec8d5c561882fab3f0b1da7a20ca742db928e4f2e5e943ac3a827965d5ff4e", {
+		name: username,
+		includePremiumAvatarTreatment: false,
+	}, { cache: true, maxCacheAge: 60e3 });
+
+	return redditorInfoByName?.isProfileContentFiltered;
 }

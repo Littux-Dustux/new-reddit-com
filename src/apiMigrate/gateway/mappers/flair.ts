@@ -22,20 +22,20 @@ export const reduceFlairsV2R2 = (flairsV2: any[]) => {
 }
 
 
-export const processSubredditPostFlair = (data: any, postFlairsV2: any[]) => ({
+export const processSubredditPostFlair = (data: any, postFlairsV2?: any[]) => ({
 	displaySettings: { isEnabled: data.link_flair_enabled, position: data.link_flair_position ?? "right" },
 	permissions: { canAssignOwn: data.can_assign_link_flair ?? true },
-	...(postFlairsV2 && reduceFlairsV2R2(postFlairsV2)),
+	...(postFlairsV2?.length && reduceFlairsV2R2(postFlairsV2)),
 });
 
-export const processSubredditPostFlairGql = (data: any, postFlairsV2: any[]) => ({
+export const processSubredditPostFlairGql = (data: any, postFlairsV2?: any[]) => ({
 	displaySettings: { isEnabled: data.postFlairSettings?.isEnabled ?? true, position: "right" },
 	permissions: { canAssignOwn: Boolean(postFlairsV2) },
-	...(postFlairsV2 && reduceFlairsV2R2(postFlairsV2)),
+	...(postFlairsV2?.length && reduceFlairsV2R2(postFlairsV2)),
 });
 
 
-export const processSubredditUserFlair = (data: any, userFlairsV2: any[]) => ({
+export const processSubredditUserFlair = (data: any, userFlairsV2?: any[]) => ({
 	// very confusing
 	displaySettings: {
 		isUserEnabled: data.user_sr_flair_enabled,
@@ -51,10 +51,10 @@ export const processSubredditUserFlair = (data: any, userFlairsV2: any[]) => ({
 		textColor: data.user_flair_text_color,
 		type: data.user_flair_type,
 	} : null,
-	...(userFlairsV2 && reduceFlairsV2R2(userFlairsV2)),
+	...(userFlairsV2?.length && reduceFlairsV2R2(userFlairsV2)),
 });
 
-export const processSubredditUserFlairGql = ({ authorFlairSettings, modPermissions, authorFlair }: any, userFlairsV2: any[]) => ({
+export const processSubredditUserFlairGql = ({ authorFlairSettings, modPermissions, authorFlair }: any, userFlairsV2?: any[]) => ({
 	displaySettings: { isEnabled: authorFlairSettings.isEnabled, isUserEnabled: authorFlairSettings.isOwnFlairEnabled, position: "right" },
 	permissions: {
 		canUserChange: authorFlairSettings.isSelfAssignable,
@@ -71,7 +71,7 @@ export const processSubredditUserFlairGql = ({ authorFlairSettings, modPermissio
 				type: authorFlair.template.richtext ? "richtext" : "text",
 			}
 		: null,
-	...(userFlairsV2 && reduceFlairsV2R2(userFlairsV2))
+	...(userFlairsV2?.length && reduceFlairsV2R2(userFlairsV2))
 });
 
 

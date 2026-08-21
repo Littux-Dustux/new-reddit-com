@@ -20,7 +20,9 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 	);
 	const subredditName = isProfile ? `u_${params.subredditName}` : params.subredditName;
 
+
 	try {
+		// Crosspost creation page
 		if (params.truncate === '0') {
 			params.id = postID;
 			const listing = await getREST(`/api/info.json?raw_json=1&${new URLSearchParams(params)}`);
@@ -65,14 +67,26 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 			}
 		}
 
-		const subredditPageExtra = subredditName && params.include?.includes("structuredStyles")
-			? fetchSubredditPageExtra(subredditName, !isProfile, Boolean(isProfile))
+		const isPreload = params.truncate === '25';
+		if (isPreload) {
+			params.count = '25';
+			params.truncate = '10';
+		}
+
+		const subredditPageExtra = !isPreload && subredditName && params.include?.includes("structuredStyles")
+			? fetchSubredditPageExtra(subredditName, !isProfile, true)
 			: null;
+
+		delete params.include;
+		delete params.subredditName;
+		delete params.hasSortParam;
+		delete params.instanceId;
+		delete params.onOtherDiscussions;
+		delete params.comment_awardings_by_current_user;
 
 		const listing = await getREST(
 			`${subredditPrefix}/comments/${postID.slice(3)}/_/${(commentID?.slice(3)) ?? ''}.json?${
 				new URLSearchParams({
-					...params,
 					//sr_detail: "1",
 					always_include_media: "1",
 					feature: "link_preview",
@@ -84,6 +98,7 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 					//sort: "live",
 					//truncate: "20",
 					//depth: "6",
+					...params,
 				})
 		}`);
 
@@ -99,7 +114,8 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 							? await subredditPageExtra
 							: { structuredStyles: null, subredditInfo: null, isSubredditR2: false }
 						),
-					}
+					},
+					!isPreload,
 				)
 			),
 			status: 200

@@ -21,10 +21,12 @@ const logger = getLogger("state:utils");
 const redditDomains = new Set(['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com', 'np.reddit.com', /* window.location.host */ ]);
 
 document.addEventListener('click', async (e: any) => {
+	if ((e.button ?? 0) !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+
 	const anchor = e.target?.closest('a');
 	if (!anchor || !anchor.href) return;
 
-	const url = new URL(anchor.href);
+	const url = new URL(anchor.href, location.origin);
 
 	if (redditDomains.has(url.host)) {
 		e.preventDefault();

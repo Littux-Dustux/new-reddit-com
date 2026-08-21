@@ -22,7 +22,10 @@ export const oauthPipeInterceptor: InterceptorHandler = async ({ url, method, he
 		anonymous: true
 	});
 
-	logger.log(`${method} ${url.slice(0, 128)} (status: ${response.status}) ${data?.slice(0, 128)}`);
+	logger[response.status >= 400 ? "err" : "log"](
+		`${method} ${url.slice(0, 128)} (status: ${response.status}) ${data?.slice(0, 128)}`
+	);
+
 	const responseHeaders = convertHeadersStringToObject(response.responseHeaders);
 	parseResponseAndStoreAuth(requestHeaders);
 

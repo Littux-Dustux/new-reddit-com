@@ -47,6 +47,26 @@
 							}
 							return originalNormalizeSubreddit(e);
 						}
+
+
+						const reduxModule = importRedditModule('./node_modules/redux/es/redux.js');
+						const originalCreateStore = reduxModule.e;
+						reduxModule.e = function (reducer, preloadedState, enhancer) {
+							if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
+								enhancer = preloadedState;
+								preloadedState = undefined;
+							}
+
+							const devToolsComposer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
+
+							if (typeof devToolsComposer === 'function') {
+								// If an enhancer already exists, compose them together; otherwise, use devToolsComposer directly
+								enhancer = enhancer ? devToolsComposer(enhancer) : devToolsComposer();
+							}
+
+							// Call original createStore with the enhanced store creator
+							return originalCreateStore(reducer, preloadedState, enhancer);
+						};
 					}
 				}]
 			);

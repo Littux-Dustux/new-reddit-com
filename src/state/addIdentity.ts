@@ -1,7 +1,7 @@
 import { isLoggedIn, state } from ".";
 import { gqlFetch } from "../api/gql";
 import { getREST } from "../api/rest";
-import type { State } from "../main";
+import { getState, type State } from "../main";
 import { getLoidState } from "./utils";
 
 export interface PrefsV1 {
@@ -122,7 +122,7 @@ const convertPrefsV1ToState = (prefs: PrefsV1): PrefsState => ({
 	hasSeenCustomizeFlyout: true,
 	hideAds: prefs.hide_ads,
 	hideFromRobots: prefs.hide_from_robots,
-	hideNSFW: !prefs.search_include_over_18,
+	hideNSFW: prefs.no_profanity,
 	highlightComments: prefs.highlight_new_comments,
 	ignoreSuggestedSort: prefs.ignore_suggested_sort,
 	isAdPersonalizationAllowed: false,
@@ -170,11 +170,12 @@ const convertPrefsV1ToState = (prefs: PrefsV1): PrefsState => ({
 	useMarkdown: true,
 });
 
-export async function addPrefsV1ToState(state: State) {
+export async function addPrefsV1ToState() {
 	try {
 		const prefs = await getREST<PrefsV1>("/api/v1/me/prefs?raw_json=1");
 		if (!prefs) return;
-		state.user.prefs = convertPrefsV1ToState(prefs);
+
+		getState().user.prefs = convertPrefsV1ToState(prefs);
 	} catch {}
 };
 
@@ -198,7 +199,7 @@ interface GetAccountResponse {
 		preferences: {
 			isTopKarmaSubredditsShown: boolean;
 		};
-		paymentSubscriptions: Array<{
+		paymentSubscriptions?: Array<{
 			productType: string;
 			status: string;
 			startedAt: string | null;
@@ -351,9 +352,9 @@ export async function addIdentityToState(state: State) {
 		// @ts-ignore
 		goldExpiration: null,
 		hasExternalAccount: identity.linkedIdentities?.length > 0,
-		hasGoldSubscription: identity.paymentSubscriptions.some(sub => sub.productType === "GOLD" && sub.status === "ACTIVE"),
-		hasPaypalSubscription: identity.paymentSubscriptions.some(sub => sub.productType === "PAYPAL" && sub.status === "ACTIVE"),
-		hasStripeSubscription: identity.paymentSubscriptions.some(sub => sub.productType === "STRIPE" && sub.status === "ACTIVE"),
+		hasGoldSubscription: identity.paymentSubscriptions?.some(sub => sub.productType === "GOLD" && sub.status === "ACTIVE"),
+		hasPaypalSubscription: identity.paymentSubscriptions?.some(sub => sub.productType === "PAYPAL" && sub.status === "ACTIVE"),
+		hasStripeSubscription: identity.paymentSubscriptions?.some(sub => sub.productType === "STRIPE" && sub.status === "ACTIVE"),
 		hasUnreadMail: identity.inbox.unreadCount > 0,
 		hasUnreadModmail: identity.modMail.isUnread,
 		hasUnreadOldModmail: false,

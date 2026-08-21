@@ -8,6 +8,7 @@ import { fixAwardIconSize } from "./helpers/award";
 import { fixGqlListing, fixGqlPost, fixPopularElements, handlePostFeedAndOtherDiscussions } from "./helpers/post";
 import { getState } from "../../main";
 import { addModSubToState } from "../../state/addModeratedSubs";
+import { isUserCurationActive } from "../gateway/listingPage";
 
 export type OldOperation = (
 	| "CreatorStats"
@@ -766,6 +767,23 @@ export const gqlFedMap: GqlFedMapping = {
 		operationName: "InterestTopicsByIds",
 		sha256Hash: "38268395dac1c8c1613665c729a51da18dc21694f8ec417b032abe1004e5ef59",
 	},
+	LanguageSelections: {
+		operationName: "ContentLanguages+SpokenLanguages",
+		async process({ allKey, suggestedKey }) {
+			const [spokenLanguages, allList, suggestedList] = await Promise.all([
+				gqlFetch("SpokenLanguages", "84dba115e7924bc81f38962b8c1f158d25acccdc6fa8400c9ac570ee3f0335dd", {}),
+				gqlFetch("ContentLanguages", "a2633f43bda02b926b17cfc0d9697085c43276cb9884fdf26133082f0f282300", { listKey: allKey }),
+				gqlFetch("ContentLanguages", "a2633f43bda02b926b17cfc0d9697085c43276cb9884fdf26133082f0f282300", { listKey: suggestedKey })
+			]);
+			return JSON.stringify({
+				data: {
+					...spokenLanguages,
+					all: allList.languagesList,
+					suggested: suggestedList.languagesList,
+				}
+			});
+		}
+	},
 	MatrixChatNotifications: {
 		operationName: "IdentityMatrixNotifications",
 		sha256Hash: "95192e490742fec36721e64002e1913e6f0dfc746b6033f31c37f8b8689595f6",
@@ -944,6 +962,7 @@ export const gqlFedMap: GqlFedMapping = {
 	PostGuidanceValidation: {
 		operationName: "ValidatePostGuidanceRules", // 2024 app
 		sha256Hash: "2c398ea4052e9bc4d02f3f9ff69dc11aa460748de32601b20c6c023cd3442644",
+		mapVars: ({ input }) => input,
 	},
 	PostSetById: {
 		operationName: "PostSetSharedTo",
@@ -1096,7 +1115,7 @@ export const gqlFedMap: GqlFedMapping = {
 		mapResp: ({ postsInfoByIds: posts }) => ({ postInfoById: posts[0] ?? null }),
 	},
 	SocialLinks: {
-		// Got from Reddit themselves
+		/* // Got from Reddit themselves
 		// https://github.com/reddit/devvit/blob/0eabc7abebf850bdd0b7a4c7c1bdf3feac340402/packages/reddit/src/models/User.ts#L494
 		operationName: "GetUserSocialLinks",
 		sha256Hash: "2aca18ef5f4fc75fb91cdaace3e9aeeae2cb3843b5c26ad511e6f01b8521593a",
@@ -1106,7 +1125,31 @@ export const gqlFedMap: GqlFedMapping = {
 				__typename: user ? "Redditor" : "UnavailableRedditor",
 				...user
 			}
-		})
+		}) */
+		operationName: "UserProfile",
+		async process({ username }) {
+			const lowerCased = username.toLowerCase();
+			const fetchPromise = gqlFetch("UserProfile", "27ec8d5c561882fab3f0b1da7a20ca742db928e4f2e5e943ac3a827965d5ff4e", {
+				name: lowerCased,
+				includePremiumAvatarTreatment: false,
+			}, { cache: true, maxCacheAge: 60e3 });
+
+			isUserCurationActive.set(lowerCased, fetchPromise.then(
+				({ redditorInfoByName }) => redditorInfoByName?.isProfileContentFiltered
+			));
+
+			const { redditorInfoByName } = await fetchPromise;
+			return JSON.stringify({
+				data: {
+					redditorInfoByName: {
+						__typename: redditorInfoByName?.__typename,
+						profile: {
+							socialLinks: redditorInfoByName?.profile?.socialLinks ?? [],
+						}
+					}
+				}
+			});
+		}
 	},
 	SubmitMediaUpload: {
 		operationName: "SubmitMediaUpload",

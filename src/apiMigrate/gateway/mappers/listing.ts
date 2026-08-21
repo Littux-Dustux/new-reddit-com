@@ -126,7 +126,8 @@ export async function postComments(
 		postFlairsV2?: any[] | null,
 		userFlairsV2?: any[] | null,
 		postWithDevvit?: AnyRecord,
-	}
+	},
+	shouldFixR2Comments: boolean,
 ) {
 	const state: CommentsPageState = {
 		account: null,
@@ -152,7 +153,7 @@ export async function postComments(
 	addPostToState(post, state, postWithDevvit);
 	addCommentTreeToState(commentsChildren, post.name, state);
 
-	await fixR2CommentsMedia(state.comments);
+	if (fixR2CommentsMedia) await fixR2CommentsMedia(state.comments);
 	return state;
 }
 

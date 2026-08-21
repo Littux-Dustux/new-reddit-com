@@ -4,24 +4,28 @@ import { postAndCommentsListing } from "./mappers/listing";
 import { fetchSubredditPageExtra } from "./utils";
 
 const logger = getLogger("subredditPostsPage");
-
+const adhocMultiNames = new Set(["all", "popular", "mod", "friends"])
 export async function subredditPostsPage(subredditOrSubreddits: string, params: Record<string, string>) {
-	const isAdhocMulti = subredditOrSubreddits.includes("+") || subredditOrSubreddits === "all";
+	const isAdhocMulti = adhocMultiNames.has(subredditOrSubreddits) || subredditOrSubreddits.includes("+");
 	const shouldFetchSubreddit = !params.after && !isAdhocMulti;
+	const sort = params.sort || '';
+	const includeStructuredStyles = params.include?.includes("structuredStyles") ?? false;
 
 	params.raw_json = '1';
-	if (!params.after) params.limit = '15';
-	const sort = params.sort || '';
+	params.limit = params.after // speed up initial load
+		? params.layout === "card" ? '25' : '50'
+		: params.layout === "card" ? '7' : '14';
 
 	delete params.dist;
 	delete params.sort;
 	delete params.layout;
+	delete params.include;
 
 	try {
 		const [listing, subredditPageExtra] = await Promise.all([
 			getREST(`/r/${subredditOrSubreddits}/${sort}.json?${new URLSearchParams(params)}`),
 			shouldFetchSubreddit
-				? await fetchSubredditPageExtra(subredditOrSubreddits, params.include?.includes("structuredStyles"), false)
+				? await fetchSubredditPageExtra(subredditOrSubreddits, includeStructuredStyles, true)
 				: undefined,
 		]);
 

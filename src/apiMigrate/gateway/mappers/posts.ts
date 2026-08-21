@@ -37,22 +37,34 @@ const getMedia = (data: any, devvitData?: any) => {
 	const isObscured = data.over_18 || data.spoiler;
 	let obfuscatedUrl = null;
 
+	const baseMedia = {
+		content: data.selftext_html,
+		markdownContent: data.selftext,
+		obfuscated: obfuscatedUrl,
+		rteMode: data.rte_mode,
+		isRichtextPreview: data.is_richtext_preview,
+		...(data.rtjson
+			? { richtextContent: data.rtjson, type: "rtjson", mediaMetadata: data.media_metadata }
+			: { type: "text" }
+		),
+	};
+
 	if (data.preview) {
 		const variants = data.preview.images[0]?.variants || {};
 		if (isObscured && variants.obfuscated) {
 			obfuscatedUrl = variants.obfuscated.source.url;
 		}
-	}
+	};
 
 	if (devvitData?.__typename === "DevvitPost") {
 		return {
+			...baseMedia,
 			content: `devvit:http://${location.host}/embed.html?${encodeURIComponent(convertDevvitDataToIFrame(devvitData).outerHTML)}`,
 			type: "embed",
 			width: 640,
 			height: 512,
 			obfuscated: obfuscatedUrl,
 			provider: "reddit",
-			richtextContent: data.rtjson
 		};
 	}
 
@@ -60,6 +72,7 @@ const getMedia = (data: any, devvitData?: any) => {
 		const galleryData = data.gallery_data || { items: [] };
 
 		return {
+			...baseMedia,
 			type: "gallery",
 			obfuscated: obfuscatedUrl,
 			gallery: {
@@ -80,36 +93,25 @@ const getMedia = (data: any, devvitData?: any) => {
 	}
 
 	if (data.is_self) {
-		return {
-			content: data.selftext_html,
-			type: "text",
-			markdownContent: data.selftext,
-			obfuscated: obfuscatedUrl,
-			rteMode: data.rte_mode || "rich_text",
-			...(data.rtjson && {
-				richtextContent: data.rtjson,
-				type: "rtjson",
-				mediaMetadata: data.media_metadata,
-			}),
-		};
+		return baseMedia;
 	}
 
 	if ((data.secure_media && data.secure_media.oembed) || data.is_survey_ad) {
 		return {
+			...baseMedia,
 			content: data.secure_media_embed?.media_domain_url,
 			type: "embed",
 			width: data.secure_media?.oembed?.width || 640,
 			height: data.secure_media?.oembed?.height || 480,
 			obfuscated: obfuscatedUrl,
 			provider: data.secure_media?.oembed?.provider_name || "",
-			richtextContent: data.rtjson,
-			markdownContent: data.selftext,
 		};
 	}
 
 	if (data.media?.reddit_video) {
 		const v = data.media.reddit_video;
 		return {
+			...baseMedia,
 			hlsUrl: v.hls_url,
 			dashUrl: v.dash_url,
 			isGif: v.is_gif,
@@ -119,8 +121,6 @@ const getMedia = (data: any, devvitData?: any) => {
 			width: v.width,
 			height: v.height,
 			type: "video",
-			richtextContent: data.rtjson,
-			markdownContent: data.selftext,
 		};
 	}
 
@@ -130,6 +130,7 @@ const getMedia = (data: any, devvitData?: any) => {
 
 		if (variants.mp4) {
 			return {
+				...baseMedia,
 				content: variants.mp4.source.url,
 				type: "gifvideo",
 				width: variants.mp4.source.width,
@@ -138,31 +139,21 @@ const getMedia = (data: any, devvitData?: any) => {
 				gifBackgroundResolutions: images.resolutions,
 				obfuscated: obfuscatedUrl,
 				resolutions: variants.mp4.resolutions,
-				richtextContent: data.rtjson,
-				markdownContent: data.selftext,
 			};
 		}
 
 		return {
+			...baseMedia,
 			content: images.source.url,
 			type: "image",
 			width: images.source.width,
 			height: images.source.height,
 			obfuscated: obfuscatedUrl,
 			resolutions: variants.gif ? variants.gif.resolutions : images.resolutions,
-			richtextContent: data.rtjson,
-			markdownContent: data.selftext,
 		};
 	}
 
-	return data.selftext || data.selftext_html || data.rtjson?.document.length
-		? {
-			type: data.rtjson ? 'rtjson' : 'text',
-			richtextContent: data.rtjson,
-			markdownContent: data.selftext,
-			content: data.selftext_html,
-		}
-		: null;
+	return data.selftext || data.selftext_html || data.rtjson?.document.length ? baseMedia : null;
 };
 
 const getSource = (data: any) => {
@@ -202,99 +193,105 @@ const normalizeR2Poll = (data: any) => ({
 	resolvedOptionId: data.resolved_option_id,
 });
 
-export const processPost = (data: any, devvitData?: any) => ({
-	adPromotedUserPostIds: [],
-	adSupplementaryText: null,
-	approvedAtUTC: data.approved_at_utc,
-	approvedBy: data.approved_by,
-	author: data.author,
-	authorId: data.author_fullname,
-	authorIsBlocked: data.author_is_blocked,
-	awardCountsById: (getState().posts.models as any)[data.name]?.awardCountsById,
-	bannedAtUTC: data.banned_at_utc,
-	bannedBy: data.banned_by,
-	belongsTo: {
-		id: data.subreddit_id || "",
-		type: data.subreddit_type === "user" ? "profile" : "subreddit",
-	},
-	callToAction: data.call_to_action || null,
-	contestMode: data.contest_mode,
-	created: data.created_utc * 1000, // Reddit API returns seconds, UI usually needs ms
-	crosspostParentId: data.cross_post_parent_id || data.crosspost_parent_list?.[0]?.name || null,
-	crosspostRootId: data.cross_post_root_id || data.crosspost_parent_list?.[0]?.name || null,
-	discussionType: /\b(thread|megathread)\b/.test(data.title)
-		? "CHAT"
-		: data.discussion_type
-			? data.discussion_type.toUpperCase()
+export const processPost = (data: any, devvitData?: any) => {
+	const postFromState = getState().posts.models[data.name];
+
+	return ({
+		adPromotedUserPostIds: [],
+		adSupplementaryText: null,
+		approvedAtUTC: data.approved_at_utc,
+		approvedBy: data.approved_by,
+		author: data.author,
+		authorId: data.author_fullname,
+		authorIsBlocked: data.author_is_blocked,
+		awardCountsById: postFromState?.awardCountsById,
+		bannedAtUTC: data.banned_at_utc,
+		bannedBy: data.banned_by,
+		belongsTo: {
+			id: data.subreddit_id || "",
+			type: data.subreddit_type === "user" ? "profile" : "subreddit",
+		},
+		callToAction: data.call_to_action || null,
+		contestMode: data.contest_mode,
+		created: data.created_utc * 1000, // Reddit API returns seconds, UI usually needs ms
+		crosspostParentId: data.cross_post_parent_id || data.crosspost_parent_list?.[0]?.name || null,
+		crosspostRootId: data.cross_post_root_id || data.crosspost_parent_list?.[0]?.name || null,
+		discussionType: /\b(thread|megathread)\b/.test(data.title)
+			? "CHAT"
+			: data.discussion_type
+				? data.discussion_type.toUpperCase()
+				: null,
+		distinguishType: data.distinguished || null,
+		domain: data.domain,
+		domainOverride: data.domain_override || null,
+		editedAt: data.edited,
+		events: data.events || [],
+		flair: getFlair(data),
+		hidden: data.hidden,
+		id: data.name,
+		ignoreReports: data.ignore_reports,
+		impressionId: data.impression_id ? String(data.impression_id) : null,
+		impressionIdStr: data.impression_id_str || null,
+		isApproved: data.approved,
+		isArchived: data.archived,
+		isAuthorCakeday: data.author_cakeday,
+		isAuthorPremium: data.author_premium,
+		isBlank: !!data.is_blank,
+		isCreatedFromAdsUi: data.is_created_from_ads_ui,
+		isCrosspostable: data.is_crosspostable,
+		isGildable: true, // data.can_gild,
+		isLocked: data.locked,
+		isMediaOnly: data.media_only,
+		isMeta: data.is_meta,
+		isNSFW: data.over_18,
+		isPinned: data.pinned,
+		isOriginalContent: data.is_original_content,
+		isScoreHidden: false, // Boolean(data.hide_score),
+		isSpoiler: data.spoiler,
+		isSponsored: Boolean(data.promoted),
+		isStickied: data.stickied,
+		isSurveyAd: Boolean(data.is_survey_ad),
+		liveCommentsWebsocket: data.name,  // data.liveCommentsWebsocket || data.websocket_url,
+		media: getMedia(data, devvitData),
+		modReports: data.mod_reports,
+		numComments: data.num_comments,
+		numCrossposts: data.num_crossposts || 0,
+		numDuplicates: data.num_duplicates,
+		numReports: data.num_reports || 0,
+		permalink: data.permalink,
+		pollData: data.poll_data ? normalizeR2Poll(data.poll_data) : null,
+		postCategories:
+			data.post_categories?.map((c: any) => ({
+				categoryId: c.category_id,
+				categoryName: c.category_name,
+			})) || [],
+		postId: data.name,
+		preview: data.preview?.images?.[0]?.source
+			? {
+					url: data.preview.images[0].source.url,
+					width: data.preview.images[0].source.width,
+					height: data.preview.images[0].source.height,
+				}
 			: null,
-	distinguishType: data.distinguished || null,
-	domain: data.domain,
-	domainOverride: data.domain_override || null,
-	events: data.events || [],
-	flair: getFlair(data),
-	hidden: data.hidden,
-	id: data.name,
-	ignoreReports: data.ignore_reports,
-	impressionId: data.impression_id ? String(data.impression_id) : null,
-	impressionIdStr: data.impression_id_str || null,
-	isApproved: data.approved,
-	isArchived: data.archived,
-	isAuthorPremium: data.author_premium,
-	isBlank: !!data.is_blank,
-	isCreatedFromAdsUi: data.is_created_from_ads_ui,
-	isCrosspostable: data.is_crosspostable,
-	isGildable: true, // data.can_gild,
-	isLocked: data.locked,
-	isMediaOnly: data.media_only,
-	isMeta: data.is_meta,
-	isNSFW: data.over_18,
-	isPinned: data.pinned,
-	isOriginalContent: data.is_original_content,
-	isScoreHidden: false, // Boolean(data.hide_score),
-	isSpoiler: data.spoiler,
-	isSponsored: Boolean(data.promoted),
-	isStickied: data.stickied,
-	isSurveyAd: Boolean(data.is_survey_ad),
-	liveCommentsWebsocket: data.name,  // data.liveCommentsWebsocket || data.websocket_url,
-	media: getMedia(data, devvitData),
-	modReports: data.mod_reports,
-	numComments: data.num_comments,
-	numCrossposts: data.num_crossposts || 0,
-	numDuplicates: data.num_duplicates,
-	numReports: data.num_reports || 0,
-	permalink: data.permalink,
-	pollData: data.poll_data ? normalizeR2Poll(data.poll_data) : null,
-	postCategories:
-		data.post_categories?.map((c: any) => ({
-			categoryId: c.category_id,
-			categoryName: c.category_name,
-		})) || [],
-	postId: data.name,
-	preview: data.preview?.images?.[0]?.source
-		? {
-				url: data.preview.images[0].source.url,
-				width: data.preview.images[0].source.width,
-				height: data.preview.images[0].source.height,
-			}
-		: null,
-	removedBy: data.removed_by,
-	removedByCategory: data.removed_by_category,
-	saved: data.saved,
-	score: data.score,
-	sendReplies: data.send_replies,
-	source: getSource(data),
-	suggestedSort: data.suggested_sort,
-	thumbnail: {
-		height: data.thumbnail_height,
-		url: data.thumbnail,
-		width: data.thumbnail_width,
-	},
-	title: data.title,
-	upvoteRatio: data.upvote_ratio,
-	userReports: data.user_reports,
-	viewCount: data.view_count || 0,
-	voteState: getVoteStateNum(data.likes),
-});
+		removedBy: data.removed_by,
+		removedByCategory: data.removed_by_category,
+		saved: data.saved,
+		score: data.score,
+		sendReplies: data.send_replies,
+		source: getSource(data),
+		suggestedSort: data.suggested_sort,
+		thumbnail: {
+			height: data.thumbnail_height,
+			url: data.thumbnail,
+			width: data.thumbnail_width,
+		},
+		title: postFromState?.title ?? data.title,
+		upvoteRatio: data.upvote_ratio,
+		userReports: data.user_reports,
+		viewCount: data.view_count || 0,
+		voteState: getVoteStateNum(data.likes),
+	});
+}
 
 
 export function addPostToState(post: any, state: StateBase, postWithDevvit?: any) {

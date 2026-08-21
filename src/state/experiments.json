@@ -1694,7 +1694,7 @@
     "d2x_popular_gql_migration_logged_in": {
         "id": 5519,
         "name": "d2x_popular_gql_migration_logged_in",
-        "variant": "enabled",
+        "variant": "control_1",
         "version": "25"
     },
     "d2x_private_community_ux": {
