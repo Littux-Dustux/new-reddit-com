@@ -70,15 +70,13 @@ export async function gqlFetch<T = any>(
 			});
 		} catch(e: any) {
 			if (e?.error) {
-				throw new TypeError(`Error fetching gql data: ${(e as Tampermonkey.ErrorResponse).error}`)
+				throw new TypeError(`Error fetching gql data: ${(e as Tampermonkey.ErrorResponse).statusText}`)
 			} else {
 				throw e;
 			}
 		}
 
 		parseResponseAndStoreAuth(resp.responseHeaders);
-
-		if (resp.status !== 200) logger.err(`Status code ${resp.status} with ${operationName}`);
 
 		let data: any;
 		if (resp.status !== 200
@@ -93,6 +91,7 @@ export async function gqlFetch<T = any>(
 				multiErrorToast(data.errors);
 			}
 			if (resp.status !== 200) {
+				logger.err("Variables: " + payload, true, variables);
 				throw new RedditAPIError(resp.status, `Error fetching gql operation ${operationName} (status: ${resp.status})`, "GQL_ERROR", data);
 			}
 		}

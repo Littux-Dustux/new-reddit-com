@@ -2,6 +2,7 @@ import { getLogger } from "./logging";
 import { initAPIMigratorInterceptors } from "./apiMigrate";
 import { hydrateState, state as initialState, isLoggedIn } from "./state";
 import { patchWebSocket } from "./apiMigrate/liveChat";
+import { setupSpaNavigation } from "./state/spaNavigation";
 
 const logger = getLogger('init');
 
@@ -62,6 +63,7 @@ async function main() {
 
 	initAPIMigratorInterceptors();
 	patchWebSocket();
+	setupSpaNavigation();
 	await addScript("https://www.redditstatic.com/desktop2x/Reddit.e6908df657b523d36c19.js");
 
 	const timer = setInterval(() => {

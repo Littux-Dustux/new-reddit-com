@@ -13,8 +13,10 @@ export default defineConfig({
 			output: {
 				inlineDynamicImports: true, // avoid chunks
 			},
-			treeshake: {
-				moduleSideEffects: true,
+			treeshake: false,
+			optimization: {
+				"pifeForModuleWrappers": true,
+				"inlineConst": true,
 			}
 		},
 		target: "es2020",

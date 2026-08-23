@@ -8,6 +8,8 @@ import { getState } from "../../main";
 import { duplicates, submitPage } from "./submitPage";
 import { shouldUseArcticShiftHistory } from "./utils";
 import { showToast, ToastType } from "../../logging";
+import { processUserAbout } from "./mappers/user";
+import { getREST } from "../../api/rest";
 
 
 const logger = getLogger("gatewayAPI");
@@ -71,7 +73,7 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 				case "posts":
 					return await shouldUseArcticShiftHistory(onTarget.toLowerCase())
 						// ? arcticShiftListing(onTarget, true, params.after)
-						? genericListingR2('/search', {
+						? genericListingR2('/search.json', {
 							q: `author:${onTarget}`,
 							sort: params.sort || "new",
 							t: params.t || "all",
@@ -79,6 +81,15 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 							...params
 						})
 						: genericListingR2(`/user/${onTarget}/submitted.json`, params)
+				case "about":
+					return {
+						jsonResponse: JSON.stringify(
+							processUserAbout(
+								(await getREST(`/user/${onTarget}/about.json?raw_json=1`)).data
+							)
+						),
+						status: 200,
+					}
 				default:
 					logger.wrn(`No handler for gateway user API endpoint ${path[0]}`, true);
 					return {

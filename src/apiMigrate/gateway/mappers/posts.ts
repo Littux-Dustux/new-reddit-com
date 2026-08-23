@@ -7,8 +7,6 @@ import { processSubredditAboutInfo, processSubreddit } from "./subreddit";
 
 const getFlair = (data: any) => {
 	const flair = [];
-	if (data.spoiler) flair.push({ text: "spoiler", type: "spoiler" });
-	if (data.over_18) flair.push({ text: "nsfw", type: "nsfw" });
 	if (data.link_flair_richtext?.length) {
 		flair.push({
 			richtext: data.link_flair_richtext,
@@ -29,6 +27,9 @@ const getFlair = (data: any) => {
 			templateId: data.link_flair_template_id,
 		});
 	}
+	if (data.spoiler) flair.push({ text: "spoiler", type: "spoiler" });
+	if (data.over_18) flair.push({ text: "nsfw", type: "nsfw" });
+	if (data.quarantine) flair.push({ text: "quarantined", type: "quarantined" });
 	return flair;
 };
 
@@ -216,7 +217,7 @@ export const processPost = (data: any, devvitData?: any) => {
 		created: data.created_utc * 1000, // Reddit API returns seconds, UI usually needs ms
 		crosspostParentId: data.cross_post_parent_id || data.crosspost_parent_list?.[0]?.name || null,
 		crosspostRootId: data.cross_post_root_id || data.crosspost_parent_list?.[0]?.name || null,
-		discussionType: /\b(thread|megathread)\b/.test(data.title)
+		discussionType: (/discussion thread|match discussion/i).test(data.title)
 			? "CHAT"
 			: data.discussion_type
 				? data.discussion_type.toUpperCase()

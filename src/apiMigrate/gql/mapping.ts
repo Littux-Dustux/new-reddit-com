@@ -1215,7 +1215,7 @@ export const gqlFedMap: GqlFedMapping = {
 	SubredditRules: {
 		operationName: "GetRules", // 2026 app
 		sha256Hash: "4902196475197c7a61271b7381b0229f42cd698929899be77b878a90e15fa5b8",
-		mapVars: ({ subredditName }) => ({ subredditId: subredditNameToId[subredditName] }),
+		mapVars: ({ subredditName }) => ({ subredditId: subredditNameToId[subredditName.toLowerCase()] }),
 		mapResp: ({ subredditInfoById }) => ({ subreddit: subredditInfoById })
 	},
 	SubredditScheduledPosts: {

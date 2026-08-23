@@ -28,9 +28,9 @@ export async function submitPage({ include, subreddit }: any) {
 
 	try {
 		const subredditExtra = await fetchSubredditPageExtra(
-			subreddit, include.includes("structuredStyles"), isProfile
+			subreddit, include.includes("structuredStyles"), true
 		);
-		(isProfile ? addR2SubredditToState : addGqlSubredditToState)(
+		addR2SubredditToState(
 			state, subredditExtra.subredditInfo, subredditExtra.userFlairsV2, subredditExtra.postFlairsV2
 		);
 		state.structuredStyles = subredditExtra.structuredStyles;

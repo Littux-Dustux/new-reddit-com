@@ -159,8 +159,8 @@ export async function fetchSubredditPageExtra(
 	if (isLoggedIn) {
 		const id = subredditNameToId[subredditName.toLocaleLowerCase()];
 		if (id) {
-			includeUserFlairs = (getState().features.userFlair as any)[id]?.permissions.canAssignOwn;
-			includePostFlairs = (getState().postFlair as any)[id]?.displaySettings.isEnabled;
+			includeUserFlairs = (getState().features.userFlair as any)[id]?.permissions?.canAssignOwn;
+			includePostFlairs = (getState().postFlair as any)[id]?.displaySettings?.isEnabled;
 		}
 	}
 
@@ -176,7 +176,19 @@ export async function fetchSubredditPageExtra(
 
 		fetchR2Subreddit
 			? getREST(`/r/${subredditName}/about.json?raw_json=1`).catch(e => {
-				if (e instanceof RedditAPIError) return e;
+				if (e instanceof RedditAPIError) {
+					fetchR2Subreddit = false;
+					return gqlFetch("SubredditInfoByName", "6b9c1679e69097e1c6df364adc11183afe6e2b6545dd1c0c1cc8f7490448c3e5", {
+						subredditName,
+						loggedOutIsOptedIn: true,
+						filterGated: true,
+						includeRecapFields: false,
+						includeWelcomePage: false,
+						includeDevvitData: false,
+					}).catch(e => logger.err(
+						`Error fetching gql subreddit info for r/${subredditName}: ${e.message}`, true, e
+					));
+				};
 				logger.err(`Error fetching r2 subreddit info for r/${subredditName}: ${e.message}`, true, e);
 			})
 			: gqlFetch("SubredditInfoByName", "6b9c1679e69097e1c6df364adc11183afe6e2b6545dd1c0c1cc8f7490448c3e5", {
@@ -230,7 +242,7 @@ export async function fetchSubredditPageExtra(
 
 
 export const shouldUseArcticShiftHistory = async (username: string) => {
-	if (username === getState().user.account?.displayText.toLowerCase()) return true;
+	if (username === getState().user.account?.displayText.toLowerCase()) return false;
 	if (isUserCurationActive.has(username)) return isUserCurationActive.get(username);
 
 	const { redditorInfoByName } = await gqlFetch("UserProfile", "27ec8d5c561882fab3f0b1da7a20ca742db928e4f2e5e943ac3a827965d5ff4e", {

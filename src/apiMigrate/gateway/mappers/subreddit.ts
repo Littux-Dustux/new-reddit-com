@@ -43,7 +43,7 @@ export const processSubredditAboutInfo = (data: any) => ({
 		galleries: data.allow_galleries,
 		talks: false
 	},
-	allowedMediaInComments: data.allowed_media_in_comments.map((str: string) => str.toUpperCase()),
+	allowedMediaInComments: data.allowed_media_in_comments?.map((str: string) => str.toUpperCase()) ?? [],
 	contentCategory: "",
 	created: data.created_utc,
 	disableContributorRequests: data.disable_contributor_requests,

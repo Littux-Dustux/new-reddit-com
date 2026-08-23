@@ -23,9 +23,11 @@ export async function subredditPostsPage(subredditOrSubreddits: string, params: 
 
 	try {
 		const [listing, subredditPageExtra] = await Promise.all([
-			getREST(`/r/${subredditOrSubreddits}/${sort}.json?${new URLSearchParams(params)}`),
+			getREST(`/r/${subredditOrSubreddits}/${sort}.json?${new URLSearchParams(params)}`).catch(e => {
+				if (!shouldFetchSubreddit) throw e;
+			}),
 			shouldFetchSubreddit
-				? await fetchSubredditPageExtra(subredditOrSubreddits, includeStructuredStyles, true)
+				? fetchSubredditPageExtra(subredditOrSubreddits, includeStructuredStyles, true)
 				: undefined,
 		]);
 
