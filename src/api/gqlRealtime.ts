@@ -1,4 +1,6 @@
 import { getLogger } from "../logging";
+import { isLoggedIn } from "../state";
+import { getAnonymousToken } from "./helpers";
 
 const logger = getLogger('api:gqlRealtime');
 
@@ -29,7 +31,7 @@ function initSocket() {
 			type: "connection_init",
 			payload: {
 				headers: {
-					Authorization: `Bearer ${await window.getToken()}`,
+					Authorization: `Bearer ${await (isLoggedIn.value ? window.getToken : getAnonymousToken)()}`,
 				},
 			},
 		}));

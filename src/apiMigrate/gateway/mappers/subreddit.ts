@@ -260,6 +260,12 @@ export const addR2SubredditToState = (state: SubredditState, r2Subreddit: any, u
 
 	const id = r2Subreddit.name;
 
+	if (r2Subreddit.__typename) {
+		logger.dbg(`Loading subreddit info for r/${r2Subreddit.name} from state`);
+		state.subredditAboutInfo[id] = (getState().subreddits.about as any)[id];
+		state.subreddits[id] = (getState().subreddits.models as any)[id];
+		return;
+	}
 	state.subredditAboutInfo[id] ??= processSubredditAboutInfo(r2Subreddit);
 	state.subreddits[id] ??= processSubreddit(r2Subreddit);
 	state.postFlair[id] ??= processSubredditPostFlair(r2Subreddit, postFlairsV2);

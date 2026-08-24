@@ -20,6 +20,7 @@ export function initAPIMigratorInterceptors() {
 	addInterceptor("reddit-uploaded-media.s3-accelerate.amazonaws.com", "POST", s3UploadPipeInterceptor);
 	addInterceptor("reddit-uploaded-video.s3-accelerate.amazonaws.com", "POST", s3UploadPipeInterceptor);
 	addInterceptor("reddit-uploaded-emoji.s3-accelerate.amazonaws.com", "POST", s3UploadPipeInterceptor);
+	addInterceptor("gql-realtime.reddit.com", "POST", ratelimitPipeInterceptor);
 
 	logger.log("Initialized interceptors.");
 }
@@ -37,4 +38,17 @@ const pipeInterceptor: InterceptorHandler = async ({ url, method, headers: reque
 		status: response.status,
 		jsonResponse: response.responseText,
 	}
+}
+
+
+
+let isBlockingRequest = false;
+const ratelimitPipeInterceptor: InterceptorHandler = async (options, data) => {
+	if (isBlockingRequest) return {
+		jsonResponse: '{}',
+		status: 429,
+	};
+	isBlockingRequest = true;
+	setTimeout(() => isBlockingRequest = false, 2000);
+	return pipeInterceptor(options, data);
 }

@@ -84,6 +84,8 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 		delete params.onOtherDiscussions;
 		delete params.comment_awardings_by_current_user;
 
+		if (postFromState?.discussionType === "CHAT") params.sort = "live";
+
 		const listing = await getREST(
 			`${subredditPrefix}/comments/${postID.slice(3)}/_/${(commentID?.slice(3)) ?? ''}.json?${
 				new URLSearchParams({

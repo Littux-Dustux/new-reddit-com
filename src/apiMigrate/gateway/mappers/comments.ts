@@ -6,7 +6,7 @@ import { markdownToRichText } from "./richtext";
 
 export type CommentPosition = { id: string; type: string } | null;
 
-const processSingleComment = (comment: any, postId?: any) => ({
+export const processSingleComment = (comment: any, postId?: any) => ({
 	approvedAtUTC: comment.approved_at_utc,
 	approvedBy: comment.approved_by,
 	author: comment.author,

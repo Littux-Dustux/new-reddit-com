@@ -1,8 +1,8 @@
-import { gqlFetch } from "../api/gql";
 import { subscribe, unsubscribe } from "../api/gqlRealtime";
-import type { CommentTreePostFragment, CommentTreeResponse, Tree } from "../api/types/gql/commentTree";
+import { getREST, RedditAPIError } from "../api/rest";
 import { getLogger } from "../logging";
 import { getState } from "../main";
+import { processSingleComment } from "./gateway/mappers/comments";
 
 
 interface NewCommentPayload {
@@ -50,75 +50,41 @@ interface NewCommentPayload {
 interface CommentCountChangeMessage {
 	subscribe: {
 		data: {
-			topLevelCommentCountChange: number;
+			commentCountChange: number;
 		}
 	}
 }
 
 
-
 const logger = getLogger('liveChat');
 
-function* convertGqlNodesToNewCommentPayload(postInfoById: CommentTreePostFragment): Generator<NewCommentPayload> {
-	const trees = postInfoById.commentForest.trees;
+async function* fetchNewCommentsForSubreddit(subreddit: string, before?: string | null) {
+	while (true) {
+		let data;
 
-	for (let i = postInfoById.commentForest.trees.length - 1; i >= 0; i--) {
-		const tree = (postInfoById.commentForest.trees[i] as Tree);
-		const comment = tree.node;
-		if (!comment) continue;
+		try {
+			data = (await getREST(
+				`/r/${subreddit}/comments.json?raw_json=1&rtj=only&profile_img=1&limit=100&count=2000${
+					before ? `&before=${before}` : ''
+				}`
+			)).data;
+		} catch (e) {
+			// before ID no longer in the 1000 comments range, reset and try again
+			if (e instanceof RedditAPIError && e.status === 400) {
+				before = null;
+				continue;
+			};
+			throw e;
+		}
 
-		yield {
-			type: "new_comment",
-			payload: {
-				_id36: comment.id.slice(3),
-				associated_award: null,
-				attribs: [],
-				...(comment.authorFlair ? {
-					author_flair_background_color: comment.authorFlair.template.backgroundColor,
-					author_flair_richtext: JSON.parse(comment.authorFlair.richtext),
-					author_flair_template_id: comment.authorFlair.template.id,
-					author_flair_text_color: comment.authorFlair.textColor.toLowerCase(),
-					author_flair_text: comment.authorFlair.text,
-					author_flair_type: comment.authorFlair.richtext ? 'richtext' : 'text',
-				} : {
-					author_flair_background_color: "",
-					author_flair_richtext: "",
-					author_flair_template_id: "",
-					author_flair_text_color: "",
-					author_flair_text: "",
-					author_flair_type: "",
-				}),
-				author_fullname: comment.authorInfo?.id || "",
-				author_icon_img: comment.authorInfo?.iconSmall.url || "",
-				author_id: parseInt(comment.authorInfo?.id || "0", 10),
-				author_is_default_icon: false,
-				author_is_nsfw_icon: comment.authorInfo?.profile.isNsfw || false,
-				author_snoovatar_img: comment.authorInfo?.snoovatarIcon?.url || "",
-				author: comment.authorInfo?.name || "",
-				body_html: "",
-				body: comment.content.markdown,
-				collapsed_in_crowd_control: comment.initiallyCollapsedReason,
-				collapsed: comment.isInitiallyCollapsed,
-				comment_type: null,
-				context: comment.permalink,
-				created_utc: Math.floor(new Date(comment.createdAt).getTime() / 1000),
-				distinguished: comment.distinguishedAs?.toLowerCase() || "",
-				flair_css_class: "",
-				flair_position: "",
-				full_date: comment.createdAt,
-				link_id: postInfoById.id,
-				name: comment.id,
-				parent_id: (trees[i] as Tree).parentId || "",
-				rtjson: JSON.parse(comment.content.richtext),
-				score: comment.score,
-				subreddit_id: postInfoById.subreddit.id,
-				subreddit_name_prefixed: postInfoById.subreddit.prefixedName,
-				subreddit: postInfoById.subreddit.name,
-				total_comment_count: postInfoById.commentCount,
-			},
-		};
+		before = data.before;
+		data.children.reverse();
+		yield* data.children;
+
+		if (!before) break;
 	}
 }
+
 
 
 export function patchWebSocket() {
@@ -144,21 +110,27 @@ export function patchWebSocket() {
 
 class LiveCommentsFakeSocket {
 	postId: string;
-	subredditData: any;
+	commentsPageKey: string;
+	subredditName: any;
+	headCommentId: string;
+
 	callbacks: { close?: (ev: Event) => void, message?: (ev: MessageEvent) => void } = {};
-	pendingCommentsCount: number = 0;
 	lastFetchTime: number = 0;
 	isFetchPending: boolean = false;
+	commentsBefore: string;
 
 	constructor(id: string) {
 		this.postId = id;
-		this.subredditData = (getState().subreddits.models as any)?.[
-			(getState().posts.models as any)[id]?.belongsTo.id
-		] ?? {};
+		this.commentsPageKey = `commentsPage--[post:'${id}']`;
+		this.headCommentId = (getState().pages.comments.keyToHeadCommentId as any)[this.commentsPageKey];
+		this.commentsBefore = this.headCommentId;
+		this.subredditName = getState().subreddits.models[
+			getState().posts.models[id].belongsTo.id
+		].name;
 
 		subscribe<CommentCountChangeMessage>({
 			operationName: "CommentCounts",
-			query: "subscription CommentCounts($id:ID!){subscribe(input:{channel:{teamOwner:CONTENT_AND_COMMUNITIES category:COMMENT_COUNT_UPDATE postID:$id}}){...on BasicMessage{data{...on CommentCountUpdateMessageData{topLevelCommentCountChange}}}}}",
+			query: "subscription CommentCounts($id:ID!){subscribe(input:{channel:{teamOwner:CONTENT_AND_COMMUNITIES category:COMMENT_COUNT_UPDATE postID:$id}}){...on BasicMessage{data{...on CommentCountUpdateMessageData{commentCountChange}}}}}",
 			variables: { id },
 			id,
 		}, this._handleMessage.bind(this));
@@ -180,24 +152,13 @@ class LiveCommentsFakeSocket {
 	}
 
 	async _handleMessage(message: CommentCountChangeMessage) {
-		if (!this.callbacks.message) {
-			logger.err("No message callback found, ignoring commenting count change.");
-			return;
-		};
-
-		if (message.subscribe.data.topLevelCommentCountChange < 0) {
-			logger.log("Ignoring negative comment count " + message.subscribe.data.topLevelCommentCountChange);
-			return;
-		};
-
-		this.pendingCommentsCount += message.subscribe.data.topLevelCommentCountChange;
-		if (this.pendingCommentsCount < 1) {
-			logger.log(`New comment count is less than 1 (${this.pendingCommentsCount}), not loading any comments.`);
+		if (message.subscribe.data.commentCountChange <= 0) {
+			logger.log(`Ignoring comment count change of ${message.subscribe.data.commentCountChange}`);
 			return;
 		};
 
 		if (this.isFetchPending) {
-			logger.log(`Fetch already pending, not loading comments yet. Pending count: ${this.pendingCommentsCount}`);
+			logger.log("Fetch already pending, not loading comments yet.");
 			return;
 		} else {
 			this.isFetchPending = true;
@@ -205,33 +166,43 @@ class LiveCommentsFakeSocket {
 
 		const delay = this.lastFetchTime === 0
 			? 0
-			: Math.min(Math.max(5000 - (Date.now() - this.lastFetchTime), 0), 2000);
+			: Math.min(Math.max(10_000 - (Date.now() - this.lastFetchTime), 0), 2000);
 		await new Promise(r => setTimeout(r, delay));
 
-		const count = this.pendingCommentsCount;
-		const data = await gqlFetch<CommentTreeResponse>(
-			"PostCommentsNew",
-			"f80b51384f447635e8539ddfafa4423bf6f562cf65a9077598552b283f9397b4",
-			{
-				id: this.postId,
-				sortType: "LIVE",
-				count: count + 1,
-				includeAwards: false,
-    		}
-		).catch(() => {
-			logger.err("Failed to fetch new comments for post " + this.postId);
-		});
+		const actions = [];
 
-		this.isFetchPending = false;
+		try {
+			for await (const { data } of fetchNewCommentsForSubreddit(this.subredditName, this.commentsBefore)) {
+				this.commentsBefore = data.name;
 
-		if (data?.postInfoById) {
-			this.pendingCommentsCount -= count;
-			this.lastFetchTime = Date.now();
+				if (data.link_id === this.postId) {
+					const action: any = {
+						"payload": {
+							"comment": processSingleComment(data, this.postId),
+							"commentsPageKey": this.commentsPageKey,
+							"numComments": data.num_comments ?? 0,
+						}
+					};
 
-			for (const newCommentPayload of convertGqlNodesToNewCommentPayload(data.postInfoById)) {
-				this.callbacks.message({ data: JSON.stringify(newCommentPayload) } as any);
-				await new Promise(r => setTimeout(r, 100));
+					if (getState().features.comments.models[data.name]) {
+						action.type = "COMMENT__LIVECOMMENTS__UPDATECOMMENT";
+					} else {
+						action.type = "COMMENT__LIVECOMMENTS__NEWCOMMENT";
+						action.payload.headCommentId = this.headCommentId;
+						this.headCommentId = data.name;
+					};
+
+					actions.push(action);
+				}
 			}
+		} finally {
+			this.lastFetchTime = Date.now();
+			this.isFetchPending = false;
+		};
+
+		for (const action of actions) {
+			window.store.dispatch(action);
+			await new Promise(r => setTimeout(r, 100));
 		}
 	}
 }

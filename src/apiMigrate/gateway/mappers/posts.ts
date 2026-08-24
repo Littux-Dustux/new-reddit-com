@@ -217,7 +217,7 @@ export const processPost = (data: any, devvitData?: any) => {
 		created: data.created_utc * 1000, // Reddit API returns seconds, UI usually needs ms
 		crosspostParentId: data.cross_post_parent_id || data.crosspost_parent_list?.[0]?.name || null,
 		crosspostRootId: data.cross_post_root_id || data.crosspost_parent_list?.[0]?.name || null,
-		discussionType: (/discussion thread|match discussion/i).test(data.title)
+		discussionType: (/discussion thread|(match|race) discussion/i).test(data.title)
 			? "CHAT"
 			: data.discussion_type
 				? data.discussion_type.toUpperCase()
