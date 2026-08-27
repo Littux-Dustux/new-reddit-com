@@ -25,13 +25,13 @@ export function initAPIMigratorInterceptors() {
 	logger.log("Initialized interceptors.");
 }
 
-const pipeInterceptor: InterceptorHandler = async ({ url, method, headers: requestHeaders }, data = null) => {
+const pipeInterceptor: InterceptorHandler = async ({ url, method, headers: requestHeaders }, data = null, anonymous = false) => {
 	const response = await window.gmFetch({
 		method: (method as any) || "GET",
 		url,
 		headers: requestHeaders,
 		data: data ?? undefined,
-		anonymous: false
+		anonymous
 	} as any);
 
 	return {
@@ -50,5 +50,6 @@ const ratelimitPipeInterceptor: InterceptorHandler = async (options, data) => {
 	};
 	isBlockingRequest = true;
 	setTimeout(() => isBlockingRequest = false, 2000);
-	return pipeInterceptor(options, data);
+	// @ts-ignore
+	return pipeInterceptor(options, data, true);
 }

@@ -2,6 +2,7 @@ import { addPostToState } from "./posts";
 import { addGqlSubredditToState, addR2SubredditToState } from "./subreddit";
 import { addCommentToState, addCommentTreeToState, type CommentPosition } from "./comments";
 import { fixR2CommentsMedia } from "../utils";
+import { getUserSubredditPref } from "../../../api/localhost";
 
 export interface StateBase {
 	account: any;
@@ -59,10 +60,11 @@ export interface ConversationsPageState extends PostListingPageState {
 export async function postAndCommentsListing(
 	things: Record<string, any>[],
 	afterToken: string | null,
-	{ subredditInfo, isSubredditR2, structuredStyles, userFlairsV2, postFlairsV2 }: {
+	{ subredditInfo, isSubredditR2, structuredStyles, preferences, userFlairsV2, postFlairsV2 }: {
 		subredditInfo: any,
 		structuredStyles: any,
 		isSubredditR2: boolean,
+		preferences?: any,
 		userFlairsV2?: any,
 		postFlairsV2?: any
 	} = {
@@ -83,7 +85,7 @@ export async function postAndCommentsListing(
 		postIds: [],
 		postInstances: {},
 		posts: {},
-		preferences: null,
+		preferences: preferences ?? null,
 		profiles: {},
 		structuredStyles: structuredStyles,
 		subredditAboutInfo: {},
@@ -119,10 +121,11 @@ export async function postAndCommentsListing(
 export async function postComments(
 	post: Record<string, any>,
 	commentsChildren: Record<string, any>[],
-	{ structuredStyles, postWithDevvit, subredditInfo, isSubredditR2, postFlairsV2, userFlairsV2 }: {
+	{ structuredStyles, postWithDevvit, subredditInfo, isSubredditR2, preferences, postFlairsV2, userFlairsV2 }: {
 		structuredStyles: AnyRecord | null,
 		subredditInfo: AnyRecord | null,
 		isSubredditR2: boolean,
+		preferences?: any,
 		postFlairsV2?: any[] | null,
 		userFlairsV2?: any[] | null,
 		postWithDevvit?: AnyRecord,
@@ -141,7 +144,7 @@ export async function postComments(
 		posts: {},
 		profiles: {},
 		subreddits: {},
-		preferences: null,
+		preferences,
 		continueThreads: {},
 		subredditAboutInfo: {},
 		structuredStyles,

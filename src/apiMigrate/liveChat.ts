@@ -169,30 +169,20 @@ class LiveCommentsFakeSocket {
 			: Math.min(Math.max(10_000 - (Date.now() - this.lastFetchTime), 0), 2000);
 		await new Promise(r => setTimeout(r, delay));
 
-		const actions = [];
+		const actionPayloads = [];
 
 		try {
 			for await (const { data } of fetchNewCommentsForSubreddit(this.subredditName, this.commentsBefore)) {
 				this.commentsBefore = data.name;
 
-				if (data.link_id === this.postId) {
-					const action: any = {
-						"payload": {
-							"comment": processSingleComment(data, this.postId),
-							"commentsPageKey": this.commentsPageKey,
-							"numComments": data.num_comments ?? 0,
-						}
-					};
-
-					if (getState().features.comments.models[data.name]) {
-						action.type = "COMMENT__LIVECOMMENTS__UPDATECOMMENT";
-					} else {
-						action.type = "COMMENT__LIVECOMMENTS__NEWCOMMENT";
-						action.payload.headCommentId = this.headCommentId;
-						this.headCommentId = data.name;
-					};
-
-					actions.push(action);
+				if (data.link_id === this.postId && !getState().features.comments.models[data.name]) {
+					actionPayloads.push({
+						"comment": processSingleComment(data, this.postId),
+						"commentsPageKey": this.commentsPageKey,
+						"headCommentId": this.headCommentId,
+						"numComments": data.num_comments ?? 0,
+					});
+					this.headCommentId = data.name;
 				}
 			}
 		} finally {
@@ -200,9 +190,9 @@ class LiveCommentsFakeSocket {
 			this.isFetchPending = false;
 		};
 
-		for (const action of actions) {
-			window.store.dispatch(action);
-			await new Promise(r => setTimeout(r, 100));
+		for (const payload of actionPayloads) {
+			window.store.dispatch({ "type": "COMMENT__LIVECOMMENTS__NEWCOMMENT", payload });
+			await new Promise(r => setTimeout(r, 200));
 		}
 	}
 }

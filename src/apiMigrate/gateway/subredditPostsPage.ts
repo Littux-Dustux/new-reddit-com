@@ -1,16 +1,25 @@
+import { getUserSubredditPref } from "../../api/localhost";
 import { getREST, RedditAPIError } from "../../api/rest";
 import { getLogger } from "../../logging";
 import { postAndCommentsListing } from "./mappers/listing";
-import { fetchSubredditPageExtra } from "./utils";
+import { expectStatusCodes, fetchSubredditPageExtra } from "./utils";
 
 const logger = getLogger("subredditPostsPage");
 const adhocMultiNames = new Set(["all", "popular", "mod", "friends"])
+
 export async function subredditPostsPage(subredditOrSubreddits: string, params: Record<string, string>) {
 	const isAdhocMulti = adhocMultiNames.has(subredditOrSubreddits) || subredditOrSubreddits.includes("+");
 	const shouldFetchSubreddit = !params.after && !isAdhocMulti;
-	const sort = params.sort || '';
 	const includeStructuredStyles = params.include?.includes("structuredStyles") ?? false;
 
+	const prefs = await getUserSubredditPref(subredditOrSubreddits);
+	const [sortPref, t] = prefs?.sort ? prefs.sort.split("_", 2) : [];
+	const sort = params.sort ?? sortPref ?? '';
+	if (prefs) {
+		prefs.layout ??= params.layout;
+	}
+
+	if (t) params.t ??= t;
 	params.raw_json = '1';
 	params.limit = params.after // speed up initial load
 		? params.layout === "card" ? '25' : '50'
@@ -23,13 +32,19 @@ export async function subredditPostsPage(subredditOrSubreddits: string, params: 
 
 	try {
 		const [listing, subredditPageExtra] = await Promise.all([
-			getREST(`/r/${subredditOrSubreddits}/${sort}.json?${new URLSearchParams(params)}`).catch(e => {
+			getREST(`/r/${subredditOrSubreddits}/${sort}.json?${new URLSearchParams(params)}`,
+				{ expectStatusCodes }
+			).catch(e => {
 				if (!shouldFetchSubreddit) throw e;
 			}),
 			shouldFetchSubreddit
 				? fetchSubredditPageExtra(subredditOrSubreddits, includeStructuredStyles, true)
 				: undefined,
 		]);
+
+		if (subredditPageExtra) {
+			subredditPageExtra.preferences = prefs;
+		}
 
 		return {
 			jsonResponse: JSON.stringify(

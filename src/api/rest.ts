@@ -106,7 +106,7 @@ export interface RequestOptions {
 	/** If true, uses getCache/setCache. Only works for GET requests. */
 	cacheMaxAge?: number | undefined;
 	anonymous?: boolean;
-	expectStatusCode?: number;
+	expectStatusCodes?: Set<number>;
 }
 
 
@@ -162,7 +162,7 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 	const parsed = tryParseJson(response.responseText);
 	const isErrorPayload = parsed?.json?.errors && Array.isArray(parsed.json.errors) && parsed.json.errors.length > 0;
 
-	if (isErrorPayload || (response.status !== options.expectStatusCode && response.status >= 400)) {
+	if (isErrorPayload || (!options.expectStatusCodes?.has(response.status) && response.status >= 400)) {
 		throw parseRedditError(response.status, response.responseText, parsed);
 	}
 

@@ -128,11 +128,13 @@ export async function fixR2CommentsMedia(comments: Record<string, any>) {
 }
 
 
+export const expectStatusCodes = new Set([403, 404]);
+
 export async function fetchSubredditPageExtra(
 	subredditName: string | null | undefined,
 	includeStructuredStyles: boolean = true,
 	fetchR2Subreddit: boolean,
-): Promise<{ structuredStyles: any, subredditInfo: any, isSubredditR2: boolean, postFlairsV2: any, userFlairsV2: any }> {
+): Promise<{ structuredStyles: any, subredditInfo: any, isSubredditR2: boolean, postFlairsV2: any, userFlairsV2: any, preferences?: any }> {
 
 	if (!subredditName) return {
 		structuredStyles: null,
@@ -168,11 +170,13 @@ export async function fetchSubredditPageExtra(
 		includeStructuredStyles && getREST(`/api/v1/structured_styles/${subredditName}.json?raw_json=1`)
 		.catch(e => logger.err(`Error fetching structuredStyles for r/${subredditName}: ${e.message}`, true, e)),
 
-		includePostFlairs && getREST(`/r/${subredditName}/api/link_flair_v2.json?raw_json=1`, { expectStatusCode: 403 })
-		.catch(e => logger.err(`Error fetching post flairs for r/${subredditName}: ${e.message}`, true, e)),
+		includePostFlairs && getREST(`/r/${subredditName}/api/link_flair_v2.json?raw_json=1`,
+			{ expectStatusCodes }
+		).catch(e => logger.err(`Error fetching post flairs for r/${subredditName}: ${e.message}`, true, e)),
 
-		includeUserFlairs && getREST(`/r/${subredditName}/api/user_flair_v2.json?raw_json=1`, { expectStatusCode: 403 })
-		.catch(e => logger.err(`Error fetching user flairs for r/${subredditName}: ${e.message}`, true, e)),
+		includeUserFlairs && getREST(`/r/${subredditName}/api/user_flair_v2.json?raw_json=1`,
+			{ expectStatusCodes }
+		).catch(e => logger.err(`Error fetching user flairs for r/${subredditName}: ${e.message}`, true, e)),
 
 		fetchR2Subreddit
 			? getREST(`/r/${subredditName}/about.json?raw_json=1`).catch(e => {

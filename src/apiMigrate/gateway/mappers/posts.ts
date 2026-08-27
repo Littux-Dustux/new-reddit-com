@@ -97,7 +97,7 @@ const getMedia = (data: any, devvitData?: any) => {
 		return baseMedia;
 	}
 
-	if ((data.secure_media && data.secure_media.oembed) || data.is_survey_ad) {
+	if (data.secure_media?.oembed || data.is_survey_ad) {
 		return {
 			...baseMedia,
 			content: data.secure_media_embed?.media_domain_url,
@@ -254,6 +254,9 @@ export const processPost = (data: any, devvitData?: any) => {
 		isSurveyAd: Boolean(data.is_survey_ad),
 		liveCommentsWebsocket: data.name,  // data.liveCommentsWebsocket || data.websocket_url,
 		media: getMedia(data, devvitData),
+		mediaStatus: {
+			transcodingStatus: data.media?.reddit_video?.transcoding_status?.toUpperCase()
+		},
 		modReports: data.mod_reports,
 		numComments: data.num_comments,
 		numCrossposts: data.num_crossposts || 0,

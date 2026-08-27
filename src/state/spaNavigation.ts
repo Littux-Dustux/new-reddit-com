@@ -5,16 +5,30 @@ const logger = getLogger("state:spaNavigation");
 const redditDomains = new Set(['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com', 'np.reddit.com', window.location.host]);
 const scrollPosByPath = new Map<string, { pos: number, selector?: string }>();
 
+const allowedAnchorClasses = new Set([
+	"_1tpiOc0IxpDU113wUs4zi1", // notification link
+	"_3t5uN8xUmg0TOwRCOGQEcU", // rtjson link (comment, post etc)
+]);
+
+const allowedTargetClasses = new Set([
+	"_1hNyZSklmcC7R_IfCUcXmZ", // Profile ID card label,
+	"_2fopwfsUIdZKFtFUEsud9r", // User icon (on followers display)
+	"_2tFYRyhxfQeK2QFUlYSYz0", // Right icon (on followers display)
+]);
+
 export function setupSpaNavigation() {
 	document.addEventListener('click', async (e: any) => {
 		if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
 
 		const anchor = e.target?.closest('a');
-		if (!anchor || !anchor.href) return;
+		if (!anchor || !anchor.href || !(
+			allowedAnchorClasses.has(anchor.className) ||
+			allowedTargetClasses.has(e.target.className)
+		)) return;
 
 		const url = new URL(anchor.href, location.origin);
 
-		if (redditDomains.has(url.host)) {
+		if (redditDomains.has(url.host) && url.pathname !== location.pathname) {
 			e.preventDefault();
 
 			let fullPath;

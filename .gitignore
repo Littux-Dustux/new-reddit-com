@@ -2,3 +2,5 @@ dist/
 node_modules/
 html/
 api_archives/
+*.db
+__pycache__/

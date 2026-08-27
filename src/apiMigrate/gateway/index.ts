@@ -10,6 +10,7 @@ import { shouldUseArcticShiftHistory } from "./utils";
 import { showToast, ToastType } from "../../logging";
 import { processUserAbout } from "./mappers/user";
 import { getREST } from "../../api/rest";
+import { APIError, convertFullnameToNum, upsertUserSubredditPref } from "../../api/localhost";
 
 
 const logger = getLogger("gatewayAPI");
@@ -110,6 +111,36 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 		case "comments_page_insertion":
 			return emptyResponse;
 
+		case "set_preferences":
+			const json = JSON.parse(data);
+			if (json.type !== "subreddit") return emptyResponse;
+			try {
+				const sr = getState().subreddits.models[json.subreddit_id];
+				return {
+					jsonResponse: JSON.stringify((
+						await upsertUserSubredditPref({
+							subreddit: {
+								id: convertFullnameToNum(sr.id),
+								name: sr.name,
+								icon: sr.communityIcon ?? sr.icon?.url
+							},
+							preferences: json.preferences
+						})
+					).prefs),
+					status: 200,
+				}
+			} catch(e) {
+				logger.err(`Error saving subreddit prefs: ${e}`);
+				if (e instanceof APIError) {
+					return {
+						jsonResponse: JSON.stringify({
+							error: e.status,
+							message: e.message,
+						}),
+						status: e.status,
+					}
+				} else throw e;
+			}
 		default:
 			logger.wrn("No handler for gateway API endpoint: " + url, true);
 			return emptyResponse;

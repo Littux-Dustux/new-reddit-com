@@ -1,5 +1,5 @@
 import { getState } from "../../../main";
-import { getVoteStateNum } from "./common";
+import { getRTJSONFirstText, getVoteStateNum } from "./common";
 import { getAuthorFlairFromR2Thing } from "./flair";
 import type { CommentListingPageState, ExtraComments } from "./listing";
 import { markdownToRichText } from "./richtext";
@@ -34,7 +34,10 @@ export const processSingleComment = (comment: any, postId?: any) => ({
 	isAuthorCakeday: comment.author_cakeday,
 	isAuthorPremium: Boolean(comment.author_premium),
 	isApproved: comment.approved,
-	isDeleted: comment.collapsed_reason_code === "DELETED" || (comment.author === "[deleted]" && comment.body === "[deleted]"),
+	isDeleted: comment.collapsed_reason_code === "DELETED" || (
+		comment.author === "[deleted]" &&
+		(comment.rtjson ? getRTJSONFirstText(comment.rtjson) : comment.body) === "[deleted]"
+	),
 	isGildable: true,
 	isLocked: comment.locked,
 	isMod: comment.distinguished === "yes",

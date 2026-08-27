@@ -1,4 +1,5 @@
 import { gqlFetch } from "../../api/gql";
+import { getUserSubredditPref } from "../../api/localhost";
 import { getREST, postREST, RedditAPIError } from "../../api/rest";
 import { getLogger } from "../../logging";
 import { getState } from "../../main";
@@ -74,8 +75,13 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 		}
 
 		const subredditPageExtra = !isPreload && subredditName && params.include?.includes("structuredStyles")
-			? fetchSubredditPageExtra(subredditName, !isProfile, true)
-			: null;
+			? Promise.all([
+				fetchSubredditPageExtra(subredditName, !isProfile, true),
+				getUserSubredditPref(subredditName),
+			]).then(([extra, prefs]) => {
+				extra.preferences = prefs;
+				return extra;
+			}) : null;
 
 		delete params.include;
 		delete params.subredditName;
@@ -85,22 +91,21 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 		delete params.comment_awardings_by_current_user;
 
 		if (postFromState?.discussionType === "CHAT") params.sort = "live";
+		if (commentID && !params.context) {
+			params.context = '4';
+			params.depth = '6';
+		}
 
 		const listing = await getREST(
 			`${subredditPrefix}/comments/${postID.slice(3)}/_/${(commentID?.slice(3)) ?? ''}.json?${
 				new URLSearchParams({
-					//sr_detail: "1",
+					...params,
 					always_include_media: "1",
 					feature: "link_preview",
 					profile_img: "1",
 					threaded: "false",
 					raw_json: "1",
 					raw_media_syntax: "1",
-					context: "3",
-					//sort: "live",
-					//truncate: "20",
-					//depth: "6",
-					...params,
 				})
 		}`);
 

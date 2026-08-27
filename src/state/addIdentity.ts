@@ -1,5 +1,6 @@
 import { isLoggedIn, state } from ".";
 import { gqlFetch } from "../api/gql";
+import { convertFullnameToNum } from "../api/localhost";
 import { getREST } from "../api/rest";
 import { getState, type State } from "../main";
 import { getLoidState } from "./utils";
@@ -339,6 +340,9 @@ export async function addIdentityToState(state: State) {
 		state.user.account = null;
 		return;
 	}
+
+	const id = identity.id;
+	document.cookie = `reddit_user_id=${convertFullnameToNum(id)}; path=/; SameSite=Lax; Expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
 
 	const redditor = identity.redditor;
 
