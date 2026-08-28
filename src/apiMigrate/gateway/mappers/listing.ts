@@ -1,63 +1,9 @@
 import { addPostToState } from "./posts";
-import { addGqlSubredditToState, addR2SubredditToState } from "./subreddit";
+import { addR2SubredditToState } from "./subreddit";
+import { addGqlSubredditToState } from "./gql/subreddit";
 import { addCommentToState, addCommentTreeToState, type CommentPosition } from "./comments";
 import { fixR2CommentsMedia } from "../utils";
-import { getUserSubredditPref } from "../../../api/localhost";
-import type { Post } from "../types/post";
-import type { Flair } from "../types/flair";
-
-export interface StateBase {
-	account: any;
-	authorFlair: Record<string, Record<string, Flair | null>>;
-	postFlair: Record<string, any>;
-	posts: Record<string, Post>;
-	profiles: Record<string, any>;
-	userFlair: Record<string, any>;
-	subredditAboutInfo: Record<string, any>;
-	subreddits: Record<string, any>;
-}
-
-export interface FlatListingStateBase extends StateBase {
-	dist: number;
-	pinned: string[];
-	token: string | null;
-}
-
-export interface SubredditListingStateBase extends StateBase {
-	features?: any;
-	preferences?: any;
-	structuredStyles?: any;
-	subredditPermissions?: any;
-}
-
-
-export interface PostListingPageState extends FlatListingStateBase {
-	postIds: string[];
-	postInstances: Record<string, any>;
-}
-
-export interface CommentListingPageState extends FlatListingStateBase {
-	commentIds: string[];
-	comments: Record<string, any>;
-}
-
-export interface CommentsPageState extends SubredditListingStateBase {
-	commentLists: Record<string, { head: CommentPosition; tail: CommentPosition }>;
-	comments: Record<string, any>;
-	continueThreads: Record<string, any>;
-	moreComments: Record<string, any>;
-	postMeta: null;
-}
-
-export interface ConversationsPageState extends PostListingPageState {
-	commentLists: Record<string, { head: CommentPosition; tail: CommentPosition }>;
-	comments: Record<string, any>;
-	continueThreads: Record<string, any>;
-	moreComments: Record<string, any>;
-	extraComments: Record<string, ExtraComments>;
-}
-
-
+import type { SubredditListingStateBase, PostListingPageState, CommentListingPageState, CommentsPageState, ConversationsPageState } from "../types/state";
 
 export async function postAndCommentsListing(
 	things: Record<string, any>[],
@@ -158,7 +104,7 @@ export async function postComments(
 	addPostToState(post, state, postWithDevvit);
 	addCommentTreeToState(commentsChildren, post.name, state);
 
-	if (fixR2CommentsMedia) await fixR2CommentsMedia(state.comments);
+	if (shouldFixR2Comments) await fixR2CommentsMedia(state.comments);
 	return state;
 }
 

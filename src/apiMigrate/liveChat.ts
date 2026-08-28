@@ -78,6 +78,10 @@ async function* fetchNewCommentsForSubreddit(subreddit: string, before?: string 
 			throw e;
 		}
 
+		if (data.dist === 0) {
+			before = null;
+			continue
+		}
 		before = data.before;
 		data.children.reverse();
 		yield* data.children;
@@ -168,7 +172,7 @@ class LiveCommentsFakeSocket {
 		const delay = this.lastFetchTime === 0
 			? 0
 			: Math.min(Math.max(10_000 - (Date.now() - this.lastFetchTime), 0), 2000);
-		await new Promise(r => setTimeout(r, delay));
+		//await new Promise(r => setTimeout(r, delay));
 
 		const actionPayloads = [];
 

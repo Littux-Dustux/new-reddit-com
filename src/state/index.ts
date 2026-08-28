@@ -1,4 +1,6 @@
+import type { Comment } from '../apiMigrate/gateway/types/comment';
 import type { Post } from '../apiMigrate/gateway/types/post';
+import type { Subreddit, SubredditAboutInfo } from '../apiMigrate/gateway/types/subreddit';
 import { addIdentityToState, addPrefsV1ToState } from './addIdentity';
 import addUserRels from './addUserRels';
 import experiments from './experiments.json';
@@ -671,7 +673,7 @@ export const state = {
 	stylesheets: "https://www.redditstatic.com/desktop2x/chunkCSS/Reddit.401bac5158b118bca775_.css",
 	subredditAutocomplete: { api: { error: {}, pending: {} }, models: {} },
 	subreddits: {
-		about: {},
+		about: {} as Record<string, SubredditAboutInfo>,
 		api: {
 			about: { error: {}, pending: false },
 			create: { error: { apiError: null }, lastCreatedSubredditId: null, initialCrosspost: null, pending: false },
@@ -694,7 +696,7 @@ export const state = {
 		crosspostable: { api: { errors: null, pending: false }, ids: {} },
 		duplicates: { models: {} },
 		gov: { assets: {}, communityRaw: {}, distributions: {}, releaseNotes: {} },
-		models: {} as Record<string, any>,
+		models: {} as Record<string, Subreddit>,
 		moderated: { api: { errors: null, fetched: true, pending: false }, order: [] as string[] },
 		notificationSettings: {},
 		onboarding: {},
@@ -964,7 +966,7 @@ export const state = {
 			focused: {},
 			hidden: {},
 			isEditing: {},
-			models: {} as Record<string, any>,
+			models: {} as Record<string, Comment>,
 			replyFormOpen: {},
 			submit: { error: {}, pending: {} },
 			visitHighlightFilter: "Last",

@@ -2,7 +2,8 @@ import { getREST, RedditAPIError } from "../../api/rest";
 import { getLogger } from "../../logging";
 import { postAndCommentsListing } from "./mappers/listing";
 import { addPostToState } from "./mappers/posts";
-import { addGqlSubredditToState, addR2SubredditToState, type SubredditState } from "./mappers/subreddit";
+import { addR2SubredditToState } from "./mappers/subreddit";
+import { type SubredditState } from "./types/state";
 import { fetchSubredditPageExtra } from "./utils";
 
 const logger = getLogger('gateway:submitPage');

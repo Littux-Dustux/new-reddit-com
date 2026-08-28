@@ -1,7 +1,6 @@
-import type { LastAuthorModNoteFragmentFragment, ModQueueTriggersFragmentFragment, RemovedByCategory } from "../../../api/types/gql";
-import type { RichTextContent } from "../mappers/richtext_types";
-import type { Award } from "./award";
-import type { CommentSort, MediaAssetR2, ModReport, UserReport } from "./common";
+import type { RemovedByCategory } from "../../../api/types/gql";
+import type { RichTextContent } from "./richtext";
+import type { CommentSort, MediaAssetR2, PostAndCommentCommon } from "./common";
 import type { PostFlair } from "./flair"
 
 
@@ -103,86 +102,55 @@ interface PollData {
 }
 
 
-export interface Post {
-	allAwardings?: Award[],
+export interface Post extends PostAndCommentCommon {
 	adPromotedUserPostIds: [],
 	adSupplementaryText: string | null,
-	approvedAtUTC: number | null,
-	approvedBy: string | null,
-	author: string,
-	authorId: string,
-	authorIsBlocked: boolean,
-	awardCountsById?: Record<string, number> | null,
-	bannedAtUTC: number | null,
-	bannedBy: string | null,
 	belongsTo: {
 		id: string,
 		type: "subreddit" | "profile",
 	},
 	callToAction: string | null,
 	contestMode: boolean,
-	created: number, // Reddit API returns seconds, UI usually needs ms
 	crosspostParentId: string | null,
 	crosspostRootId: string | null,
 	discussionType: string,
-	distinguishType: string | null,
 	domain: string,
 	domainOverride: string | null,
-	editedAt: number | null,
 	events: [],
 	flair: PostFlair[],
 	hidden: boolean,
-	id: string,
-	ignoreReports: boolean,
 	impressionId: string | null,
 	impressionIdStr: string | null,
-	isApproved: boolean,
 	isArchived: boolean,
-	isAuthorCakeday: boolean,
-	isAuthorPremium: boolean,
 	isBlank: boolean,
 	isCreatedFromAdsUi: boolean,
 	isCrosspostable: boolean,
-	isGildable: boolean,
-	isLocked: boolean,
 	isMediaOnly: boolean,
 	isMeta: boolean,
 	isNSFW: boolean,
 	isPinned: boolean,
 	isOriginalContent: boolean,
-	isScoreHidden: boolean,
 	isSpoiler: boolean,
 	isSponsored: boolean,
-	isStickied: boolean,
 	isSurveyAd: boolean,
-	lastAuthorModNote?: LastAuthorModNoteFragmentFragment['lastAuthorModNote'],
 	liveCommentsWebsocket: string,
 	media: Media | null,
-	modQueueTriggers?: ModQueueTriggersFragmentFragment['modQueueTriggers'],
-	modReports: ModReport[] | null, 
-	modReportsDismissed?: ModReport[] | null,
 	numComments: number,
 	numCrossposts: number,
 	numDuplicates: number,
-	numReports: number,
-	permalink: string,
 	pollData: PollData | null,
 	postCategories: {
 		categoryId: string,
 		categoryName: string
 	}[],
-	postId: string,
 	preview: {
 		url: string,
 		width: number,
 		height: number,
 	} | null,
-	previousActions?: any,
 	removedBy: string | null,
 	removedByCategory: RemovedByCategory,
 	saved: boolean,
-	score: number,
-	sendReplies: boolean,
 	source: {
 		displayText: string,
 		url: string,
@@ -198,8 +166,5 @@ export interface Post {
 	},
 	title: string,
 	upvoteRatio: number,
-	userReports: UserReport[] | null,
-	userReportsDismissed?: UserReport[] | null,
 	viewCount: number,
-	voteState: -1 | 0 | 1,
 }

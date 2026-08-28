@@ -1,3 +1,6 @@
+import type { LastAuthorModNoteFragmentFragment, ModQueueTriggersFragmentFragment } from "../../../api/types/gql";
+import type { Award } from "./award";
+
 /** [reason, name] */
 export type ModReport = [string, string];
 /** [reason, count, isSnoozed, isSnoozable] */
@@ -68,3 +71,41 @@ export type MediaAssetR2 =
 	GifImageAssetR2 |
 	ImageAssetR2 |
 	VideoAssetR2;
+
+
+export interface PostAndCommentCommon {
+	allAwardings?: Award[],
+	approvedAtUTC: number | null,
+	approvedBy: string | null,
+	author: string,
+	authorId: string,
+	authorIsBlocked: boolean,
+	awardCountsById?: Record<string, number> | null,
+	bannedAtUTC: number | null,
+	bannedBy: string | null,
+	created: number, // Reddit API returns seconds, UI usually needs ms
+	distinguishType: string | null,
+	editedAt: number | null,
+	id: string,
+	ignoreReports: boolean,
+	isApproved: boolean,
+	isAuthorCakeday: boolean,
+	isAuthorPremium: boolean,
+	isGildable: boolean,
+	isLocked: boolean,
+	isScoreHidden: boolean,
+	isStickied: boolean,
+	lastAuthorModNote?: LastAuthorModNoteFragmentFragment['lastAuthorModNote'],
+	modQueueTriggers?: ModQueueTriggersFragmentFragment['modQueueTriggers'],
+	modReports: ModReport[] | null, 
+	modReportsDismissed?: ModReport[] | null,
+	numReports: number,
+	permalink: string,
+	postId: string,
+	previousActions?: any,
+	score: number,
+	sendReplies: boolean,
+	userReports: UserReport[] | null,
+	userReportsDismissed?: UserReport[] | null,
+	voteState: -1 | 0 | 1,
+}

@@ -1,5 +1,5 @@
 import type { VideoAssetR2 } from "../types/common";
-import { FormattingFlag } from "./richtext_types";
+import { FormattingFlag } from "../types/richtext";
 
 export const getVoteStateNum = (likes: boolean | null) => (likes === null ? 0 : likes ? 1 : -1);
 

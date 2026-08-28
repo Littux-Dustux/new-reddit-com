@@ -33,8 +33,8 @@ import type {
 	SpoilerText,
 	FormatRange,
 	RichTextContent,
-} from "./richtext_types";
-import { FormattingFlag } from "./richtext_types";
+} from "../types/richtext";
+import { FormattingFlag } from "../types/richtext";
 
 
 const parser = new Parser();

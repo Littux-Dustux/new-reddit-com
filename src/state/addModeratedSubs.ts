@@ -1,4 +1,6 @@
-import { addGqlSubredditToState, processModPermissionsGql, subredditNameToId } from "../apiMigrate/gateway/mappers/subreddit";
+import { subredditNameToId } from "../apiMigrate/gateway/mappers/subreddit";
+import { addGqlSubredditToState } from "../apiMigrate/gateway/mappers/gql/subreddit";
+import { processModPermissionsGql } from "../apiMigrate/gateway/mappers/gql/subreddit";
 import { getState } from "../main";
 
 export function addModSubToState(sub: any) {

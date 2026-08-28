@@ -3,7 +3,8 @@ import { getUserSubredditPref } from "../../api/localhost";
 import { getREST, postREST, RedditAPIError } from "../../api/rest";
 import { getLogger } from "../../logging";
 import { getState } from "../../main";
-import { moreComments, postAndCommentsListing, postComments, type CommentsPageState } from "./mappers/listing";
+import { moreComments, postAndCommentsListing, postComments } from "./mappers/listing";
+import { type CommentsPageState } from "./types/state";
 import { fetchSubredditPageExtra } from "./utils";
 
 

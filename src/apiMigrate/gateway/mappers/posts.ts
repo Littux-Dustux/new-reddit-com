@@ -3,7 +3,7 @@ import type { PostFlair } from "../types/flair";
 import type { Media, MediaRichtext, MediaText, Post } from "../types/post";
 import { antiGifFuckGifs, getVoteStateNum } from "./common";
 import { getAuthorFlairFromR2Thing, processSubredditPostFlair, processSubredditUserFlair } from "./flair";
-import type { StateBase } from "./listing";
+import type { StateBase } from "../types/state";
 import { processSubredditAboutInfo, processSubreddit } from "./subreddit";
 
 

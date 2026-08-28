@@ -1,75 +1,83 @@
 import { getState } from "../../../main";
+import type { Comment } from "../types/comment";
 import { getRTJSONFirstText, getVoteStateNum } from "./common";
 import { getAuthorFlairFromR2Thing } from "./flair";
-import type { CommentListingPageState, ExtraComments } from "./listing";
+import type { ExtraComments } from "./listing";
+import type { CommentListingPageState } from "../types/state";
 import { markdownToRichText } from "./richtext";
 
 export type CommentPosition = { id: string; type: string } | null;
 
-export const processSingleComment = (comment: any, postId?: any) => ({
-	approvedAtUTC: comment.approved_at_utc,
-	approvedBy: comment.approved_by,
-	author: comment.author,
-	authorId: comment.author_fullname,
-	authorIsBlocked: comment.author_is_blocked,
-	bannedAtUTC: comment.banned_at_utc,
-	bannedBy: comment.banned_by,
-	bodyMD: comment.body,
-	body: comment.body_html,
-	collapsed: comment.collapsed,
-	collapsedReason: comment.collapsed_reason,
-	collapsedBecauseCrowdControl: comment.collapsed_because_crowd_control,
-	collapsedReasonCode: comment.collapsed_reason_code,
-	commentType: comment.comment_type,
-	created: comment.created_utc,
-	depth: comment.depth,
-	deletedBy: comment.banned_by,
-	distinguishType: comment.distinguished,
-	editedAt: comment.edited,
-	gildings: null,
-	goldCount: 0,
-	id: comment.name,
-	ignoreReports: comment.ignore_reports,
-	isAdmin: comment.distinguished === "admin",
-	isAuthorCakeday: comment.author_cakeday,
-	isAuthorPremium: Boolean(comment.author_premium),
-	isApproved: comment.approved,
-	isDeleted: comment.collapsed_reason_code === "DELETED" || (
-		comment.author === "[deleted]" &&
-		(comment.rtjson ? getRTJSONFirstText(comment.rtjson) : comment.body) === "[deleted]"
-	),
-	isGildable: true,
-	isLocked: comment.locked,
-	isMod: comment.distinguished === "yes",
-	isOp: comment.is_submitter,
-	isRemoved: comment.removed,
-	isSaved: comment.saved,
-	isStickied: comment.stickied,
-	isScoreHidden: comment.score_hidden,
-	media: {
-		richtextContent: comment.rtjson ?? markdownToRichText(comment.body, comment.media_metadata),
-		type: "rtjson",
-		rteMode: comment.rte_mode,
-		mediaMetadata: comment.media_metadata,
-	},
-	modReports: comment.mod_reports,
-	next: null,
-	numReports: comment.num_reports,
-	parentId: comment.parent_id,
-	permalink: comment.permalink,
-	prev: null,
-	profileImage: comment.profile_img,
-	postAuthor: comment.link_author ?? null,
-	postId: postId ?? comment.link_id,
-	postTitle: comment.link_title ?? null,
-	score: comment.score,
-	sendReplies: comment.send_replies,
-	subredditId: comment.subreddit_id,
-	treatmentTags: comment.treatment_tags,
-	userReports: comment.user_reports,
-	unrepliableReason: comment.unrepliable_reason,
-	voteState: getVoteStateNum(comment.likes),
-});
+export const processSingleComment = (comment: any, postId?: any): Comment => {
+	const bodyText = comment.rtjson ? getRTJSONFirstText(comment.rtjson) : comment.body;
+	const isDeleted = comment.collapsed_reason_code === "DELETED" || (
+		comment.author === "[deleted]" && bodyText === "[deleted]"
+	);
+
+	return ({
+		approvedAtUTC: comment.approved_at_utc,
+		approvedBy: comment.approved_by,
+		author: comment.author,
+		authorId: comment.author_fullname,
+		authorIsBlocked: comment.author_is_blocked,
+		bannedAtUTC: comment.banned_at_utc,
+		bannedBy: comment.banned_by,
+		bodyMD: comment.body,
+		body: comment.body_html,
+		collapsed: comment.collapsed,
+		// collapsedReason: comment.collapsed_reason,
+		collapsedBecauseCrowdControl: comment.collapsed_because_crowd_control,
+		collapsedReasonCode: comment.collapsed_reason_code,
+		commentType: comment.comment_type,
+		created: comment.created_utc,
+		depth: comment.depth,
+		deletedBy: isDeleted
+			? bodyText === "[deleted]" ? "user" : "moderator"
+			: null,
+		distinguishType: comment.distinguished,
+		editedAt: comment.edited,
+		// gildings: null,
+		goldCount: 0,
+		id: comment.name,
+		ignoreReports: comment.ignore_reports,
+		isAdmin: comment.distinguished === "admin",
+		isAuthorCakeday: comment.author_cakeday,
+		isAuthorPremium: Boolean(comment.author_premium),
+		isApproved: comment.approved,
+		isDeleted,
+		isGildable: true,
+		isLocked: comment.locked,
+		isMod: comment.distinguished === "yes",
+		isOp: comment.is_submitter,
+		isRemoved: comment.removed,
+		isSaved: comment.saved,
+		isStickied: comment.stickied,
+		isScoreHidden: comment.score_hidden,
+		media: {
+			type: "rtjson",
+			richtextContent: comment.rtjson ?? markdownToRichText(comment.body, comment.media_metadata),
+			rteMode: comment.rte_mode,
+			mediaMetadata: comment.media_metadata,
+		},
+		modReports: comment.mod_reports,
+		next: null,
+		numReports: comment.num_reports,
+		parentId: comment.parent_id,
+		permalink: comment.permalink,
+		prev: null,
+		profileImage: comment.profile_img,
+		postAuthor: comment.link_author ?? null,
+		postId: postId ?? comment.link_id,
+		postTitle: comment.link_title ?? null,
+		score: comment.score,
+		sendReplies: comment.send_replies,
+		subredditId: comment.subreddit_id,
+		treatmentTags: comment.treatment_tags,
+		userReports: comment.user_reports,
+		unrepliableReason: comment.unrepliable_reason,
+		voteState: getVoteStateNum(comment.likes),
+	})
+};
 
 
 const processMoreComment = (morecomments: any, postId: string) => ({
@@ -113,6 +121,7 @@ export function addCommentToState(comment: any, state: CommentListingPageState) 
 		};
 
 	if (!appState.posts.models[comment.link_id])
+		// @ts-ignore
 		state.posts[comment.link_id] ??= {
 			author: comment.link_author ?? '[deleted]',
 			belongsTo: {

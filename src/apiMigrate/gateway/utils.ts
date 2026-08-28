@@ -3,10 +3,11 @@ import { getGIPHYGifsByIds } from "../../api/giphy";
 import { gqlFetch } from "../../api/gql";
 import { getVideoMediaMetadataGql, getMuxedMP4sDownloadRTJSON } from "./mappers/common";
 import { getREST, RedditAPIError } from "../../api/rest";
-import { convertUnavailableGqlSubredditToGatewayError, subredditNameToId } from "./mappers/subreddit";
+import { subredditNameToId } from "./mappers/subreddit";
+import { convertUnavailableGqlSubredditToGatewayError } from "./mappers/gql/subreddit";
 import { getState } from "../../main";
 import { markdownToRichText } from "./mappers/richtext";
-import { FormattingFlag } from "./mappers/richtext_types";
+import { FormattingFlag } from "./types/richtext";
 import { isLoggedIn } from "../../state";
 import { blockedByUserNames, isUserCurationActive } from "./listingPage";
 
