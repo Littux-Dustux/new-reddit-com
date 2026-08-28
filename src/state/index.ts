@@ -1,3 +1,4 @@
+import type { Post } from '../apiMigrate/gateway/types/post';
 import { addIdentityToState, addPrefsV1ToState } from './addIdentity';
 import addUserRels from './addUserRels';
 import experiments from './experiments.json';
@@ -576,7 +577,7 @@ export const state = {
 		isAnimatingUpvote: null,
 		isTrackingCrossposts: {},
 		metaMap: {},
-		models: {} as Record<string, any>,
+		models: {} as Record<string, Post>,
 		modToMemberShare: null,
 		crowdControl: null,
 		postLevelCrowdControl: {},

@@ -1,10 +1,11 @@
+import type { VideoAssetR2 } from "../types/common";
 import { FormattingFlag } from "./richtext_types";
 
 export const getVoteStateNum = (likes: boolean | null) => (likes === null ? 0 : likes ? 1 : -1);
 
-export const getVideoMediaMetadataGql = (data: any) => ({
+export const getVideoMediaMetadataGql = (data: any): VideoAssetR2 => ({
 	e: "RedditVideo",
-	status: (data.status as string).toLowerCase(),
+	status: (data.status as string).toLowerCase() as "valid",
 	dashUrl: data.dashUrl,
 	hlsUrl: data.hlsUrl,
 	id: data.id,

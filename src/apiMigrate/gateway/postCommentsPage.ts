@@ -93,7 +93,7 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 		if (postFromState?.discussionType === "CHAT") params.sort = "live";
 		if (commentID && !params.context) {
 			params.context = '4';
-			params.depth = '6';
+			params.depth = '10';
 		}
 
 		const listing = await getREST(
@@ -102,7 +102,6 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 					...params,
 					always_include_media: "1",
 					feature: "link_preview",
-					profile_img: "1",
 					threaded: "false",
 					raw_json: "1",
 					raw_media_syntax: "1",

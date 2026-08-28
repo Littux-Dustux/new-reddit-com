@@ -1,3 +1,5 @@
+import type { Flair } from "../types/flair";
+
 export const reduceFlairsV2R2 = (flairsV2: any[]) => {
 	const templates: Record<string, any> = {};
 	const templateIds: string[] = [];
@@ -75,7 +77,7 @@ export const processSubredditUserFlairGql = ({ authorFlairSettings, modPermissio
 });
 
 
-export const getAuthorFlairFromR2Thing = (data: any) =>
+export const getAuthorFlairFromR2Thing = (data: any): Flair | null =>
 	data.author_flair_text
 		? {
 			text: data.author_flair_text,
@@ -84,4 +86,5 @@ export const getAuthorFlairFromR2Thing = (data: any) =>
 			templateId: data.author_flair_template_id,
 			textColor: data.author_flair_text_color,
 			type: data.author_flair_type,
+			cssClass: data.author_flair_css_class,
 		} : null;

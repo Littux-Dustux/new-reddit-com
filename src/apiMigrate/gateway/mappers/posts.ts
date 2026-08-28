@@ -1,16 +1,18 @@
 import { getState } from "../../../main";
+import type { PostFlair } from "../types/flair";
+import type { Media, MediaRichtext, MediaText, Post } from "../types/post";
 import { antiGifFuckGifs, getVoteStateNum } from "./common";
 import { getAuthorFlairFromR2Thing, processSubredditPostFlair, processSubredditUserFlair } from "./flair";
 import type { StateBase } from "./listing";
 import { processSubredditAboutInfo, processSubreddit } from "./subreddit";
 
 
-const getFlair = (data: any) => {
-	const flair = [];
+const getFlair = (data: any): PostFlair[] => {
+	const flair: PostFlair[] = [];
 	if (data.link_flair_richtext?.length) {
 		flair.push({
-			richtext: data.link_flair_richtext,
 			type: "richtext",
+			richtext: data.link_flair_richtext,
 			textColor: data.link_flair_text_color || "dark",
 			backgroundColor: data.link_flair_background_color || "",
 			cssClass: data.link_flair_css_class || null,
@@ -33,29 +35,32 @@ const getFlair = (data: any) => {
 	return flair;
 };
 
-const getMedia = (data: any, devvitData?: any) => {
+const getMedia = (data: any, devvitData?: any): Media | null => {
 	const isPreviewEnabled = data.preview?.enabled;
 	const isObscured = data.over_18 || data.spoiler;
 	let obfuscatedUrl = null;
-
-	const baseMedia = {
-		content: data.selftext_html,
-		markdownContent: data.selftext,
-		obfuscated: obfuscatedUrl,
-		rteMode: data.rte_mode,
-		isRichtextPreview: data.is_richtext_preview,
-		...(data.rtjson
-			? { richtextContent: data.rtjson, type: "rtjson", mediaMetadata: data.media_metadata }
-			: { type: "text" }
-		),
-	};
-
+	
 	if (data.preview) {
 		const variants = data.preview.images[0]?.variants || {};
 		if (isObscured && variants.obfuscated) {
 			obfuscatedUrl = variants.obfuscated.source.url;
 		}
 	};
+
+	const baseMedia = {
+		type: data.rtjson ? "rtjson" : "text",
+		content: data.selftext_html,
+		markdownContent: data.selftext,
+		obfuscated: obfuscatedUrl,
+		rteMode: data.rte_mode,
+		isRichtextPreview: data.is_richtext_preview,
+		richtextContent: data.rtjson,
+		mediaMetadata: data.media_metadata,
+	} as MediaText | MediaRichtext;
+	
+	if (data.is_self) {
+		return baseMedia;
+	}
 
 	if (devvitData?.__typename === "DevvitPost") {
 		return {
@@ -85,17 +90,10 @@ const getMedia = (data: any, devvitData?: any) => {
 				})),
 			},
 			mediaMetadata: antiGifFuckGifs(data.media_metadata),
-			crossPostRootId: data.cross_post_root_id || null,
-			crossPostParentId: data.cross_post_parent_id || null,
-			numCrossposts: data.num_crossposts || 0,
-			isCrosspostable: data.is_crosspostable,
 			richtextContent: data.rtjson,
 		};
 	}
 
-	if (data.is_self) {
-		return baseMedia;
-	}
 
 	if (data.secure_media?.oembed || data.is_survey_ad) {
 		return {
@@ -194,8 +192,9 @@ const normalizeR2Poll = (data: any) => ({
 	resolvedOptionId: data.resolved_option_id,
 });
 
-export const processPost = (data: any, devvitData?: any) => {
-	const postFromState = getState().posts.models[data.name];
+export const processPost = (data: any, devvitData?: any): Post => {
+	const postFromState: Post | undefined = getState().posts.models[data.name];
+	const crossPostId = data.cross_post_parent_id || data.crosspost_parent_list?.[0]?.name;
 
 	return ({
 		adPromotedUserPostIds: [],
@@ -205,7 +204,6 @@ export const processPost = (data: any, devvitData?: any) => {
 		author: data.author,
 		authorId: data.author_fullname,
 		authorIsBlocked: data.author_is_blocked,
-		awardCountsById: postFromState?.awardCountsById,
 		bannedAtUTC: data.banned_at_utc,
 		bannedBy: data.banned_by,
 		belongsTo: {
@@ -215,8 +213,8 @@ export const processPost = (data: any, devvitData?: any) => {
 		callToAction: data.call_to_action || null,
 		contestMode: data.contest_mode,
 		created: data.created_utc * 1000, // Reddit API returns seconds, UI usually needs ms
-		crosspostParentId: data.cross_post_parent_id || data.crosspost_parent_list?.[0]?.name || null,
-		crosspostRootId: data.cross_post_root_id || data.crosspost_parent_list?.[0]?.name || null,
+		crosspostParentId: crossPostId,
+		crosspostRootId: crossPostId,
 		discussionType: (/discussion thread|(match|race) discussion/i).test(data.title)
 			? "CHAT"
 			: data.discussion_type
@@ -254,10 +252,11 @@ export const processPost = (data: any, devvitData?: any) => {
 		isSurveyAd: Boolean(data.is_survey_ad),
 		liveCommentsWebsocket: data.name,  // data.liveCommentsWebsocket || data.websocket_url,
 		media: getMedia(data, devvitData),
-		mediaStatus: {
+		/* mediaStatus: {
 			transcodingStatus: data.media?.reddit_video?.transcoding_status?.toUpperCase()
-		},
+		}, */
 		modReports: data.mod_reports,
+		modReportsDismissed: data.mod_reports_dismissed,
 		numComments: data.num_comments,
 		numCrossposts: data.num_crossposts || 0,
 		numDuplicates: data.num_duplicates,
@@ -292,6 +291,7 @@ export const processPost = (data: any, devvitData?: any) => {
 		title: postFromState?.title ?? data.title,
 		upvoteRatio: data.upvote_ratio,
 		userReports: data.user_reports,
+		userReportsDismissed: data.user_reports_dismissed,
 		viewCount: data.view_count || 0,
 		voteState: getVoteStateNum(data.likes),
 	});

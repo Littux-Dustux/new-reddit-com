@@ -1,3 +1,4 @@
+import type { AnimatedImageAssetR2 } from "../apiMigrate/gateway/types/common";
 import { getLogger } from "../logging";
 import { chunkIterable } from "../utils";
 
@@ -32,31 +33,13 @@ type GiphyResponse = {
 	}
 };
 
-type RedditGiphyGif = {
-	status: "valid",
-	e: "AnimatedImage",
-	m: "image/gif",
-	s: {
-		x: number,
-		y: number,
-		gif: string,
-		mp4: string,
-	},
-	p: [],
-	ext: string,
-	t: "giphy",
-	id?: string,
-	/* profile_url: string,
-	display_name: string,
-	username: string */
-};
 
 // const FIELDS = "id,url,images.fixed_height,user.profile_url,user.display_name,user.username";
 const GIPHY_API_KEY = "k2kwyMA6VeyHM6ZRT96OXDGaersnx73Z"; // API key used by Reddit on their website
 
 const logger = getLogger("giphyAPI");
 
-export async function getGIPHYGifsByIds(ids: Iterable<string>): Promise<Record<string, RedditGiphyGif>> {
+export async function getGIPHYGifsByIds(ids: Iterable<string>): Promise<Record<string, AnimatedImageAssetR2>> {
 	const apiPromises: Promise<Response>[] = [];
 
 	for (const chunk of chunkIterable(ids, 100)) {
@@ -69,7 +52,7 @@ export async function getGIPHYGifsByIds(ids: Iterable<string>): Promise<Record<s
 	}
 
 	const responses = await Promise.all(apiPromises);
-	const idToGif: Record<string, RedditGiphyGif> = {};
+	const idToGif: Record<string, AnimatedImageAssetR2> = {};
 
 	for (const response of responses) {
 		const data: GiphyResponse = await response.json();
@@ -80,6 +63,7 @@ export async function getGIPHYGifsByIds(ids: Iterable<string>): Promise<Record<s
 		logger.log(`GET (${data.meta.status} ${data.meta.msg}): ${data.data.length} GIFs fetched`);
 
 		for (const gif of data.data) {
+			// @ts-ignore
 			idToGif[gif.id] = {
 				status: "valid",
 				e: "AnimatedImage",

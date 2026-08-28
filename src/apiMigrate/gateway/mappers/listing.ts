@@ -3,12 +3,14 @@ import { addGqlSubredditToState, addR2SubredditToState } from "./subreddit";
 import { addCommentToState, addCommentTreeToState, type CommentPosition } from "./comments";
 import { fixR2CommentsMedia } from "../utils";
 import { getUserSubredditPref } from "../../../api/localhost";
+import type { Post } from "../types/post";
+import type { Flair } from "../types/flair";
 
 export interface StateBase {
 	account: any;
-	authorFlair: Record<string, Record<string, any>>;
+	authorFlair: Record<string, Record<string, Flair | null>>;
 	postFlair: Record<string, any>;
-	posts: Record<string, any>;
+	posts: Record<string, Post>;
 	profiles: Record<string, any>;
 	userFlair: Record<string, any>;
 	subredditAboutInfo: Record<string, any>;

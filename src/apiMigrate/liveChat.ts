@@ -3,6 +3,7 @@ import { getREST, RedditAPIError } from "../api/rest";
 import { getLogger } from "../logging";
 import { getState } from "../main";
 import { processSingleComment } from "./gateway/mappers/comments";
+import type { Post } from "./gateway/types/post";
 
 
 interface NewCommentPayload {
@@ -125,7 +126,7 @@ class LiveCommentsFakeSocket {
 		this.headCommentId = (getState().pages.comments.keyToHeadCommentId as any)[this.commentsPageKey];
 		this.commentsBefore = this.headCommentId;
 		this.subredditName = getState().subreddits.models[
-			getState().posts.models[id].belongsTo.id
+			(getState().posts.models[id] as Post).belongsTo.id
 		].name;
 
 		subscribe<CommentCountChangeMessage>({
