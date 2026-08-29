@@ -6,10 +6,11 @@ import { getREST, RedditAPIError } from "../../api/rest";
 import { subredditNameToId } from "./mappers/subreddit";
 import { convertUnavailableGqlSubredditToGatewayError } from "./mappers/gql/subreddit";
 import { getState } from "../../main";
-import { markdownToRichText } from "./mappers/richtext";
 import { FormattingFlag } from "./types/richtext";
 import { isLoggedIn } from "../../state";
 import { blockedByUserNames, isUserCurationActive } from "./listingPage";
+import { getUserSubredditPref } from "../../api/localhost";
+import type { CommentMediaDetailsQuery } from "../../api/types/gql";
 
 const logger = getLogger('apiMigrate:gateway:utils');
 
@@ -74,13 +75,15 @@ export async function fixR2CommentsMedia(comments: Record<string, any>) {
 	if (videoCommentIdsToFetch.length > 0) {
 		logger.log(`Loading ${videoCommentIdsToFetch.length} comments with videos...`, true);
 		commentFixerPromises.push(
-			gqlFetch("CommentMediaDetails", "4228949b61fb4a9c17aed04edc4be641a7c48a12fbd506151afde1ce0e335857", { ids: videoCommentIdsToFetch })
-			.then(({ commentsByIds }) => {
+			gqlFetch<CommentMediaDetailsQuery>(
+				"CommentMediaDetails", "4228949b61fb4a9c17aed04edc4be641a7c48a12fbd506151afde1ce0e335857", { ids: videoCommentIdsToFetch }
+			).then(({ commentsByIds }) => {
 				for (const comment of commentsByIds) {
+					if (!comment) continue;
 					const incompleteMedia = videoCommentIncompleteMedias[comment.id];
 					const videoAsset = comment.content?.richtextMedia?.[0];
 
-					if (incompleteMedia && videoAsset?.status === "VALID") {
+					if (incompleteMedia && videoAsset?.__typename === "VideoAsset" && videoAsset?.status === "VALID") {
 						incompleteMedia.mediaMetadata = {
 							[videoAsset.id]: getVideoMediaMetadataGql(videoAsset)
 						};
@@ -134,15 +137,14 @@ export const expectStatusCodes = new Set([403, 404]);
 export async function fetchSubredditPageExtra(
 	subredditName: string | null | undefined,
 	includeStructuredStyles: boolean = true,
-	fetchR2Subreddit: boolean,
-): Promise<{ structuredStyles: any, subredditInfo: any, isSubredditR2: boolean, postFlairsV2: any, userFlairsV2: any, preferences?: any }> {
+	isNotPreload: boolean = true,
+): Promise<{ structuredStyles: any, subredditInfo: any, postFlairsV2: any, userFlairsV2: any, preferences?: any }> {
 
 	if (!subredditName) return {
 		structuredStyles: null,
 		subredditInfo: null,
 		postFlairsV2: null,
 		userFlairsV2: null,
-		isSubredditR2: false,
 	}
 
 	if (!includeStructuredStyles) {
@@ -153,21 +155,22 @@ export async function fetchSubredditPageExtra(
 				subredditInfo: { __typename: "__USE_CACHE__", id, name: subredditName },
 				userFlairsV2: null,
 				postFlairsV2: null,
-				isSubredditR2: false,
 			}
 		}
 	}
 
-	let includeUserFlairs = isLoggedIn.value, includePostFlairs = isLoggedIn.value;
-	if (isLoggedIn) {
-		const id = subredditNameToId[subredditName.toLocaleLowerCase()];
+	const includeFlairs = isNotPreload && isLoggedIn.value;
+
+	let includeUserFlairs = includeFlairs, includePostFlairs = includeFlairs;
+	if (includeFlairs) {
+		const id = subredditNameToId[subredditName.toLowerCase()];
 		if (id) {
 			includeUserFlairs = (getState().features.userFlair as any)[id]?.permissions?.canAssignOwn;
 			includePostFlairs = (getState().postFlair as any)[id]?.displaySettings?.isEnabled;
 		}
 	}
 
-	const [structuredStyles, postFlairsV2, userFlairsV2, gqlOrR2SubredditInfo] = await Promise.all([
+	const [structuredStyles, postFlairsV2, userFlairsV2, gqlOrR2SubredditInfo, prefs] = await Promise.all([
 		includeStructuredStyles && getREST(`/api/v1/structured_styles/${subredditName}.json?raw_json=1`)
 		.catch(e => logger.err(`Error fetching structuredStyles for r/${subredditName}: ${e.message}`, true, e)),
 
@@ -179,37 +182,29 @@ export async function fetchSubredditPageExtra(
 			{ expectStatusCodes }
 		).catch(e => logger.err(`Error fetching user flairs for r/${subredditName}: ${e.message}`, true, e)),
 
-		fetchR2Subreddit
-			? getREST(`/r/${subredditName}/about.json?raw_json=1`).catch(e => {
-				if (e instanceof RedditAPIError) {
-					fetchR2Subreddit = false;
-					return gqlFetch("SubredditInfoByName", "6b9c1679e69097e1c6df364adc11183afe6e2b6545dd1c0c1cc8f7490448c3e5", {
-						subredditName,
-						loggedOutIsOptedIn: true,
-						filterGated: true,
-						includeRecapFields: false,
-						includeWelcomePage: false,
-						includeDevvitData: false,
-					}).catch(e => logger.err(
-						`Error fetching gql subreddit info for r/${subredditName}: ${e.message}`, true, e
-					));
-				};
-				logger.err(`Error fetching r2 subreddit info for r/${subredditName}: ${e.message}`, true, e);
-			})
-			: gqlFetch("SubredditInfoByName", "6b9c1679e69097e1c6df364adc11183afe6e2b6545dd1c0c1cc8f7490448c3e5", {
-				subredditName,
-				loggedOutIsOptedIn: true,
-				filterGated: true,
-				includeRecapFields: false,
-				includeWelcomePage: false,
-				includeDevvitData: false,
-			}).catch(e => logger.err(
-				`Error fetching gql subreddit info for r/${subredditName}: ${e.message}`, true, e
-			)),
+		isNotPreload && getREST(`/r/${subredditName}/about.json?raw_json=1`).catch(e => {
+			if (e instanceof RedditAPIError) {
+				if (subredditName.startsWith("u_") || (e.status === 404 && e.reason !== 'banned'))
+					return e;
+				return gqlFetch("SubredditInfoByName", "6b9c1679e69097e1c6df364adc11183afe6e2b6545dd1c0c1cc8f7490448c3e5", {
+					subredditName,
+					loggedOutIsOptedIn: true,
+					filterGated: true,
+					includeRecapFields: false,
+					includeWelcomePage: false,
+					includeDevvitData: false,
+				}).catch(e => logger.err(
+					`Error fetching gql subreddit info for r/${subredditName}: ${e.message}`, true, e
+				));
+			};
+			logger.err(`Error fetching r2 subreddit info for r/${subredditName}: ${e.message}`, true, e);
+		}),
+
+		isNotPreload && getUserSubredditPref(subredditName),
 	]);
 
 
-	if (fetchR2Subreddit) {
+	if (isNotPreload) {
 		if (gqlOrR2SubredditInfo instanceof RedditAPIError) {
 			throw {
 				jsonResponse: JSON.stringify({
@@ -222,26 +217,27 @@ export async function fetchSubredditPageExtra(
 			}
 		} else if (gqlOrR2SubredditInfo.kind === "t5") {
 			subredditNameToId[gqlOrR2SubredditInfo.data.display_name.toLowerCase()] = gqlOrR2SubredditInfo.data.name;
+
+		} else if (typeof gqlOrR2SubredditInfo?.subredditInfoByName !== 'undefined') {
+			const subredditInfoByName = gqlOrR2SubredditInfo.subredditInfoByName;
+
+			if (!subredditInfoByName || subredditInfoByName.__typename !== "Subreddit") {
+				const gatewayError = await convertUnavailableGqlSubredditToGatewayError(subredditInfoByName);
+				logger.dbg("Unavailable gql subreddit", { subredditInfoByName, gatewayError });
+				throw gatewayError;
+			}
+
+			subredditNameToId[subredditName.toLowerCase()] = subredditInfoByName.id;
+
 		} else throw gqlOrR2SubredditInfo;
-
-	} else {
-		const subredditInfoByName = gqlOrR2SubredditInfo?.subredditInfoByName;
-		
-		if (!subredditInfoByName || subredditInfoByName.__typename !== "Subreddit") {
-			const gatewayError = await convertUnavailableGqlSubredditToGatewayError(subredditInfoByName);
-			logger.dbg("Unavailable gql subreddit", { subredditInfoByName, gatewayError });
-			throw gatewayError;
-		}
-
-		subredditNameToId[subredditName.toLowerCase()] = subredditInfoByName.id;
 	}
 
 	return {
 		structuredStyles,
 		postFlairsV2,
 		userFlairsV2,
-		subredditInfo: fetchR2Subreddit ? gqlOrR2SubredditInfo.data : gqlOrR2SubredditInfo.subredditInfoByName,
-		isSubredditR2: fetchR2Subreddit,
+		subredditInfo: gqlOrR2SubredditInfo?.data,
+		preferences: prefs,
 	};
 }
 

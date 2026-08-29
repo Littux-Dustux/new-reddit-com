@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Subreddit Preferences Manager</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-color: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --danger: #ef4444;
+      --border: #334155;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    h1 { border-bottom: 2px solid var(--border); padding-bottom: 12px; }
+    
+    /* Search Box / Autocomplete */
+    .search-container { position: relative; margin-bottom: 30px; }
+    .search-input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: #fff;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0; right: 0;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 0 0 8px 8px;
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 10;
+      display: none;
+    }
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      cursor: pointer;
+    }
+    .dropdown-item:hover { background: #334155; }
+    .dropdown-item img { width: 24px; height: 24px; border-radius: 50%; }
+
+    /* Preference Cards */
+    .pref-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .sr-info { display: flex; align-items: center; gap: 12px; }
+    .sr-icon { width: 36px; height: 36px; border-radius: 50%; background: #475569; }
+    .controls { display: flex; gap: 12px; align-items: center; }
+    select, button {
+      background: var(--bg-color);
+      color: var(--text-color);
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+    .btn-danger { background: var(--danger); border: none; cursor: pointer; color: white; }
+    .btn-danger:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+
+  <h1>Subreddit Preferences</h1>
+
+  <!-- Autocomplete Search Widget -->
+  <div class="search-container">
+    <input type="text" id="sr-search" class="search-input" placeholder="Search subreddits to configure..." autocomplete="off" />
+    <div id="dropdown" class="dropdown"></div>
+  </div>
+
+  <!-- Active Preferences List -->
+  <div id="prefs-list"></div>
+
+  <script>
+    // Injected initial state from Flask template rendering
+    let currentPrefs = {{ initial_prefs | tojson }};
+
+    const SORTS = [
+      'best', 'hot', 'new', 'rising', 'gilded',
+      'top_hour', 'top_day', 'top_week', 'top_month', 'top_year', 'top_all',
+      'controversial_hour', 'controversial_day', 'controversial_week', 
+      'controversial_month', 'controversial_year', 'controversial_all'
+    ];
+    const LAYOUTS = ['card', 'classic', 'compact', 'search'];
+
+    // GraphQL Request Helper
+    async function gqlFetch(operationName, sha256Hash, variables) {
+      const resp = await window.gmFetch({
+        method: "POST",
+        url: "https://cf.gql-fed.reddit.com?" + operationName,
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": "Reddit/Version 2026.03.0/Build 2603061/Android 13",
+          "X-Reddit-Translations": "enabled",
+          "Authorization": `Bearer ${await window.getToken()}`,
+          "X-Reddit-Loid": window.loid,
+        },
+        data: JSON.stringify({
+          operationName,
+          variables,
+          extensions: {
+            persistedQuery: {
+              version: 1,
+              sha256Hash,
+            },
+          },
+        }),
+        anonymous: true,
+        timeout: 30000,
+      });
+
+      return JSON.parse(resp.responseText).data;
+    }
+
+    // Render Preference Cards UI
+    function renderList() {
+      const container = document.getElementById('prefs-list');
+      container.innerHTML = '';
+
+      currentPrefs.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'pref-card';
+
+        const iconUrl = item.subreddit.icon || 'https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png';
+        card.innerHTML = `
+          <div class="sr-info">
+            <img class="sr-icon" src="${iconUrl}" alt="" />
+            <div>
+              <strong>r/${item.subreddit.name}</strong>
+            </div>
+          </div>
+          <div class="controls">
+            <label>Sort:
+              <select onchange="updatePref('${item.subreddit.name}', 'sort', this.value)">
+                ${SORTS.map(s => `<option value="${s}" ${item.prefs?.sort === s ? 'selected' : ''}>${s}</option>`).join('')}
+              </select>
+            </label>
+            <label>Layout:
+              <select onchange="updatePref('${item.subreddit.name}', 'layout', this.value)">
+                ${LAYOUTS.map(l => `<option value="${l}" ${item.prefs?.layout === l ? 'selected' : ''}>${l}</option>`).join('')}
+              </select>
+            </label>
+            <button class="btn-danger" onclick="deletePref('${item.subreddit.name}')">Remove</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Save Preference Updates via PATCH
+    async function updatePref(name, key, value, fullSubredditObj = null) {
+      const existing = currentPrefs.find(p => p.subreddit.name.toLowerCase() === name.toLowerCase());
+      
+      const payload = {
+        preferences: {
+          [key]: value
+        },
+        subreddit: fullSubredditObj || existing?.subreddit || { name }
+      };
+
+      const res = await fetch(`/api/prefs/subreddit/${name}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        const updated = await res.json();
+        const idx = currentPrefs.findIndex(p => p.subreddit.name.toLowerCase() === name.toLowerCase());
+        if (idx >= 0) {
+          currentPrefs[idx] = updated.data;
+        } else {
+          currentPrefs.push(updated.data);
+        }
+        renderList();
+      }
+    }
+
+    // Delete Preference via DELETE
+    async function deletePref(name) {
+      const res = await fetch(`/api/prefs/subreddit/${name}`, {
+        method: 'DELETE'
+      });
+
+      if (res.ok) {
+        currentPrefs = currentPrefs.filter(p => p.subreddit.name.toLowerCase() !== name.toLowerCase());
+        renderList();
+      }
+    }
+
+    // Autocomplete Subreddit Search Logic
+    let debounceTimer;
+    const searchInput = document.getElementById('sr-search');
+    const dropdown = document.getElementById('dropdown');
+
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(debounceTimer);
+      const q = e.target.value.trim();
+      if (!q) {
+        dropdown.style.display = 'none';
+        return;
+      }
+
+      debounceTimer = setTimeout(async () => {
+        try {
+          const res = await gqlFetch(
+            'ComposeSearchSubreddits',
+            'e04d14238a3308b21c86811e9b68bfe8275745ea2680bb38a6b095a98f037d56',
+            { query: q, isNsfwIncluded: false }
+          );
+
+          const edges = res?.subredditTypeahead?.subreddits?.edges || [];
+          dropdown.innerHTML = '';
+
+          if (edges.length === 0) {
+            dropdown.style.display = 'none';
+            return;
+          }
+
+          edges.forEach(({ node }) => {
+            const item = document.createElement('div');
+            item.className = 'dropdown-item';
+            const icon = node.styles?.icon || node.styles?.legacyIcon?.url || 'https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png';
+            
+            item.innerHTML = `
+              <img src="${icon}" />
+              <div>
+                <div><strong>${node.prefixedName}</strong></div>
+                <small style="color: var(--text-muted);">${node.subscribersCount.toLocaleString()} subscribers</small>
+              </div>
+            `;
+
+            item.onclick = () => {
+              dropdown.style.display = 'none';
+              searchInput.value = '';
+              const subredditPayload = {
+                id: parseInt(node.id.slice(3), 36),
+                name: node.name,
+                icon: icon
+              };
+              updatePref(node.name, 'sort', 'hot', subredditPayload);
+            };
+
+            dropdown.appendChild(item);
+          });
+
+          dropdown.style.display = 'block';
+        } catch (err) {
+          console.error("Failed to autocomplete subreddits:", err);
+        }
+      }, 300);
+    });
+
+    // Initialize list on render
+    renderList();
+  </script>
+</body>
+</html>

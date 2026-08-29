@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subreddit Preferences</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen py-10 px-4">
+  <div class="max-w-4xl mx-auto space-y-6">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between border-b border-gray-800 pb-4">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-white">Subreddit Preferences</h1>
+        <p class="text-sm text-gray-400">User ID: <span class="font-mono text-amber-400">{{ user_id }}</span></p>
+      </div>
+      <button onclick="openAddModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2 rounded-lg text-sm transition">
+        + Add Subreddit
+      </button>
+    </div>
+
+    <!-- Alert Toast -->
+    <div id="toast" class="hidden p-4 rounded-lg text-sm font-medium"></div>
+
+    <!-- Subreddit Prefs Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="prefs-grid">
+      {% for item in prefs %}
+      <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm space-y-4" id="card-{{ item.subreddit.name }}">
+        
+        <!-- Subreddit Header -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            {% if item.subreddit.icon %}
+              <img src="{{ item.subreddit.icon }}" alt="{{ item.subreddit.name }}" class="w-8 h-8 rounded-full border border-gray-700 object-cover">
+            {% else %}
+              <div class="w-8 h-8 rounded-full bg-indigo-900 border border-indigo-700 flex items-center justify-center font-bold text-xs text-indigo-300">
+                r/
+              </div>
+            {% endif %}
+            <h2 class="font-semibold text-lg text-white">r/{{ item.subreddit.name }}</h2>
+          </div>
+          <button onclick="deletePref('{{ item.subreddit.name }}')" class="text-red-400 hover:text-red-300 text-sm font-medium transition">
+            Delete
+          </button>
+        </div>
+
+        <!-- Form Fields -->
+        <div class="space-y-3 pt-2">
+          <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Default Sort</label>
+            <select onchange="updatePref('{{ item.subreddit.name }}', {{ item.subreddit.id }})" id="sort-{{ item.subreddit.name }}" class="w-full bg-gray-900 border border-gray-700 text-gray-200 text-sm rounded-lg p-2.5 focus:ring-indigo-500 focus:border-indigo-500">
+              <option value="" {% if not item.prefs.sort %}selected{% endif %}>Default (Unset)</option>
+              {% for opt in ['best', 'hot', 'new', 'rising', 'gilded', 'top_hour', 'top_day', 'top_week', 'top_month', 'top_year', 'top_all', 'controversial_hour', 'controversial_day', 'controversial_week', 'controversial_month', 'controversial_year', 'controversial_all'] %}
+                <option value="{{ opt }}" {% if item.prefs.sort == opt %}selected{% endif %}>{{ opt }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Layout Mode</label>
+            <select onchange="updatePref('{{ item.subreddit.name }}', {{ item.subreddit.id }})" id="layout-{{ item.subreddit.name }}" class="w-full bg-gray-900 border border-gray-700 text-gray-200 text-sm rounded-lg p-2.5 focus:ring-indigo-500 focus:border-indigo-500">
+              <option value="" {% if not item.prefs.layout %}selected{% endif %}>Default (Unset)</option>
+              {% for opt in ['card', 'classic', 'compact', 'search'] %}
+                <option value="{{ opt }}" {% if item.prefs.layout == opt %}selected{% endif %}>{{ opt }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="flex items-center justify-between pt-1">
+            <span class="text-sm font-medium text-gray-300">Community Styles</span>
+            <input type="checkbox" onchange="updatePref('{{ item.subreddit.name }}', {{ item.subreddit.id }})" id="styles-{{ item.subreddit.name }}" {% if item.prefs.styles_enabled %}checked{% endif %} class="w-4 h-4 text-indigo-600 bg-gray-900 border-gray-700 rounded focus:ring-indigo-500">
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="col-span-full py-12 text-center text-gray-500 bg-gray-800/50 border border-dashed border-gray-700 rounded-xl">
+        No custom subreddit preferences configured yet.
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Add Subreddit GraphQL Search Modal -->
+  <div id="modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-gray-800 border border-gray-700 rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl relative">
+      <h3 class="text-xl font-bold text-white">Add Subreddit Preference</h3>
+      
+      <!-- Subreddit Search with Autocomplete -->
+      <div class="relative">
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Search Subreddit</label>
+        <input 
+          type="text" 
+          id="modal-sr-search" 
+          placeholder="Type to search (e.g., AskReddit)..." 
+          oninput="handleSubredditSearch(this.value)"
+          autocomplete="off"
+          class="w-full bg-gray-900 border border-gray-700 text-gray-200 text-sm rounded-lg p-2.5 focus:ring-indigo-500 focus:border-indigo-500"
+        >
+        
+        <!-- Live GraphQL Search Results Dropdown -->
+        <div id="search-results" class="hidden absolute left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg max-h-60 overflow-y-auto shadow-2xl z-50 divide-y divide-gray-800">
+        </div>
+      </div>
+
+      <!-- Selected Subreddit Preview & Custom Icon -->
+      <div class="space-y-3 pt-2">
+        <input type="hidden" id="selected-sr-name">
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Icon URL</label>
+          <input type="text" id="modal-sr-icon" placeholder="Auto-filled from search or custom URL" class="w-full bg-gray-900 border border-gray-700 text-gray-200 text-sm rounded-lg p-2.5">
+        </div>
+      </div>
+
+      <div class="flex justify-end space-x-3 pt-2">
+        <button onclick="closeAddModal()" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition">Cancel</button>
+        <button onclick="submitNewPref()" class="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg transition">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Client JavaScript -->
+  <script>
+    async function gqlFetch(operationName, sha256Hash, variables) {
+      try {
+        const result = await window.gmFetch({
+          method: "POST",
+          url: "https://cf.gql-fed.reddit.com?" + operationName,
+          headers: {
+            "Content-Type": "application/json",
+            "User-Agent": "Reddit/Version 2026.03.0/Build 2603061/Android 13",
+            "X-Reddit-Translations": "enabled",
+            "Authorization": `Bearer ${window.getToken ? window.getToken() : ''}`,
+            "X-Reddit-Loid": window.loid || "",
+          },
+          data: JSON.stringify({
+            operationName,
+            variables,
+            extensions: {
+              persistedQuery: {
+                version: 1,
+                sha256Hash,
+              },
+            },
+          }),
+          anonymous: true,
+          timeout: 30000,
+        });
+
+        return JSON.parse(result.responseText);
+      } catch(e) {
+        if (e?.error) {
+          throw new TypeError(`Error fetching gql data: ${e.statusText}`);
+        } else {
+          throw e;
+        }
+      }
+    }
+
+    // ------------------------------------------------------------------
+    // 2. Subreddit Typeahead Search Logic
+    // ------------------------------------------------------------------
+    const SEARCH_HASH = "e04d14238a3308b21c86811e9b68bfe8275745ea2680bb38a6b095a98f037d56";
+    let searchDebounceTimer = null;
+
+    function handleSubredditSearch(query) {
+      clearTimeout(searchDebounceTimer);
+      const resultsContainer = document.getElementById('search-results');
+
+      if (!query || query.trim().length < 2) {
+        resultsContainer.classList.add('hidden');
+        resultsContainer.innerHTML = '';
+        return;
+      }
+
+      searchDebounceTimer = setTimeout(async () => {
+        try {
+          const data = await gqlFetch("ComposeSearchSubreddits", SEARCH_HASH, {
+            query: query.trim(),
+            isNsfwIncluded: true
+          });
+
+          const edges = data?.data?.subredditTypeahead?.subreddits?.edges || [];
+          renderSearchResults(edges);
+        } catch (err) {
+          console.error("GraphQL typeahead search failed:", err);
+        }
+      }, 300);
+    }
+
+    function renderSearchResults(edges) {
+      const container = document.getElementById('search-results');
+      if (edges.length === 0) {
+        container.innerHTML = `<div class="p-3 text-xs text-gray-500">No subreddits found</div>`;
+        container.classList.remove('hidden');
+        return;
+      }
+
+      container.innerHTML = edges.map(({ node }) => {
+        const iconUrl = node.styles?.icon || node.styles?.legacyIcon?.url || '';
+        const subs = node.subscribersCount ? `${node.subscribersCount.toLocaleString()} members` : '';
+        const safeName = node.name.replace(/'/g, "\\'");
+        const safeIcon = iconUrl.replace(/'/g, "\\'");
+
+        return `
+          <div 
+            onclick="selectSubreddit('${safeName}', '${safeIcon}')"
+            class="p-2.5 flex items-center justify-between hover:bg-gray-800 cursor-pointer transition"
+          >
+            <div class="flex items-center space-x-3">
+              ${iconUrl 
+                ? `<img src="${iconUrl}" class="w-7 h-7 rounded-full object-cover">` 
+                : `<div class="w-7 h-7 rounded-full bg-indigo-900 flex items-center justify-center text-xs font-bold text-indigo-300">r/</div>`
+              }
+              <div>
+                <div class="text-sm font-medium text-gray-100">${node.prefixedName || 'r/' + node.name}</div>
+                <div class="text-xs text-gray-400">${subs}</div>
+              </div>
+            </div>
+            ${node.isNsfw ? `<span class="bg-red-900/40 text-red-400 text-[10px] px-1.5 py-0.5 rounded border border-red-800">NSFW</span>` : ''}
+          </div>
+        `;
+      }).join('');
+
+      container.classList.remove('hidden');
+    }
+
+    function selectSubreddit(name, iconUrl) {
+      document.getElementById('modal-sr-search').value = name;
+      document.getElementById('selected-sr-name').value = name;
+      document.getElementById('modal-sr-icon').value = iconUrl;
+      document.getElementById('search-results').classList.add('hidden');
+    }
+
+    // ------------------------------------------------------------------
+    // 3. Application Actions
+    // ------------------------------------------------------------------
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.className = `p-4 rounded-lg text-sm font-medium ${isError ? 'bg-red-900/50 border border-red-700 text-red-200' : 'bg-emerald-900/50 border border-emerald-700 text-emerald-200'}`;
+      toast.textContent = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3000);
+    }
+
+    async function updatePref(srName, srId) {
+      const sortVal = document.getElementById(`sort-${srName}`).value;
+      const layoutVal = document.getElementById(`layout-${srName}`).value;
+      const stylesVal = document.getElementById(`styles-${srName}`).checked;
+
+      const payload = {
+        subreddit: { id: srId, name: srName },
+        preferences: {
+          ...(sortVal && { sort: sortVal }),
+          ...(layoutVal && { layout: layoutVal }),
+          styles_enabled: stylesVal
+        }
+      };
+
+      try {
+        const res = await fetch(`/api/prefs/subreddit/${srName}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          showToast(`Updated preferences for r/${srName}`);
+        } else {
+          const err = await res.json();
+          showToast(err.error || 'Failed to update preferences', true);
+        }
+      } catch (e) {
+        showToast('Network error during update', true);
+      }
+    }
+
+    async function deletePref(srName) {
+      if (!confirm(`Are you sure you want to delete preferences for r/${srName}?`)) return;
+
+      try {
+        const res = await fetch(`/api/prefs/subreddit/${srName}`, {
+          method: 'DELETE',
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (res.ok) {
+          document.getElementById(`card-${srName}`).remove();
+          showToast(`Deleted preferences for r/${srName}`);
+        } else {
+          showToast('Failed to delete preference', true);
+        }
+      } catch (e) {
+        showToast('Network error during delete', true);
+      }
+    }
+
+    function openAddModal() { 
+      document.getElementById('modal').classList.remove('hidden'); 
+      document.getElementById('modal-sr-search').focus();
+    }
+    
+    function closeAddModal() { 
+      document.getElementById('modal').classList.add('hidden'); 
+      document.getElementById('search-results').classList.add('hidden');
+    }
+
+    async function submitNewPref() {
+      const srName = document.getElementById('selected-sr-name').value.trim() || document.getElementById('modal-sr-search').value.trim();
+      const srIcon = document.getElementById('modal-sr-icon').value.trim();
+
+      if (!srName) {
+        showToast('Subreddit name is required', true);
+        return;
+      }
+
+      const payload = {
+        subreddit: { name: srName, icon: srIcon || null },
+        preferences: { sort: 'hot', layout: 'card' }
+      };
+
+      try {
+        const res = await fetch(`/api/prefs/subreddit/${srName}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          closeAddModal();
+          window.location.reload();
+        } else {
+          showToast('Failed to create subreddit preference', true);
+        }
+      } catch (e) {
+        showToast('Network error', true);
+      }
+    }
+  </script>
+</body>
+</html>

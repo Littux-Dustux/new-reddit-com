@@ -6,9 +6,10 @@ import type { RichTextContent } from "./richtext"
 
 interface Media {
 	type: "rtjson",
+	rteMode: string,
 	richtextContent: RichTextContent,
 	mediaMetadata?: Record<string, MediaAssetR2> | null,
-	rteMode: string,
+	expressionAssetData?: any,
 }
 
 export interface Comment extends PostAndCommentCommon {

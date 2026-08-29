@@ -38,7 +38,7 @@ export async function subredditPostsPage(subredditOrSubreddits: string, params: 
 				if (!shouldFetchSubreddit) throw e;
 			}),
 			shouldFetchSubreddit
-				? fetchSubredditPageExtra(subredditOrSubreddits, includeStructuredStyles, true)
+				? fetchSubredditPageExtra(subredditOrSubreddits, includeStructuredStyles)
 				: undefined,
 		]);
 

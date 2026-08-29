@@ -1,9 +1,10 @@
+import type { DevvitPostFragmentFragment, GetDevvitPostDataQuery } from "../../../api/types/gql";
 import { getState } from "../../../main";
 import type { PostFlair } from "../types/flair";
 import type { Media, MediaRichtext, MediaText, Post } from "../types/post";
 import { antiGifFuckGifs, getVoteStateNum } from "./common";
 import { getAuthorFlairFromR2Thing, processSubredditPostFlair, processSubredditUserFlair } from "./flair";
-import type { StateBase } from "../types/state";
+import type { StateBase } from "../types/state.ts";
 import { processSubredditAboutInfo, processSubreddit } from "./subreddit";
 
 
@@ -35,7 +36,7 @@ const getFlair = (data: any): PostFlair[] => {
 	return flair;
 };
 
-const getMedia = (data: any, devvitData?: any): Media | null => {
+const getMedia = (data: any, devvitData?: DevvitPostFragmentFragment): Media | null => {
 	const isPreviewEnabled = data.preview?.enabled;
 	const isObscured = data.over_18 || data.spoiler;
 	let obfuscatedUrl = null;
@@ -192,7 +193,7 @@ const normalizeR2Poll = (data: any) => ({
 	resolvedOptionId: data.resolved_option_id,
 });
 
-export const processPost = (data: any, devvitData?: any): Post => {
+export const processPost = (data: any, devvitData?: DevvitPostFragmentFragment): Post => {
 	const postFromState: Post | undefined = getState().posts.models[data.name];
 	const crossPostId = data.cross_post_parent_id || data.crosspost_parent_list?.[0]?.name;
 
@@ -298,7 +299,8 @@ export const processPost = (data: any, devvitData?: any): Post => {
 }
 
 
-export function addPostToState(post: any, state: StateBase, postWithDevvit?: any) {
+export function addPostToState(post: any, state: StateBase, postWithDevvit?: GetDevvitPostDataQuery['postInfoById']) {
+	// @ts-ignore
 	state.posts[post.name] = processPost(post, postWithDevvit?.devvit);
 
 	const appState = getState();
@@ -316,6 +318,7 @@ export function addPostToState(post: any, state: StateBase, postWithDevvit?: any
 
 	} else {
 		if (!appState.subreddits.models[subId])
+			// @ts-ignore
 			state.subreddits[subId] ??= {
 				displayText: post.subreddit_name_prefixed,
 				id: post.subreddit_id,
@@ -349,13 +352,14 @@ export function addPostToState(post: any, state: StateBase, postWithDevvit?: any
 
 	const crossPost = post.crosspost_parent_list?.[0];
 	if (crossPost) {
-		addPostToState(crossPost, state, postWithDevvit?.crosspostRoot?.postInfo?.devvit);
+		// @ts-ignore
+		addPostToState(crossPost, state, postWithDevvit?.crosspostRoot?.postInfo);
 	}
 	return state;
 }
 
 
-export const convertDevvitDataToIFrame = (devvit: any): HTMLIFrameElement => {
+export const convertDevvitDataToIFrame = (devvit: DevvitPostFragmentFragment): HTMLIFrameElement => {
 	const iframe = document.createElement("iframe");
 	iframe.allow = "clipboard-write; web-share";
 	iframe.loading = "lazy";

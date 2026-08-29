@@ -6,9 +6,9 @@ import { subredditNameToId } from "../gateway/mappers/subreddit";
 import { gqlFetch } from "../../api/gql";
 import { fixAwardIconSize } from "./helpers/award";
 import { fixGqlListing, fixGqlPost, fixPopularElements, handlePostFeedAndOtherDiscussions } from "./helpers/post";
-import { getState } from "../../main";
 import { addModSubToState } from "../../state/addModeratedSubs";
 import { isUserCurationActive } from "../gateway/listingPage";
+import type { ContentLanguagesQuery, SpokenLanguagesQuery } from "../../api/types/gql";
 
 export type OldOperation = (
 	| "CreatorStats"
@@ -771,9 +771,9 @@ export const gqlFedMap: GqlFedMapping = {
 		operationName: "ContentLanguages+SpokenLanguages",
 		async process({ allKey, suggestedKey }) {
 			const [spokenLanguages, allList, suggestedList] = await Promise.all([
-				gqlFetch("SpokenLanguages", "84dba115e7924bc81f38962b8c1f158d25acccdc6fa8400c9ac570ee3f0335dd", {}),
-				gqlFetch("ContentLanguages", "a2633f43bda02b926b17cfc0d9697085c43276cb9884fdf26133082f0f282300", { listKey: allKey }),
-				gqlFetch("ContentLanguages", "a2633f43bda02b926b17cfc0d9697085c43276cb9884fdf26133082f0f282300", { listKey: suggestedKey })
+				gqlFetch<SpokenLanguagesQuery>("SpokenLanguages", "84dba115e7924bc81f38962b8c1f158d25acccdc6fa8400c9ac570ee3f0335dd", {}),
+				gqlFetch<ContentLanguagesQuery>("ContentLanguages", "a2633f43bda02b926b17cfc0d9697085c43276cb9884fdf26133082f0f282300", { listKey: allKey }),
+				gqlFetch<ContentLanguagesQuery>("ContentLanguages", "a2633f43bda02b926b17cfc0d9697085c43276cb9884fdf26133082f0f282300", { listKey: suggestedKey })
 			]);
 			return JSON.stringify({
 				data: {

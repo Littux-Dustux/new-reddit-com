@@ -25,11 +25,9 @@ export async function submitPage({ include, subreddit }: any) {
 		}
 	};
 
-	const isProfile = subreddit.startsWith("u_");
-
 	try {
 		const subredditExtra = await fetchSubredditPageExtra(
-			subreddit, include.includes("structuredStyles"), true
+			subreddit, include.includes("structuredStyles"),
 		);
 		addR2SubredditToState(
 			state, subredditExtra.subredditInfo, subredditExtra.userFlairsV2, subredditExtra.postFlairsV2
