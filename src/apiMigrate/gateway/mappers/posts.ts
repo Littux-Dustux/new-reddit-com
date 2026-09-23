@@ -40,7 +40,7 @@ const getMedia = (data: any, devvitData?: DevvitPostFragmentFragment): Media | n
 	const isPreviewEnabled = data.preview?.enabled;
 	const isObscured = data.over_18 || data.spoiler;
 	let obfuscatedUrl = null;
-	
+
 	if (data.preview) {
 		const variants = data.preview.images[0]?.variants || {};
 		if (isObscured && variants.obfuscated) {
@@ -49,7 +49,6 @@ const getMedia = (data: any, devvitData?: DevvitPostFragmentFragment): Media | n
 	};
 
 	const baseMedia = {
-		type: data.rtjson ? "rtjson" : "text",
 		content: data.selftext_html,
 		markdownContent: data.selftext,
 		obfuscated: obfuscatedUrl,
@@ -58,10 +57,7 @@ const getMedia = (data: any, devvitData?: DevvitPostFragmentFragment): Media | n
 		richtextContent: data.rtjson,
 		mediaMetadata: data.media_metadata,
 	} as MediaText | MediaRichtext;
-	
-	if (data.is_self) {
-		return baseMedia;
-	}
+
 
 	if (devvitData?.__typename === "DevvitPost") {
 		return {
@@ -70,18 +66,16 @@ const getMedia = (data: any, devvitData?: DevvitPostFragmentFragment): Media | n
 			type: "embed",
 			width: 640,
 			height: 512,
-			obfuscated: obfuscatedUrl,
 			provider: "reddit",
 		};
-	}
+	};
 
-	if (data.is_gallery || data.gallery_data) {
+	if (data.is_gallery) {
 		const galleryData = data.gallery_data || { items: [] };
 
 		return {
 			...baseMedia,
 			type: "gallery",
-			obfuscated: obfuscatedUrl,
 			gallery: {
 				items: (galleryData.items || []).map((it: any) => ({
 					caption: it.caption,
@@ -91,10 +85,8 @@ const getMedia = (data: any, devvitData?: DevvitPostFragmentFragment): Media | n
 				})),
 			},
 			mediaMetadata: antiGifFuckGifs(data.media_metadata),
-			richtextContent: data.rtjson,
-		};
-	}
-
+		}
+	};
 
 	if (data.secure_media?.oembed || data.is_survey_ad) {
 		return {
@@ -105,8 +97,8 @@ const getMedia = (data: any, devvitData?: DevvitPostFragmentFragment): Media | n
 			height: data.secure_media?.oembed?.height || 480,
 			obfuscated: obfuscatedUrl,
 			provider: data.secure_media?.oembed?.provider_name || "",
-		};
-	}
+		}
+	};
 
 	if (data.media?.reddit_video) {
 		const v = data.media.reddit_video;
@@ -121,8 +113,8 @@ const getMedia = (data: any, devvitData?: DevvitPostFragmentFragment): Media | n
 			width: v.width,
 			height: v.height,
 			type: "video",
-		};
-	}
+		}
+	};
 
 	if (isPreviewEnabled) {
 		const images = data.preview.images[0];
@@ -140,7 +132,7 @@ const getMedia = (data: any, devvitData?: DevvitPostFragmentFragment): Media | n
 				obfuscated: obfuscatedUrl,
 				resolutions: variants.mp4.resolutions,
 			};
-		}
+		};
 
 		return {
 			...baseMedia,
@@ -151,9 +143,18 @@ const getMedia = (data: any, devvitData?: DevvitPostFragmentFragment): Media | n
 			obfuscated: obfuscatedUrl,
 			resolutions: variants.gif ? variants.gif.resolutions : images.resolutions,
 		};
-	}
+	};
 
-	return data.selftext || data.selftext_html || data.rtjson?.document.length ? baseMedia : null;
+	if (data.is_self || data.selftext || data.selftext_html || data.rtjson?.document.length) {
+		if (typeof data.selftext === "string") {
+			baseMedia.type = "text";
+		} else if (data.is_self && data.rtjson) {
+			baseMedia.type = "rtjson";
+		}
+		return baseMedia;
+	};
+	
+	return null;
 };
 
 const getSource = (data: any) => {
@@ -198,8 +199,6 @@ export const processPost = (data: any, devvitData?: DevvitPostFragmentFragment):
 	const crossPostId = data.cross_post_parent_id || data.crosspost_parent_list?.[0]?.name;
 
 	return ({
-		adPromotedUserPostIds: [],
-		adSupplementaryText: null,
 		approvedAtUTC: data.approved_at_utc,
 		approvedBy: data.approved_by,
 		author: data.author,
@@ -211,7 +210,7 @@ export const processPost = (data: any, devvitData?: DevvitPostFragmentFragment):
 			id: data.subreddit_id || "",
 			type: data.subreddit_type === "user" ? "profile" : "subreddit",
 		},
-		callToAction: data.call_to_action || null,
+		callToAction: data.call_to_action || undefined,
 		contestMode: data.contest_mode,
 		created: data.created_utc * 1000, // Reddit API returns seconds, UI usually needs ms
 		crosspostParentId: crossPostId,
@@ -247,6 +246,7 @@ export const processPost = (data: any, devvitData?: DevvitPostFragmentFragment):
 		isPinned: data.pinned,
 		isOriginalContent: data.is_original_content,
 		isScoreHidden: false, // Boolean(data.hide_score),
+		isSpam: data.spam,
 		isSpoiler: data.spoiler,
 		isSponsored: Boolean(data.promoted),
 		isStickied: data.stickied,
@@ -268,7 +268,7 @@ export const processPost = (data: any, devvitData?: DevvitPostFragmentFragment):
 			data.post_categories?.map((c: any) => ({
 				categoryId: c.category_id,
 				categoryName: c.category_name,
-			})) || [],
+			})) || null,
 		postId: data.name,
 		preview: data.preview?.images?.[0]?.source
 			? {
@@ -293,7 +293,7 @@ export const processPost = (data: any, devvitData?: DevvitPostFragmentFragment):
 		upvoteRatio: data.upvote_ratio,
 		userReports: data.user_reports,
 		userReportsDismissed: data.user_reports_dismissed,
-		viewCount: data.view_count || 0,
+		viewCount: data.view_count,
 		voteState: getVoteStateNum(data.likes),
 	});
 }

@@ -51,12 +51,15 @@ export async function duplicates(postId: string, params: Record<string, string>)
 	params.raw_json = '1';
 
 	try {
-		const [{ data: { children: [{ data: post }] } }, { data: { children, after }}] = await getREST(
+		const [{ data: { children: [post] } }, { data: { children, after }}] = await getREST(
 			`/duplicates/${postId}.json?${new URLSearchParams(params)}`
 		);
+		if (post.data.subreddit === params.sr) {
+			children.push(post);
+		};
 
 		const state = await postAndCommentsListing(children, after);
-		addPostToState(post, state);
+		addPostToState(post.data, state);
 
 		return {
 			jsonResponse: JSON.stringify(state),

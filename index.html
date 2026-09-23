@@ -1,269 +1,267 @@
 <!DOCTYPE html>
 <html lang="en-US" class="theme-beta theme-dark">
-	<head>
-		<script>
-		var __SUPPORTS_TIMING_API = typeof performance === "object" && !!performance.mark && !!performance.measure && !!performance.getEntriesByType;
-		function __perfMark(name) {
-			__SUPPORTS_TIMING_API && performance.mark(name);
+<head>
+	<script>
+	var __SUPPORTS_TIMING_API = typeof performance === "object" && !!performance.mark && !!performance.measure && !!performance.getEntriesByType;
+	function __perfMark(name) {
+		__SUPPORTS_TIMING_API && performance.mark(name);
+	}
+	var __firstPostLoaded = false;
+	function __markFirstPostVisible() {
+		if (__firstPostLoaded) {
+			return;
 		}
-		var __firstPostLoaded = false;
-		function __markFirstPostVisible() {
-			if (__firstPostLoaded) {
-				return;
+		__firstPostLoaded = true;
+		__perfMark("first_post_title_image_loaded");
+	}
+	var __firstCommentLoaded = false;
+	function __markFirstCommentVisible() {
+		if (__firstCommentLoaded) {
+			return;
+		}
+		__firstCommentLoaded = true;
+		__perfMark("first_comment_loaded");
+	}
+	(window.__LOADABLE_LOADED_CHUNKS__ = []).push([['FrontpageLinks'], {
+		'./src/reddit/endpoints/goodContent/frontpageLinks.json': function (r, _, __req__) {
+			r.exports = JSON.parse(
+				'[{"title":"Popular Communities","links":[{"url":"/r/AskReddit/","visible":true},{"url":"/r/NoStupidQuestions/","visible":true},{"url":"/r/DestinyTheGame/","visible":true},{"url":"/r/explainlikeimfive/","visible":true},{"url":"/r/leagueoflegends/","visible":true},{"url":"/r/Minecraft/","visible":true},{"url":"/r/IAmA/","visible":true},{"url":"/r/OutOfTheLoop/","visible":true},{"url":"/r/discordapp/","visible":true},{"url":"/r/FIFA/","visible":true},{"url":"/r/Instagram/","visible":true},{"url":"/r/Twitch/","visible":true},{"url":"/r/FortNiteBR/","visible":true},{"url":"/r/NintendoSwitch/","visible":true},{"url":"/r/NBA2k/","visible":true},{"url":"/r/gtaonline/","visible":true},{"url":"/r/Tinder/","visible":true},{"url":"/r/xboxone/","visible":true},{"url":"/r/relationship_advice/","visible":true},{"url":"/r/Amd/","visible":true},{"url":"/r/todayilearned/","visible":true},{"url":"/r/sysadmin/","visible":true},{"url":"/r/OnePiece/","visible":true},{"url":"/r/askscience/","visible":true},{"url":"/r/2007scape/","visible":true},{"url":"/r/pics/","visible":true},{"url":"/r/MonsterHunterWorld/","visible":true},{"url":"/r/legaladvice/","visible":true},{"url":"/r/Showerthoughts/","visible":true},{"url":"/r/pcmasterrace/","visible":true},{"url":"/r/LifeProTips/","visible":true},{"url":"/r/breakingbad/","visible":true},{"url":"/r/singapore/","visible":true},{"url":"/r/AskCulinary/","visible":true},{"url":"/r/FORTnITE/","visible":true},{"url":"/r/netflix/","visible":true},{"url":"/r/tipofmytongue/","visible":true},{"url":"/r/DotA2/","visible":true},{"url":"/r/nvidia/","visible":true},{"url":"/r/books/","visible":true},{"url":"/r/DunderMifflin/","visible":true},{"url":"/r/memes/","visible":true},{"url":"/r/baseball/","visible":true},{"url":"/r/learnpython/","visible":true},{"url":"/r/keto/","visible":true},{"url":"/r/Windows10/","visible":true},{"url":"/r/Sneakers/","visible":true},{"url":"/r/Frugal/","visible":true},{"url":"/r/learnprogramming/","visible":true},{"url":"/r/Overwatch/","visible":true},{"url":"/r/southpark/","visible":true},{"url":"/r/piercing/","visible":true},{"url":"/r/canada/","visible":true},{"url":"/r/skyrim/","visible":true},{"url":"/r/worldnews/","visible":true},{"url":"/r/nosleep/","visible":true}]},{"title":"Gaming","links":[{"url":"/r/StardewValley/","visible":true},{"url":"/r/FortniteCompetitive/","visible":true},{"url":"/r/totalwar/","visible":true},{"url":"/r/Fallout/","visible":true},{"url":"/r/RocketLeague/","visible":true},{"url":"/r/fo76/","visible":true},{"url":"/r/yugioh/","visible":true},{"url":"/r/ClashRoyale/","visible":true},{"url":"/r/boardgames/","visible":true},{"url":"/r/thedivision/","visible":true},{"url":"/r/elderscrollsonline/","visible":true},{"url":"/r/runescape/","visible":true},{"url":"/r/Blackops4/","visible":true},{"url":"/r/fireemblem/","visible":true},{"url":"/r/CrusaderKings/","visible":true},{"url":"/r/Breath_of_the_Wild/","visible":true},{"url":"/r/PUBGMobile/","visible":true},{"url":"/r/Warhammer40k/","visible":true},{"url":"/r/Brawlstars/","visible":true},{"url":"/r/summonerswar/","visible":true},{"url":"/r/MLBTheShow/","visible":true},{"url":"/r/SWGalaxyOfHeroes/","visible":true},{"url":"/r/BattlefieldV/","visible":true},{"url":"/r/deadbydaylight/","visible":true},{"url":"/r/MagicArena/","visible":true},{"url":"/r/Smite/","visible":true},{"url":"/r/starcitizen/","visible":true},{"url":"/r/Persona5/","visible":true},{"url":"/r/MortalKombat/","visible":true},{"url":"/r/tf2/","visible":true},{"url":"/r/playrust/","visible":true},{"url":"/r/PSVR/","visible":true},{"url":"/r/RimWorld/","visible":true},{"url":"/r/ClashOfClans/","visible":true},{"url":"/r/FireEmblemHeroes/","visible":true},{"url":"/r/Terraria/","visible":true},{"url":"/r/osugame/","visible":true},{"url":"/r/NoMansSkyTheGame/","visible":true},{"url":"/r/forhonor/","visible":true},{"url":"/r/EliteDangerous/","visible":true},{"url":"/r/Warthunder/","visible":true},{"url":"/r/Seaofthieves/","visible":true},{"url":"/r/Paladins/","visible":true},{"url":"/r/StarWarsBattlefront/","visible":true},{"url":"/r/dauntless/","visible":true},{"url":"/r/FFBraveExvius/","visible":true},{"url":"/r/TwoBestFriendsPlay/","visible":true},{"url":"/r/Competitiveoverwatch/","visible":true},{"url":"/r/DuelLinks/","visible":true},{"url":"/r/Eve/","visible":true},{"url":"/r/danganronpa/","visible":true},{"url":"/r/halo/","visible":true},{"url":"/r/Destiny/","visible":true},{"url":"/r/pesmobile/","visible":true},{"url":"/r/CoDCompetitive/","visible":true},{"url":"/r/future_fight/","visible":true},{"url":"/r/DaysGone/","visible":true},{"url":"/r/ModernMagic/","visible":true},{"url":"/r/girlsfrontline/","visible":true},{"url":"/r/fivenightsatfreddys/","visible":true},{"url":"/r/NHLHUT/","visible":true},{"url":"/r/WorldofTanks/","visible":true},{"url":"/r/Gamingcirclejerk/","visible":true},{"url":"/r/Mordhau/","visible":true},{"url":"/r/battlestations/","visible":true},{"url":"/r/FUTMobile/","visible":true},{"url":"/r/Market76/","visible":true},{"url":"/r/pokemontrades/","visible":true}]},{"title":"Sports","links":[{"url":"/r/soccer/","visible":true},{"url":"/r/hockey/","visible":true},{"url":"/r/CFB/","visible":true},{"url":"/r/barstoolsports/","visible":true},{"url":"/r/airsoft/","visible":true},{"url":"/r/rugbyunion/","visible":true},{"url":"/r/golf/","visible":true},{"url":"/r/MTB/","visible":true},{"url":"/r/cycling/","visible":true},{"url":"/r/Boxing/","visible":true},{"url":"/r/bicycling/","visible":true},{"url":"/r/sportsbook/","visible":true},{"url":"/r/hockeyplayers/","visible":true},{"url":"/r/NewSkaters/","visible":true},{"url":"/r/Astros/","visible":true},{"url":"/r/footballmanagergames/","visible":true},{"url":"/r/WWEGames/","visible":true},{"url":"/r/Nationals/","visible":true},{"url":"/r/GreenBayPackers/","visible":true},{"url":"/r/Patriots/","visible":true},{"url":"/r/sports/","visible":true},{"url":"/r/reddevils/","visible":true},{"url":"/r/LiverpoolFC/","visible":true},{"url":"/r/NYYankees/","visible":true},{"url":"/r/tennis/","visible":true},{"url":"/r/FantasyPL/","visible":true},{"url":"/r/WWE/","visible":true},{"url":"/r/Dodgers/","visible":true},{"url":"/r/NFA/","visible":true},{"url":"/r/eagles/","visible":true},{"url":"/r/sixers/","visible":true},{"url":"/r/Browns/","visible":true},{"url":"/r/detroitlions/","visible":true},{"url":"/r/discgolf/","visible":true},{"url":"/r/Cricket/","visible":true},{"url":"/r/MLS/","visible":true},{"url":"/r/canucks/","visible":true},{"url":"/r/DynastyFF/","visible":true},{"url":"/r/minnesotavikings/","visible":true},{"url":"/r/cowboys/","visible":true},{"url":"/r/snowboarding/","visible":true},{"url":"/r/nrl/","visible":true},{"url":"/r/Braves/","visible":true},{"url":"/r/Cardinals/","visible":true},{"url":"/r/bikecommuting/","visible":true},{"url":"/r/CHIBears/","visible":true},{"url":"/r/ravens/","visible":true},{"url":"/r/coys/","visible":true},{"url":"/r/Mavericks/","visible":true},{"url":"/r/nyjets/","visible":true},{"url":"/r/nbadiscussion/","visible":true},{"url":"/r/chelseafc/","visible":true},{"url":"/r/bostonceltics/","visible":true},{"url":"/r/Fishing/","visible":true},{"url":"/r/NYKnicks/","visible":true},{"url":"/r/LosAngelesRams/","visible":true},{"url":"/r/steelers/","visible":true},{"url":"/r/nhl/","visible":true},{"url":"/r/FixedGearBicycle/","visible":true},{"url":"/r/fantasybaseball/","visible":true},{"url":"/r/Barca/","visible":true},{"url":"/r/denvernuggets/","visible":true},{"url":"/r/realmadrid/","visible":true},{"url":"/r/suns/","visible":true},{"url":"/r/NBASpurs/","visible":true},{"url":"/r/tampabayrays/","visible":true},{"url":"/r/peloton/","visible":true},{"url":"/r/AtlantaUnited/","visible":true},{"url":"/r/minnesotatwins/","visible":true},{"url":"/r/SanJoseSharks/","visible":true},{"url":"/r/Torontobluejays/","visible":true},{"url":"/r/ripcity/","visible":true},{"url":"/r/flyfishing/","visible":true},{"url":"/r/MCFC/","visible":true},{"url":"/r/balisong/","visible":true},{"url":"/r/redsox/","visible":true},{"url":"/r/LigaMX/","visible":true},{"url":"/r/phillies/","visible":true},{"url":"/r/NewYorkMets/","visible":true},{"url":"/r/SFGiants/","visible":true},{"url":"/r/ACMilan/","visible":true}]},{"title":"TV","links":[{"url":"/r/rupaulsdragrace/","visible":true},{"url":"/r/90DayFiance/","visible":true},{"url":"/r/dbz/","visible":true},{"url":"/r/Boruto/","visible":true},{"url":"/r/rickandmorty/","visible":true},{"url":"/r/howardstern/","visible":true},{"url":"/r/cordcutters/","visible":true},{"url":"/r/TheLastAirbender/","visible":true},{"url":"/r/IASIP/","visible":true},{"url":"/r/stevenuniverse/","visible":true},{"url":"/r/brooklynninenine/","visible":true},{"url":"/r/thebachelor/","visible":true},{"url":"/r/TheSimpsons/","visible":true},{"url":"/r/thewalkingdead/","visible":true},{"url":"/r/MtvChallenge/","visible":true},{"url":"/r/StrangerThings/","visible":true},{"url":"/r/survivor/","visible":true},{"url":"/r/thesopranos/","visible":true},{"url":"/r/batman/","visible":true},{"url":"/r/BravoRealHousewives/","visible":true},{"url":"/r/blackmirror/","visible":true},{"url":"/r/NetflixBestOf/","visible":true},{"url":"/r/Berserk/","visible":true},{"url":"/r/BlackClover/","visible":true},{"url":"/r/riverdale/","visible":true},{"url":"/r/BoJackHorseman/","visible":true},{"url":"/r/lucifer/","visible":true},{"url":"/r/TheBlackList/","visible":true},{"url":"/r/TeenMomOGandTeenMom2/","visible":true},{"url":"/r/overlord/","visible":true},{"url":"/r/trailerparkboys/","visible":true},{"url":"/r/BigBrother/","visible":true},{"url":"/r/PandR/","visible":true},{"url":"/r/community/","visible":true},{"url":"/r/adventuretime/","visible":true},{"url":"/r/Konosuba/","visible":true},{"url":"/r/fairytail/","visible":true},{"url":"/r/touhou/","visible":true},{"url":"/r/the100/","visible":true},{"url":"/r/scifi/","visible":true},{"url":"/r/titanfolk/","visible":true},{"url":"/r/TheHandmaidsTale/","visible":true},{"url":"/r/criterion/","visible":true},{"url":"/r/westworld/","visible":true},{"url":"/r/DanLeBatardShow/","visible":true},{"url":"/r/mylittlepony/","visible":true},{"url":"/r/Jeopardy/","visible":true},{"url":"/r/SpoiledDragRace/","visible":true},{"url":"/r/Gundam/","visible":true},{"url":"/r/MakingaMurderer/","visible":true},{"url":"/r/vanderpumprules/","visible":true},{"url":"/r/StarVStheForcesofEvil/","visible":true},{"url":"/r/anime_irl/","visible":true},{"url":"/r/TheDickShow/","visible":true},{"url":"/r/rpdrcringe/","visible":true},{"url":"/r/TheAmazingRace/","visible":true},{"url":"/r/LegendsOfTomorrow/","visible":true},{"url":"/r/marvelmemes/","visible":true},{"url":"/r/ImaginaryWesteros/","visible":true},{"url":"/r/HBOGameofThrones/","visible":true},{"url":"/r/GameOfThronesMemes/","visible":true},{"url":"/r/aSongOfMemesAndRage/","visible":true}]},{"title":"Travel","links":[{"url":"/r/vancouver/","visible":true},{"url":"/r/brasil/","visible":true},{"url":"/r/australia/","visible":true},{"url":"/r/mexico/","visible":true},{"url":"/r/argentina/","visible":true},{"url":"/r/ottawa/","visible":true},{"url":"/r/ireland/","visible":true},{"url":"/r/travel/","visible":true},{"url":"/r/Calgary/","visible":true},{"url":"/r/india/","visible":true},{"url":"/r/italy/","visible":true},{"url":"/r/AskNYC/","visible":true},{"url":"/r/europe/","visible":true},{"url":"/r/sydney/","visible":true},{"url":"/r/france/","visible":true},{"url":"/r/dubai/","visible":true},{"url":"/r/Edmonton/","visible":true},{"url":"/r/CasualUK/","visible":true},{"url":"/r/malaysia/","visible":true},{"url":"/r/askTO/","visible":true},{"url":"/r/JapanTravel/","visible":true},{"url":"/r/solotravel/","visible":true},{"url":"/r/newzealand/","visible":true},{"url":"/r/Turkey/","visible":true},{"url":"/r/Portland/","visible":true},{"url":"/r/thenetherlands/","visible":true},{"url":"/r/Atlanta/","visible":true},{"url":"/r/brisbane/","visible":true},{"url":"/r/halifax/","visible":true},{"url":"/r/chile/","visible":true},{"url":"/r/Winnipeg/","visible":true},{"url":"/r/japanlife/","visible":true},{"url":"/r/philadelphia/","visible":true},{"url":"/r/hungary/","visible":true},{"url":"/r/sandiego/","visible":true},{"url":"/r/Denver/","visible":true},{"url":"/r/Romania/","visible":true},{"url":"/r/translator/","visible":true},{"url":"/r/Dallas/","visible":true},{"url":"/r/Columbus/","visible":true},{"url":"/r/pittsburgh/","visible":true},{"url":"/r/berkeley/","visible":true},{"url":"/r/nashville/","visible":true},{"url":"/r/VictoriaBC/","visible":true},{"url":"/r/greece/","visible":true},{"url":"/r/WaltDisneyWorld/","visible":true},{"url":"/r/Austria/","visible":true},{"url":"/r/Sacramento/","visible":true},{"url":"/r/kansascity/","visible":true},{"url":"/r/croatia/","visible":true},{"url":"/r/sanfrancisco/","visible":true},{"url":"/r/vzla/","visible":true},{"url":"/r/Suomi/","visible":true},{"url":"/r/Denmark/","visible":true},{"url":"/r/orangecounty/","visible":true},{"url":"/r/nova/","visible":true},{"url":"/r/Minneapolis/","visible":true},{"url":"/r/saskatoon/","visible":true},{"url":"/r/SaltLakeCity/","visible":true},{"url":"/r/NewOrleans/","visible":true},{"url":"/r/Polska/","visible":true},{"url":"/r/Wellington/","visible":true},{"url":"/r/rva/","visible":true},{"url":"/r/Adelaide/","visible":true},{"url":"/r/brasilivre/","visible":true},{"url":"/r/Scotland/","visible":true},{"url":"/r/indonesia/","visible":true},{"url":"/r/IWantOut/","visible":true},{"url":"/r/serbia/","visible":true},{"url":"/r/rollercoasters/","visible":true},{"url":"/r/Detroit/","visible":true},{"url":"/r/sanantonio/","visible":true},{"url":"/r/Israel/","visible":true},{"url":"/r/Shoestring/","visible":true},{"url":"/r/podemos/","visible":true},{"url":"/r/newsokur/","visible":true},{"url":"/r/vagabond/","visible":true},{"url":"/r/TurkeyJerky/","visible":true},{"url":"/r/roadtrip/","visible":true},{"url":"/r/cirkeltrek/","visible":true}]},{"title":"Health & Fitness","links":[{"url":"/r/orangetheory/","visible":true},{"url":"/r/bodybuilding/","visible":true},{"url":"/r/bodyweightfitness/","visible":true},{"url":"/r/vegan/","visible":true},{"url":"/r/crossfit/","visible":true},{"url":"/r/nattyorjuice/","visible":true},{"url":"/r/loseit/","visible":true},{"url":"/r/xxfitness/","visible":true},{"url":"/r/powerlifting/","visible":true},{"url":"/r/1200isplenty/","visible":true},{"url":"/r/GetMotivated/","visible":true},{"url":"/r/intermittentfasting/","visible":true},{"url":"/r/CampingGear/","visible":true},{"url":"/r/skiing/","visible":true},{"url":"/r/leangains/","visible":true},{"url":"/r/progresspics/","visible":true},{"url":"/r/amateur_boxing/","visible":true},{"url":"/r/CampingandHiking/","visible":true},{"url":"/r/diabetes/","visible":true},{"url":"/r/Supplements/","visible":true},{"url":"/r/boostedboards/","visible":true},{"url":"/r/backpacking/","visible":true},{"url":"/r/camping/","visible":true},{"url":"/r/Stronglifts5x5/","visible":true},{"url":"/r/hiking/","visible":true},{"url":"/r/Brogress/","visible":true},{"url":"/r/migraine/","visible":true},{"url":"/r/C25K/","visible":true},{"url":"/r/HealthyFood/","visible":true},{"url":"/r/ehlersdanlos/","visible":true},{"url":"/r/swoleacceptance/","visible":true},{"url":"/r/EOOD/","visible":true},{"url":"/r/EDanonymemes/","visible":true},{"url":"/r/diabetes_t1/","visible":true},{"url":"/r/medical_advice/","visible":true}]},{"title":"Fashion","links":[{"url":"/r/MakeupAddiction/","visible":true},{"url":"/r/Watches/","visible":true},{"url":"/r/BeautyGuruChatter/","visible":true},{"url":"/r/frugalmalefashion/","visible":true},{"url":"/r/poshmark/","visible":true},{"url":"/r/tattoos/","visible":true},{"url":"/r/beards/","visible":true},{"url":"/r/goodyearwelt/","visible":true},{"url":"/r/Repsneakers/","visible":true},{"url":"/r/fragrance/","visible":true},{"url":"/r/LushCosmetics/","visible":true},{"url":"/r/malelivingspace/","visible":true},{"url":"/r/BeautyBoxes/","visible":true},{"url":"/r/beauty/","visible":true},{"url":"/r/Makeup/","visible":true},{"url":"/r/wicked_edge/","visible":true},{"url":"/r/rawdenim/","visible":true},{"url":"/r/RedditLaqueristas/","visible":true},{"url":"/r/Hair/","visible":true},{"url":"/r/Indiemakeupandmore/","visible":true},{"url":"/r/MUAontheCheap/","visible":true},{"url":"/r/Watchexchange/","visible":true},{"url":"/r/yeezys/","visible":true},{"url":"/r/streetwearstartup/","visible":true},{"url":"/r/findfashion/","visible":true},{"url":"/r/femalehairadvice/","visible":true},{"url":"/r/PanPorn/","visible":true},{"url":"/r/rolex/","visible":true},{"url":"/r/acne/","visible":true},{"url":"/r/Wetshaving/","visible":true},{"url":"/r/Youniqueamua/","visible":true},{"url":"/r/sneakermarket/","visible":true},{"url":"/r/SarahSnark/","visible":true},{"url":"/r/RepLadiesBST/","visible":true},{"url":"/r/makeupexchange/","visible":true}]}]'
+			)
+			window.importRedditModule = __req__;
+			importRedditModule('./src/lib/forceHttps/index.ts').a = function (e) {
+				return e.startsWith('http') || e.startsWith('blob')
+					? e.replace(/^http:\/\//i, 'https://')
+					: e.startsWith("devvit:")
+						? e.slice(7)
+						: e
 			}
-			__firstPostLoaded = true;
-			__perfMark("first_post_title_image_loaded");
-		}
-		var __firstCommentLoaded = false;
-		function __markFirstCommentVisible() {
-			if (__firstCommentLoaded) {
-				return;
+
+			const originalNormalizeSubreddit = importRedditModule('./src/reddit/helpers/graphql/normalizeSubredditFromGql/index.ts').a;
+			importRedditModule('./src/reddit/helpers/graphql/normalizeSubredditFromGql/index.ts').a = function (e) {
+				if (e && e.styles && e.styles.legacyIcon) {
+					e.styles.legacyIcon.dimensions = { height: 256, width: 256 };
+				}
+				return originalNormalizeSubreddit(e);
 			}
-			__firstCommentLoaded = true;
-			__perfMark("first_comment_loaded");
-		}
-		(window.__LOADABLE_LOADED_CHUNKS__ = []).push([['FrontpageLinks'], {
-			'./src/reddit/endpoints/goodContent/frontpageLinks.json': function (r, _, __req__) {
-				r.exports = JSON.parse(
-					'[{"title":"Popular Communities","links":[{"url":"/r/AskReddit/","visible":true},{"url":"/r/NoStupidQuestions/","visible":true},{"url":"/r/DestinyTheGame/","visible":true},{"url":"/r/explainlikeimfive/","visible":true},{"url":"/r/leagueoflegends/","visible":true},{"url":"/r/Minecraft/","visible":true},{"url":"/r/IAmA/","visible":true},{"url":"/r/OutOfTheLoop/","visible":true},{"url":"/r/discordapp/","visible":true},{"url":"/r/FIFA/","visible":true},{"url":"/r/Instagram/","visible":true},{"url":"/r/Twitch/","visible":true},{"url":"/r/FortNiteBR/","visible":true},{"url":"/r/NintendoSwitch/","visible":true},{"url":"/r/NBA2k/","visible":true},{"url":"/r/gtaonline/","visible":true},{"url":"/r/Tinder/","visible":true},{"url":"/r/xboxone/","visible":true},{"url":"/r/relationship_advice/","visible":true},{"url":"/r/Amd/","visible":true},{"url":"/r/todayilearned/","visible":true},{"url":"/r/sysadmin/","visible":true},{"url":"/r/OnePiece/","visible":true},{"url":"/r/askscience/","visible":true},{"url":"/r/2007scape/","visible":true},{"url":"/r/pics/","visible":true},{"url":"/r/MonsterHunterWorld/","visible":true},{"url":"/r/legaladvice/","visible":true},{"url":"/r/Showerthoughts/","visible":true},{"url":"/r/pcmasterrace/","visible":true},{"url":"/r/LifeProTips/","visible":true},{"url":"/r/breakingbad/","visible":true},{"url":"/r/singapore/","visible":true},{"url":"/r/AskCulinary/","visible":true},{"url":"/r/FORTnITE/","visible":true},{"url":"/r/netflix/","visible":true},{"url":"/r/tipofmytongue/","visible":true},{"url":"/r/DotA2/","visible":true},{"url":"/r/nvidia/","visible":true},{"url":"/r/books/","visible":true},{"url":"/r/DunderMifflin/","visible":true},{"url":"/r/memes/","visible":true},{"url":"/r/baseball/","visible":true},{"url":"/r/learnpython/","visible":true},{"url":"/r/keto/","visible":true},{"url":"/r/Windows10/","visible":true},{"url":"/r/Sneakers/","visible":true},{"url":"/r/Frugal/","visible":true},{"url":"/r/learnprogramming/","visible":true},{"url":"/r/Overwatch/","visible":true},{"url":"/r/southpark/","visible":true},{"url":"/r/piercing/","visible":true},{"url":"/r/canada/","visible":true},{"url":"/r/skyrim/","visible":true},{"url":"/r/worldnews/","visible":true},{"url":"/r/nosleep/","visible":true}]},{"title":"Gaming","links":[{"url":"/r/StardewValley/","visible":true},{"url":"/r/FortniteCompetitive/","visible":true},{"url":"/r/totalwar/","visible":true},{"url":"/r/Fallout/","visible":true},{"url":"/r/RocketLeague/","visible":true},{"url":"/r/fo76/","visible":true},{"url":"/r/yugioh/","visible":true},{"url":"/r/ClashRoyale/","visible":true},{"url":"/r/boardgames/","visible":true},{"url":"/r/thedivision/","visible":true},{"url":"/r/elderscrollsonline/","visible":true},{"url":"/r/runescape/","visible":true},{"url":"/r/Blackops4/","visible":true},{"url":"/r/fireemblem/","visible":true},{"url":"/r/CrusaderKings/","visible":true},{"url":"/r/Breath_of_the_Wild/","visible":true},{"url":"/r/PUBGMobile/","visible":true},{"url":"/r/Warhammer40k/","visible":true},{"url":"/r/Brawlstars/","visible":true},{"url":"/r/summonerswar/","visible":true},{"url":"/r/MLBTheShow/","visible":true},{"url":"/r/SWGalaxyOfHeroes/","visible":true},{"url":"/r/BattlefieldV/","visible":true},{"url":"/r/deadbydaylight/","visible":true},{"url":"/r/MagicArena/","visible":true},{"url":"/r/Smite/","visible":true},{"url":"/r/starcitizen/","visible":true},{"url":"/r/Persona5/","visible":true},{"url":"/r/MortalKombat/","visible":true},{"url":"/r/tf2/","visible":true},{"url":"/r/playrust/","visible":true},{"url":"/r/PSVR/","visible":true},{"url":"/r/RimWorld/","visible":true},{"url":"/r/ClashOfClans/","visible":true},{"url":"/r/FireEmblemHeroes/","visible":true},{"url":"/r/Terraria/","visible":true},{"url":"/r/osugame/","visible":true},{"url":"/r/NoMansSkyTheGame/","visible":true},{"url":"/r/forhonor/","visible":true},{"url":"/r/EliteDangerous/","visible":true},{"url":"/r/Warthunder/","visible":true},{"url":"/r/Seaofthieves/","visible":true},{"url":"/r/Paladins/","visible":true},{"url":"/r/StarWarsBattlefront/","visible":true},{"url":"/r/dauntless/","visible":true},{"url":"/r/FFBraveExvius/","visible":true},{"url":"/r/TwoBestFriendsPlay/","visible":true},{"url":"/r/Competitiveoverwatch/","visible":true},{"url":"/r/DuelLinks/","visible":true},{"url":"/r/Eve/","visible":true},{"url":"/r/danganronpa/","visible":true},{"url":"/r/halo/","visible":true},{"url":"/r/Destiny/","visible":true},{"url":"/r/pesmobile/","visible":true},{"url":"/r/CoDCompetitive/","visible":true},{"url":"/r/future_fight/","visible":true},{"url":"/r/DaysGone/","visible":true},{"url":"/r/ModernMagic/","visible":true},{"url":"/r/girlsfrontline/","visible":true},{"url":"/r/fivenightsatfreddys/","visible":true},{"url":"/r/NHLHUT/","visible":true},{"url":"/r/WorldofTanks/","visible":true},{"url":"/r/Gamingcirclejerk/","visible":true},{"url":"/r/Mordhau/","visible":true},{"url":"/r/battlestations/","visible":true},{"url":"/r/FUTMobile/","visible":true},{"url":"/r/Market76/","visible":true},{"url":"/r/pokemontrades/","visible":true}]},{"title":"Sports","links":[{"url":"/r/soccer/","visible":true},{"url":"/r/hockey/","visible":true},{"url":"/r/CFB/","visible":true},{"url":"/r/barstoolsports/","visible":true},{"url":"/r/airsoft/","visible":true},{"url":"/r/rugbyunion/","visible":true},{"url":"/r/golf/","visible":true},{"url":"/r/MTB/","visible":true},{"url":"/r/cycling/","visible":true},{"url":"/r/Boxing/","visible":true},{"url":"/r/bicycling/","visible":true},{"url":"/r/sportsbook/","visible":true},{"url":"/r/hockeyplayers/","visible":true},{"url":"/r/NewSkaters/","visible":true},{"url":"/r/Astros/","visible":true},{"url":"/r/footballmanagergames/","visible":true},{"url":"/r/WWEGames/","visible":true},{"url":"/r/Nationals/","visible":true},{"url":"/r/GreenBayPackers/","visible":true},{"url":"/r/Patriots/","visible":true},{"url":"/r/sports/","visible":true},{"url":"/r/reddevils/","visible":true},{"url":"/r/LiverpoolFC/","visible":true},{"url":"/r/NYYankees/","visible":true},{"url":"/r/tennis/","visible":true},{"url":"/r/FantasyPL/","visible":true},{"url":"/r/WWE/","visible":true},{"url":"/r/Dodgers/","visible":true},{"url":"/r/NFA/","visible":true},{"url":"/r/eagles/","visible":true},{"url":"/r/sixers/","visible":true},{"url":"/r/Browns/","visible":true},{"url":"/r/detroitlions/","visible":true},{"url":"/r/discgolf/","visible":true},{"url":"/r/Cricket/","visible":true},{"url":"/r/MLS/","visible":true},{"url":"/r/canucks/","visible":true},{"url":"/r/DynastyFF/","visible":true},{"url":"/r/minnesotavikings/","visible":true},{"url":"/r/cowboys/","visible":true},{"url":"/r/snowboarding/","visible":true},{"url":"/r/nrl/","visible":true},{"url":"/r/Braves/","visible":true},{"url":"/r/Cardinals/","visible":true},{"url":"/r/bikecommuting/","visible":true},{"url":"/r/CHIBears/","visible":true},{"url":"/r/ravens/","visible":true},{"url":"/r/coys/","visible":true},{"url":"/r/Mavericks/","visible":true},{"url":"/r/nyjets/","visible":true},{"url":"/r/nbadiscussion/","visible":true},{"url":"/r/chelseafc/","visible":true},{"url":"/r/bostonceltics/","visible":true},{"url":"/r/Fishing/","visible":true},{"url":"/r/NYKnicks/","visible":true},{"url":"/r/LosAngelesRams/","visible":true},{"url":"/r/steelers/","visible":true},{"url":"/r/nhl/","visible":true},{"url":"/r/FixedGearBicycle/","visible":true},{"url":"/r/fantasybaseball/","visible":true},{"url":"/r/Barca/","visible":true},{"url":"/r/denvernuggets/","visible":true},{"url":"/r/realmadrid/","visible":true},{"url":"/r/suns/","visible":true},{"url":"/r/NBASpurs/","visible":true},{"url":"/r/tampabayrays/","visible":true},{"url":"/r/peloton/","visible":true},{"url":"/r/AtlantaUnited/","visible":true},{"url":"/r/minnesotatwins/","visible":true},{"url":"/r/SanJoseSharks/","visible":true},{"url":"/r/Torontobluejays/","visible":true},{"url":"/r/ripcity/","visible":true},{"url":"/r/flyfishing/","visible":true},{"url":"/r/MCFC/","visible":true},{"url":"/r/balisong/","visible":true},{"url":"/r/redsox/","visible":true},{"url":"/r/LigaMX/","visible":true},{"url":"/r/phillies/","visible":true},{"url":"/r/NewYorkMets/","visible":true},{"url":"/r/SFGiants/","visible":true},{"url":"/r/ACMilan/","visible":true}]},{"title":"TV","links":[{"url":"/r/rupaulsdragrace/","visible":true},{"url":"/r/90DayFiance/","visible":true},{"url":"/r/dbz/","visible":true},{"url":"/r/Boruto/","visible":true},{"url":"/r/rickandmorty/","visible":true},{"url":"/r/howardstern/","visible":true},{"url":"/r/cordcutters/","visible":true},{"url":"/r/TheLastAirbender/","visible":true},{"url":"/r/IASIP/","visible":true},{"url":"/r/stevenuniverse/","visible":true},{"url":"/r/brooklynninenine/","visible":true},{"url":"/r/thebachelor/","visible":true},{"url":"/r/TheSimpsons/","visible":true},{"url":"/r/thewalkingdead/","visible":true},{"url":"/r/MtvChallenge/","visible":true},{"url":"/r/StrangerThings/","visible":true},{"url":"/r/survivor/","visible":true},{"url":"/r/thesopranos/","visible":true},{"url":"/r/batman/","visible":true},{"url":"/r/BravoRealHousewives/","visible":true},{"url":"/r/blackmirror/","visible":true},{"url":"/r/NetflixBestOf/","visible":true},{"url":"/r/Berserk/","visible":true},{"url":"/r/BlackClover/","visible":true},{"url":"/r/riverdale/","visible":true},{"url":"/r/BoJackHorseman/","visible":true},{"url":"/r/lucifer/","visible":true},{"url":"/r/TheBlackList/","visible":true},{"url":"/r/TeenMomOGandTeenMom2/","visible":true},{"url":"/r/overlord/","visible":true},{"url":"/r/trailerparkboys/","visible":true},{"url":"/r/BigBrother/","visible":true},{"url":"/r/PandR/","visible":true},{"url":"/r/community/","visible":true},{"url":"/r/adventuretime/","visible":true},{"url":"/r/Konosuba/","visible":true},{"url":"/r/fairytail/","visible":true},{"url":"/r/touhou/","visible":true},{"url":"/r/the100/","visible":true},{"url":"/r/scifi/","visible":true},{"url":"/r/titanfolk/","visible":true},{"url":"/r/TheHandmaidsTale/","visible":true},{"url":"/r/criterion/","visible":true},{"url":"/r/westworld/","visible":true},{"url":"/r/DanLeBatardShow/","visible":true},{"url":"/r/mylittlepony/","visible":true},{"url":"/r/Jeopardy/","visible":true},{"url":"/r/SpoiledDragRace/","visible":true},{"url":"/r/Gundam/","visible":true},{"url":"/r/MakingaMurderer/","visible":true},{"url":"/r/vanderpumprules/","visible":true},{"url":"/r/StarVStheForcesofEvil/","visible":true},{"url":"/r/anime_irl/","visible":true},{"url":"/r/TheDickShow/","visible":true},{"url":"/r/rpdrcringe/","visible":true},{"url":"/r/TheAmazingRace/","visible":true},{"url":"/r/LegendsOfTomorrow/","visible":true},{"url":"/r/marvelmemes/","visible":true},{"url":"/r/ImaginaryWesteros/","visible":true},{"url":"/r/HBOGameofThrones/","visible":true},{"url":"/r/GameOfThronesMemes/","visible":true},{"url":"/r/aSongOfMemesAndRage/","visible":true}]},{"title":"Travel","links":[{"url":"/r/vancouver/","visible":true},{"url":"/r/brasil/","visible":true},{"url":"/r/australia/","visible":true},{"url":"/r/mexico/","visible":true},{"url":"/r/argentina/","visible":true},{"url":"/r/ottawa/","visible":true},{"url":"/r/ireland/","visible":true},{"url":"/r/travel/","visible":true},{"url":"/r/Calgary/","visible":true},{"url":"/r/india/","visible":true},{"url":"/r/italy/","visible":true},{"url":"/r/AskNYC/","visible":true},{"url":"/r/europe/","visible":true},{"url":"/r/sydney/","visible":true},{"url":"/r/france/","visible":true},{"url":"/r/dubai/","visible":true},{"url":"/r/Edmonton/","visible":true},{"url":"/r/CasualUK/","visible":true},{"url":"/r/malaysia/","visible":true},{"url":"/r/askTO/","visible":true},{"url":"/r/JapanTravel/","visible":true},{"url":"/r/solotravel/","visible":true},{"url":"/r/newzealand/","visible":true},{"url":"/r/Turkey/","visible":true},{"url":"/r/Portland/","visible":true},{"url":"/r/thenetherlands/","visible":true},{"url":"/r/Atlanta/","visible":true},{"url":"/r/brisbane/","visible":true},{"url":"/r/halifax/","visible":true},{"url":"/r/chile/","visible":true},{"url":"/r/Winnipeg/","visible":true},{"url":"/r/japanlife/","visible":true},{"url":"/r/philadelphia/","visible":true},{"url":"/r/hungary/","visible":true},{"url":"/r/sandiego/","visible":true},{"url":"/r/Denver/","visible":true},{"url":"/r/Romania/","visible":true},{"url":"/r/translator/","visible":true},{"url":"/r/Dallas/","visible":true},{"url":"/r/Columbus/","visible":true},{"url":"/r/pittsburgh/","visible":true},{"url":"/r/berkeley/","visible":true},{"url":"/r/nashville/","visible":true},{"url":"/r/VictoriaBC/","visible":true},{"url":"/r/greece/","visible":true},{"url":"/r/WaltDisneyWorld/","visible":true},{"url":"/r/Austria/","visible":true},{"url":"/r/Sacramento/","visible":true},{"url":"/r/kansascity/","visible":true},{"url":"/r/croatia/","visible":true},{"url":"/r/sanfrancisco/","visible":true},{"url":"/r/vzla/","visible":true},{"url":"/r/Suomi/","visible":true},{"url":"/r/Denmark/","visible":true},{"url":"/r/orangecounty/","visible":true},{"url":"/r/nova/","visible":true},{"url":"/r/Minneapolis/","visible":true},{"url":"/r/saskatoon/","visible":true},{"url":"/r/SaltLakeCity/","visible":true},{"url":"/r/NewOrleans/","visible":true},{"url":"/r/Polska/","visible":true},{"url":"/r/Wellington/","visible":true},{"url":"/r/rva/","visible":true},{"url":"/r/Adelaide/","visible":true},{"url":"/r/brasilivre/","visible":true},{"url":"/r/Scotland/","visible":true},{"url":"/r/indonesia/","visible":true},{"url":"/r/IWantOut/","visible":true},{"url":"/r/serbia/","visible":true},{"url":"/r/rollercoasters/","visible":true},{"url":"/r/Detroit/","visible":true},{"url":"/r/sanantonio/","visible":true},{"url":"/r/Israel/","visible":true},{"url":"/r/Shoestring/","visible":true},{"url":"/r/podemos/","visible":true},{"url":"/r/newsokur/","visible":true},{"url":"/r/vagabond/","visible":true},{"url":"/r/TurkeyJerky/","visible":true},{"url":"/r/roadtrip/","visible":true},{"url":"/r/cirkeltrek/","visible":true}]},{"title":"Health & Fitness","links":[{"url":"/r/orangetheory/","visible":true},{"url":"/r/bodybuilding/","visible":true},{"url":"/r/bodyweightfitness/","visible":true},{"url":"/r/vegan/","visible":true},{"url":"/r/crossfit/","visible":true},{"url":"/r/nattyorjuice/","visible":true},{"url":"/r/loseit/","visible":true},{"url":"/r/xxfitness/","visible":true},{"url":"/r/powerlifting/","visible":true},{"url":"/r/1200isplenty/","visible":true},{"url":"/r/GetMotivated/","visible":true},{"url":"/r/intermittentfasting/","visible":true},{"url":"/r/CampingGear/","visible":true},{"url":"/r/skiing/","visible":true},{"url":"/r/leangains/","visible":true},{"url":"/r/progresspics/","visible":true},{"url":"/r/amateur_boxing/","visible":true},{"url":"/r/CampingandHiking/","visible":true},{"url":"/r/diabetes/","visible":true},{"url":"/r/Supplements/","visible":true},{"url":"/r/boostedboards/","visible":true},{"url":"/r/backpacking/","visible":true},{"url":"/r/camping/","visible":true},{"url":"/r/Stronglifts5x5/","visible":true},{"url":"/r/hiking/","visible":true},{"url":"/r/Brogress/","visible":true},{"url":"/r/migraine/","visible":true},{"url":"/r/C25K/","visible":true},{"url":"/r/HealthyFood/","visible":true},{"url":"/r/ehlersdanlos/","visible":true},{"url":"/r/swoleacceptance/","visible":true},{"url":"/r/EOOD/","visible":true},{"url":"/r/EDanonymemes/","visible":true},{"url":"/r/diabetes_t1/","visible":true},{"url":"/r/medical_advice/","visible":true}]},{"title":"Fashion","links":[{"url":"/r/MakeupAddiction/","visible":true},{"url":"/r/Watches/","visible":true},{"url":"/r/BeautyGuruChatter/","visible":true},{"url":"/r/frugalmalefashion/","visible":true},{"url":"/r/poshmark/","visible":true},{"url":"/r/tattoos/","visible":true},{"url":"/r/beards/","visible":true},{"url":"/r/goodyearwelt/","visible":true},{"url":"/r/Repsneakers/","visible":true},{"url":"/r/fragrance/","visible":true},{"url":"/r/LushCosmetics/","visible":true},{"url":"/r/malelivingspace/","visible":true},{"url":"/r/BeautyBoxes/","visible":true},{"url":"/r/beauty/","visible":true},{"url":"/r/Makeup/","visible":true},{"url":"/r/wicked_edge/","visible":true},{"url":"/r/rawdenim/","visible":true},{"url":"/r/RedditLaqueristas/","visible":true},{"url":"/r/Hair/","visible":true},{"url":"/r/Indiemakeupandmore/","visible":true},{"url":"/r/MUAontheCheap/","visible":true},{"url":"/r/Watchexchange/","visible":true},{"url":"/r/yeezys/","visible":true},{"url":"/r/streetwearstartup/","visible":true},{"url":"/r/findfashion/","visible":true},{"url":"/r/femalehairadvice/","visible":true},{"url":"/r/PanPorn/","visible":true},{"url":"/r/rolex/","visible":true},{"url":"/r/acne/","visible":true},{"url":"/r/Wetshaving/","visible":true},{"url":"/r/Youniqueamua/","visible":true},{"url":"/r/sneakermarket/","visible":true},{"url":"/r/SarahSnark/","visible":true},{"url":"/r/RepLadiesBST/","visible":true},{"url":"/r/makeupexchange/","visible":true}]}]'
-				)
-				window.importRedditModule = __req__;
-				importRedditModule('./src/lib/forceHttps/index.ts').a = function (e) {
-					return e.startsWith('http') || e.startsWith('blob')
-						? e.replace(/^http:\/\//i, 'https://')
-						: e.startsWith("devvit:")
-							? e.slice(7)
-							: e
+
+
+			const reduxModule = importRedditModule('./node_modules/redux/es/redux.js');
+			const originalCreateStore = reduxModule.e;
+			reduxModule.e = function (reducer, preloadedState, enhancer) {
+				if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
+					enhancer = preloadedState;
+					preloadedState = undefined;
 				}
 
-				const originalNormalizeSubreddit = importRedditModule('./src/reddit/helpers/graphql/normalizeSubredditFromGql/index.ts').a;
-				importRedditModule('./src/reddit/helpers/graphql/normalizeSubredditFromGql/index.ts').a = function (e) {
-					if (e && e.styles && e.styles.legacyIcon) {
-						e.styles.legacyIcon.dimensions = { height: 256, width: 256 };
-					}
-					return originalNormalizeSubreddit(e);
+				const devToolsComposer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
+
+				if (typeof devToolsComposer === 'function') {
+					// If an enhancer already exists, compose them together; otherwise, use devToolsComposer directly
+					enhancer = enhancer ? devToolsComposer(enhancer) : devToolsComposer();
 				}
 
+				// Call original createStore with the enhanced store creator
+				return originalCreateStore(reducer, preloadedState, enhancer);
+			};
 
-				const reduxModule = importRedditModule('./node_modules/redux/es/redux.js');
-				const originalCreateStore = reduxModule.e;
-				reduxModule.e = function (reducer, preloadedState, enhancer) {
-					if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
-						enhancer = preloadedState;
-						preloadedState = undefined;
-					}
+			const cfg = importRedditModule('./src/config.ts').a;
+			cfg.cookieDomain = window.location.hostname;
+		}
+	}]);
+	//# sourceMappingURL=https://www.redditstatic.com/desktop2x/FrontpageLinks.0ce5886f5840c6a1029f.js.map
+	</script>
+	<script>__perfMark("head_tag_start");</script>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="referrer" content="origin-when-cross-origin" />
+	<style>
+	/*
+		http://meyerweb.com/eric/tools/css/reset/
+		v2.0 | 20110126
+		License: none (public domain)
+	*/
+		html,
+		body,
+		div,
+		span,
+		applet,
+		object,
+		iframe,
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6,
+		p,
+		blockquote,
+		pre,
+		a,
+		abbr,
+		acronym,
+		address,
+		big,
+		button,
+		cite,
+		code,
+		del,
+		dfn,
+		em,
+		img,
+		input,
+		ins,
+		kbd,
+		q,
+		s,
+		samp,
+		small,
+		strike,
+		strong,
+		sub,
+		sup,
+		tt,
+		var,
+		b,
+		u,
+		i,
+		center,
+		dl,
+		dt,
+		dd,
+		ol,
+		ul,
+		li,
+		fieldset,
+		form,
+		label,
+		legend,
+		table,
+		caption,
+		tbody,
+		tfoot,
+		thead,
+		tr,
+		th,
+		td,
+		article,
+		aside,
+		canvas,
+		details,
+		embed,
+		figure,
+		figcaption,
+		footer,
+		header,
+		hgroup,
+		menu,
+		nav,
+		output,
+		ruby,
+		section,
+		summary,
+		time,
+		mark,
+		audio,
+		video {
+			margin: 0;
+			padding: 0;
+			border: 0;
+			font-size: 100%;
+			font: inherit;
+			vertical-align: baseline;
+		}
 
-					const devToolsComposer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
+		/* HTML5 display-role reset for older browsers */
+		article,
+		aside,
+		details,
+		figcaption,
+		figure,
+		footer,
+		header,
+		hgroup,
+		menu,
+		nav,
+		section {
+			display: block;
+		}
+		body {
+			line-height: 1;
+			font-family: 'Reddit Sans';
+		}
+		ol,
+		ul {
+			list-style: none;
+		}
+		blockquote,
+		q {
+			quotes: none;
+		}
+		blockquote:before,
+		blockquote:after,
+		q:before,
+		q:after {
+			content: "";
+			content: none;
+		}
+		table {
+			border-collapse: collapse;
+			border-spacing: 0;
+		}
+		a {
+			color: inherit;
+			text-decoration: inherit;
+		}
 
-					if (typeof devToolsComposer === 'function') {
-						// If an enhancer already exists, compose them together; otherwise, use devToolsComposer directly
-						enhancer = enhancer ? devToolsComposer(enhancer) : devToolsComposer();
-					}
+		html,
+		body {
+			width: 100%;
+			margin: 0;
+		}
 
-					// Call original createStore with the enhanced store creator
-					return originalCreateStore(reducer, preloadedState, enhancer);
-				};
+		/* HTML5 display-role reset for older browsers */
+		article,
+		aside,
+		details,
+		figcaption,
+		figure,
+		footer,
+		header,
+		hgroup,
+		menu,
+		nav,
+		section {
+			display: block;
+		}
 
-				const cfg = importRedditModule('./src/config.ts').a;
-				cfg.cookieDomain = window.location.hostname;
-			}
-		}]);
-		//# sourceMappingURL=https://www.redditstatic.com/desktop2x/FrontpageLinks.0ce5886f5840c6a1029f.js.map
-		</script>
-		<script>
-			__perfMark("head_tag_start");
-		</script>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="referrer" content="origin-when-cross-origin" />
-		<style>
-		/*
-			http://meyerweb.com/eric/tools/css/reset/
-			v2.0 | 20110126
-			License: none (public domain)
-		*/
-			html,
-			body,
-			div,
-			span,
-			applet,
-			object,
-			iframe,
-			h1,
-			h2,
-			h3,
-			h4,
-			h5,
-			h6,
-			p,
-			blockquote,
-			pre,
-			a,
-			abbr,
-			acronym,
-			address,
-			big,
-			button,
-			cite,
-			code,
-			del,
-			dfn,
-			em,
-			img,
-			input,
-			ins,
-			kbd,
-			q,
-			s,
-			samp,
-			small,
-			strike,
-			strong,
-			sub,
-			sup,
-			tt,
-			var,
-			b,
-			u,
-			i,
-			center,
-			dl,
-			dt,
-			dd,
-			ol,
-			ul,
-			li,
-			fieldset,
-			form,
-			label,
-			legend,
-			table,
-			caption,
-			tbody,
-			tfoot,
-			thead,
-			tr,
-			th,
-			td,
-			article,
-			aside,
-			canvas,
-			details,
-			embed,
-			figure,
-			figcaption,
-			footer,
-			header,
-			hgroup,
-			menu,
-			nav,
-			output,
-			ruby,
-			section,
-			summary,
-			time,
-			mark,
-			audio,
-			video {
-				margin: 0;
-				padding: 0;
-				border: 0;
-				font-size: 100%;
-				font: inherit;
-				vertical-align: baseline;
-			}
+		button {
+			background: transparent;
+			border: none;
+			color: inherit;
+			cursor: pointer;
+			padding: initial;
+		}
 
-			/* HTML5 display-role reset for older browsers */
-			article,
-			aside,
-			details,
-			figcaption,
-			figure,
-			footer,
-			header,
-			hgroup,
-			menu,
-			nav,
-			section {
-				display: block;
-			}
-			body {
-				line-height: 1;
-				font-family: 'Reddit Sans';
-			}
-			ol,
-			ul {
-				list-style: none;
-			}
-			blockquote,
-			q {
-				quotes: none;
-			}
-			blockquote:before,
-			blockquote:after,
-			q:before,
-			q:after {
-				content: "";
-				content: none;
-			}
-			table {
-				border-collapse: collapse;
-				border-spacing: 0;
-			}
-			a {
-				color: inherit;
-				text-decoration: inherit;
-			}
+		body {
+			min-height: calc(100vh - 48px);
+			line-height: 1;
+			font-family: 'Reddit Sans';
+			-webkit-font-smoothing: antialiased;
+		}
 
-			html,
-			body {
-				width: 100%;
-				margin: 0;
-			}
+		body ::-moz-selection {
+			background-color: #7dbcff99;
+		}
 
-			/* HTML5 display-role reset for older browsers */
-			article,
-			aside,
-			details,
-			figcaption,
-			figure,
-			footer,
-			header,
-			hgroup,
-			menu,
-			nav,
-			section {
-				display: block;
-			}
-
-			button {
-				background: transparent;
-				border: none;
-				color: inherit;
-				cursor: pointer;
-				padding: initial;
-			}
-
-			body {
-				min-height: calc(100vh - 48px);
-				line-height: 1;
-				font-family: 'Reddit Sans';
-				-webkit-font-smoothing: antialiased;
-			}
-
-			body ::-moz-selection {
-				background-color: #7dbcff99;
-			}
-
-			input,
-			textarea,
-			[contenteditable] {
-				font-size: 14px;
-				font-weight: 400;
-				line-height: 21px;
-				font-family: inherit;
-			}
-		</style>
+		input,
+		textarea,
+		[contenteditable] {
+			font-size: 14px;
+			font-weight: 400;
+			line-height: 21px;
+			font-family: inherit;
+		}
+	</style>
 		<link rel="stylesheet" href="https://www.redditstatic.com/desktop2x/chunkCSS/CommentsPage~Reddit~StandalonePostPage~reddit-components-ClassicPost~reddit-components-CompactPost~r~73d6ba4d.8c84a9a99da41a2f4805_.css" />
 		<link rel="stylesheet" href="https://www.redditstatic.com/desktop2x/chunkCSS/CommentsPage~Reddit~RichTextEditor~reddit-components-LargePost~reddit-components-MediumPost~reddit-c~cad4f428.5569bbcfca5096e59799_.css" />
 		<link rel="stylesheet" href="https://www.redditstatic.com/desktop2x/chunkCSS/ModListing~Reddit~StandalonePostPage~Subreddit.9cc9a122bf677a5c6071_.css" />
@@ -281,27 +279,130 @@
 		<link rel="stylesheet" href="https://www.redditstatic.com/desktop2x/chunkCSS/ModQueuePages~ProfileOverview~reddit-components-LargePost~reddit-components-MediumPost.7542be90d7ecce6e2aeb_.css" />
 		<link rel="stylesheet" href="https://www.redditstatic.com/desktop2x/chunkCSS/reddit-components-LargePost.5fa7173d071b52fddca9_.css" />
 		<link rel="stylesheet" href="https://www.redditstatic.com/desktop2x/chunkCSS/IdCard.2d3d15de647a0153f67d_.css" />
-		<style>
-			._1gg1MfJZaNkaPmqHpGQHni { /* GIFS in comments */
-				max-height: 200px;
-			}
-			._3CUdiRoAXQxoYJ-UeFCjPS { /* Subreddit pill in search bar - fix the annoying line break at "r/" */
-				white-space: nowrap;
-			}
-			._3K6DCjWs2dQ93YYZDOHjib {
-				width: 100% !important;
-			}
-			.ULWj94BYSOqoJDetxgcnU { /* Username in moderator list in sidebar */
-				white-space: nowrap;
-			}
-			.RichTextJSON-root {
-				font-family: 'Reddit Sans';
-			}
-			._2QZW3qVaM5fa8vo4uwbT42 > img { /* Trophy image */
-				width: 70px;
-				height: 70px;
-			}
-		</style>
+	<style>
+	._1gg1MfJZaNkaPmqHpGQHni { /* GIFS in comments */
+		height: 200px !important;
+	}
+	._3CUdiRoAXQxoYJ-UeFCjPS { /* Subreddit pill in search bar - fix the annoying line break at "r/" */
+		white-space: nowrap;
+	}
+	._3K6DCjWs2dQ93YYZDOHjib {
+		width: 100% !important;
+	}
+	.ULWj94BYSOqoJDetxgcnU { /* Username in moderator list in sidebar */
+		white-space: nowrap;
+	}
+	.RichTextJSON-root {
+		font-family: 'Reddit Sans';
+		overflow-y: hidden;
+	}
+	._2QZW3qVaM5fa8vo4uwbT42 > img { /* Trophy image */
+		width: 70px;
+		height: 70px;
+	}
+	._35oEP5zLnhKEbj5BlkTBUA { /* gallery image */
+		width: 100%
+	}
+	.m3aNC6yp8RrNM_-a0rrfa { /* Embed content */
+		max-height: 512px !important;
+	}
+	._35oEP5zLnhKEbj5BlkTBUA > video {
+		width: 100%
+	}
+	._35oEP5zLnhKEbj5BlkTBUA { /* Post image */
+		align-items: unset !important;
+	}
+
+
+	.P8SGAKMtRxNwlmLz1zdJu._1z5rdmX8TDr6mqwNv7A70U { /* Comment div */
+		margin-top: 0.5em !important;
+	}
+	._3GfQMgsm3HGd3838lwqCST { /* Comment author icon */
+		width: 2rem !important; /* shreddit size */
+		height: 2rem !important;
+	}
+	.wM6scouPXXsFDSZmZPHRo { /* Comment author name */
+		font-weight: bold !important;
+	}
+	._2Gzh48SaLz7dQBCULfOC6V.O_Ica0k2O4KFcZyNfsJDU { /* Expand button - visible */
+		width: 1em !important;
+	}
+	._2Gzh48SaLz7dQBCULfOC6V > .icon-expand {
+		width: 1em !important;
+		font-size: 1em !important;
+	}
+	.Comment {
+		padding: 6px 0 0 6px !important;
+	}
+	._3tw__eCCe7j-epNCKGXUKk { /* Comment content */
+		max-width: unset !important;
+	}
+	.Comment._1z5rdmX8TDr6mqwNv7A70U { /* Top level comment */
+		border-top: 0.2rem solid var(--newCommunityTheme-line);
+	}
+	.threadline {
+		border-right: 0.15rem solid var(--newCommunityTheme-line) !important;
+	}
+	.hovered > .threadline {
+		border-right: 0.15rem solid white !important;
+	}
+	.-Xcv3XBXmgiY2X5RqaPbO[data-testid="post-comment-header"] { /* Comment top bar */
+		margin-top: 3px !important;
+	}
+	.-Xcv3XBXmgiY2X5RqaPbO {
+		cursor: pointer;
+	}
+	.-Xcv3XBXmgiY2X5RqaPbO._3c9Go6433BnvYx8_7MkPnt { /* Collapsed comment top bar */
+		margin-top: 10px !important;
+	}
+	._2HYsucNpMdUpYlGBMviq8M { /* more comments */
+		font-size: 14px !important;
+		font-weight: 500 !important;
+		height: 20px !important;
+	}
+	._1OVBBWLtHoSPfGCRaPzpTf._2udhMC-jldHp_EpAuBeSR1 { /* Post comments (full page) */
+		max-width: 1080px !important;
+	}
+	._1_TJAX-8zAT3vVN1Iz7cys { /* Top menu links */
+		max-width: 1400px !important;
+	}
+	._2wzi-W7JiZ7A6U6aFvfvSR { /* Subreddit name on banner */
+		text-shadow: -1px -1px 8px #000, 0px 0px 8px #000, 1px 1px 8px #000;
+	}
+	._2RkQc9Gtsq3cPQNZLYv4zc { /* Container holding subreddit name on banner */
+		max-width: 1400px !important;
+	}
+	._2ED-O3JtIcOqp8iIL1G5cg { /* Crosspost box */
+		max-width: 1800px !important;
+	}
+	.iUP9nbvcaxfwKrQTgt0sw {
+		width: 100%;
+	}
+
+	.u35lf2ynn4jHsVUwPmNU { /* Post comments pop-up view */
+		max-width: unset !important;
+	}
+	.K4Eem3pMbRbAYioOfqN5E { /* Post comments pop-up top bar */
+		padding: 0 !important;
+	}
+	.lrzZ8b0L6AzLkQj5Ww7H1 { /* Post indicators container */
+		display: flex !important;
+	}
+	._3BPVpMSn5b1vb1yTQuqCRH, ._1wzhGvvafQFOWAyA157okr { /* Top bar NSFW/Spoiler etc indicator */
+		height: 18px !important;
+	}
+	._2hSecp_zkPm_s5ddV2htoj { /* Post flair */
+		vertical-align: unset !important;
+	}
+
+	/* Comment actions and mod buttons */
+	._374Hkkigy4E4srsI2WktEd._2hr3tRWszeMRQ0u_Whs7t8._14hLFU5cIJCyxH9DSgsCov {
+		display: block !important;
+	}
+	._3cJNzWW-kTTUFiqoBkRMRk {
+		display: block !important;
+	}
+	</style>
 
 		<link as="script" href="https://www.redditstatic.com/desktop2x/runtime~Reddit.a100d33a0552e5fb8823.js" key="https://www.redditstatic.com/desktop2x/runtime~Reddit.a100d33a0552e5fb8823.js" rel="preload" />
 		<link as="script" href="https://www.redditstatic.com/desktop2x/vendors~Governance~Reddit.2f67e72146622b933b15.js" key="https://www.redditstatic.com/desktop2x/vendors~Governance~Reddit.2f67e72146622b933b15.js" rel="preload" />
@@ -312,80 +413,72 @@
 		<link as="script" href="https://www.redditstatic.com/desktop2x/Governance~Reddit.f38cbc1b092de66bb711.js" key="https://www.redditstatic.com/desktop2x/Governance~Reddit.f38cbc1b092de66bb711.js" rel="preload" />
 		<link as="script" href="https://www.redditstatic.com/desktop2x/Reddit.e6908df657b523d36c19.js" key="https://www.redditstatic.com/desktop2x/Reddit.e6908df657b523d36c19.js" rel="preload" />
 
-		<link rel="apple-touch-icon" sizes="57x57" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-57x57.png" />
-		<link rel="apple-touch-icon" sizes="60x60" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-60x60.png" />
-		<link rel="apple-touch-icon" sizes="72x72" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-72x72.png" />
-		<link rel="apple-touch-icon" sizes="76x76" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-76x76.png" />
-		<link rel="apple-touch-icon" sizes="114x114" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-114x114.png" />
-		<link rel="apple-touch-icon" sizes="120x120" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-120x120.png" />
-		<link rel="apple-touch-icon" sizes="144x144" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-144x144.png" />
-		<link rel="apple-touch-icon" sizes="152x152" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-152x152.png" />
-		<link rel="apple-touch-icon" sizes="180x180" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-180x180.png" />
-		<link rel="icon" type="image/png" sizes="192x192" href="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png" />
-		<link rel="icon" type="image/png" sizes="32x32" href="https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png" />
-		<link rel="icon" type="image/png" sizes="96x96" href="https://www.redditstatic.com/desktop2x/img/favicon/favicon-96x96.png" />
-		<link rel="icon" type="image/png" sizes="16x16" href="https://www.redditstatic.com/desktop2x/img/favicon/favicon-16x16.png" />
-		<link rel="manifest" href="https://www.redditstatic.com/desktop2x/img/favicon/manifest.json?v=2" />
-		<meta name="msapplication-TileColor" content="#ffffff" />
-		<meta name="msapplication-TileImage" content="https://www.redditstatic.com/desktop2x/img/favicon/ms-icon-144x144.png" />
-		<meta name="theme-color" content="#1A1A1B" data-reactroot="" />
-		<meta name="jsapi" />
+	<link rel="apple-touch-icon" sizes="57x57" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-57x57.png" />
+	<link rel="apple-touch-icon" sizes="60x60" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-60x60.png" />
+	<link rel="apple-touch-icon" sizes="72x72" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-72x72.png" />
+	<link rel="apple-touch-icon" sizes="76x76" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-76x76.png" />
+	<link rel="apple-touch-icon" sizes="114x114" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-114x114.png" />
+	<link rel="apple-touch-icon" sizes="120x120" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-120x120.png" />
+	<link rel="apple-touch-icon" sizes="144x144" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-144x144.png" />
+	<link rel="apple-touch-icon" sizes="152x152" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-152x152.png" />
+	<link rel="apple-touch-icon" sizes="180x180" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-180x180.png" />
+	<link rel="icon" type="image/png" sizes="192x192" href="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png" />
+	<link rel="icon" type="image/png" sizes="32x32" href="https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png" />
+	<link rel="icon" type="image/png" sizes="96x96" href="https://www.redditstatic.com/desktop2x/img/favicon/favicon-96x96.png" />
+	<link rel="icon" type="image/png" sizes="16x16" href="https://www.redditstatic.com/desktop2x/img/favicon/favicon-16x16.png" />
+	<link rel="manifest" href="https://www.redditstatic.com/desktop2x/img/favicon/manifest.json?v=2" />
+	<meta name="msapplication-TileColor" content="#ffffff" />
+	<meta name="msapplication-TileImage" content="https://www.redditstatic.com/desktop2x/img/favicon/ms-icon-144x144.png" />
+	<meta name="theme-color" content="#1A1A1B" data-reactroot="" />
+	<meta name="jsapi" />
 
-		<title>Reddit - Dive into anything</title>
-		<meta name="description" content="Reddit is a network of communities where people can dive into their interests, hobbies and passions. There&#x27;s a community for whatever you&#x27;re interested in on Reddit." />
-		<link rel="canonical" href="https://www.reddit.com/" />
-		<link rel="next" href="https://www.reddit.com/?after=t3_1e19h4p" />
-		<meta property="og:ttl" content="600" />
-		<meta property="og:site_name" content="reddit" />
-		<meta property="twitter:site" content="@reddit" />
-		<meta property="twitter:card" content="summary" />
-		<meta property="og:title" content="reddit" />
-		<meta property="twitter:title" content="reddit" />
-		<meta property="twitter:image" content="https://www.redditstatic.com/icon.png" />
-		<meta property="og:type" content="website" />
-		<meta property="og:url" content="https://www.reddit.com/" />
-		<meta property="og:image" content="https://www.redditstatic.com/icon.png" />
-		<meta property="og:image:width" content="256" />
-		<meta property="og:image:height" content="256" />
-		<script type="application/ld+json">
-			{ "@context": "https://schema.org", "@type": "WebSite", "url": "https://www.reddit.com/", "potentialAction": { "@type": "SearchAction", "target": "https://www.reddit.com/search?q={search_term_string}\u0026referrer=sitelinks_searchbox", "query-input": "required name=search_term_string" } }
-		</script>
-	</head>
+	<title>Reddit - Dive into anything</title>
+	<meta name="description" content="Reddit is a network of communities where people can dive into their interests, hobbies and passions. There&#x27;s a community for whatever you&#x27;re interested in on Reddit." />
+	<link rel="canonical" href="https://www.reddit.com/" />
+	<link rel="next" href="https://www.reddit.com/?after=t3_1e19h4p" />
+	<meta property="og:ttl" content="600" />
+	<meta property="og:site_name" content="reddit" />
+	<meta property="twitter:site" content="@reddit" />
+	<meta property="twitter:card" content="summary" />
+	<meta property="og:title" content="reddit" />
+	<meta property="twitter:title" content="reddit" />
+	<meta property="twitter:image" content="https://www.redditstatic.com/icon.png" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://www.reddit.com/" />
+	<meta property="og:image" content="https://www.redditstatic.com/icon.png" />
+	<meta property="og:image:width" content="256" />
+	<meta property="og:image:height" content="256" />
+	<script type="application/ld+json">
+		{ "@context": "https://schema.org", "@type": "WebSite", "url": "https://www.reddit.com/", "potentialAction": { "@type": "SearchAction", "target": "https://www.reddit.com/search?q={search_term_string}\u0026referrer=sitelinks_searchbox", "query-input": "required name=search_term_string" } }
+	</script>
+</head>
 
-	<body>
-		<script>
-			__perfMark("app_html_start");
-		</script>
-		<div id="2x-container"></div>
-		<script>
-			__perfMark("ads_dot_js_fetch_start");
-		</script>
-		<script src="https://www.redditstatic.com/desktop2x/js/xads.js"></script>
-		<script>
-			__perfMark("redux_json_start");
-		</script>
-		<script id="data" src="/dist/main.js"></script>
-		<script>
-			__perfMark("js_deps_fetch_start");
-		</script>
-		<script id="whitespace__LOADABLE_REQUIRED_CHUNKS__" type="application/json">
-			[
-				"CollectionCommentsPage~CommentsPage~CountryPage~Frontpage~GovernanceReleaseNotesModal~ModListing~Mod~e3d63e32",
-				"CountryPage~Frontpage~ModListing~Multireddit~ProfileComments~ProfileOverview~ProfilePosts~Subreddit",
-				"Frontpage",
-				"reddit-components-InFeedPostCreation",
-				"CollectionCommentsPage~CommentsPage~CountryPage~FramedGild~GildModal~GovernanceReleaseNotesModal~Hap~cb450973",
-				"CollectionCommentsPage~CommentsPage~EconTopAwardersModal~ModQueuePages~ModerationPages~PostCreation~~bca2b657",
-				"CollectionCommentsPage~CommentsPage~GovernanceReleaseNotesModal~ModerationPages~PostCreation~Profile~9a5d9fab",
-				"CollectionCommentsPage~CommentsPage~ModerationPages~PostCreation~ProfileComments~ProfileOverview~Pro~fd7d7cf1",
-				"CollectionCommentsPage~CommentsPage~ModerationPages~ProfileComments~ProfileOverview~ProfilePrivate~S~b1793d14",
-				"CommentsPage~Reddit~StandalonePostPage~reddit-components-ClassicPost~reddit-components-CompactPost~r~73d6ba4d",
-				"CommentsPage~Reddit~RichTextEditor~reddit-components-LargePost~reddit-components-MediumPost~reddit-c~cad4f428",
-				"ModQueuePages~ProfileOverview~reddit-components-LargePost~reddit-components-MediumPost",
-				"reddit-components-LargePost",
-				"IdCard"
-			]
-		</script>
+<body>
+	<script>__perfMark("app_html_start")</script>
+	<div id="2x-container"></div>
+	<script>__perfMark("ads_dot_js_fetch_start")</script>
+	<script src="https://www.redditstatic.com/desktop2x/js/xads.js"></script>
+	<script>__perfMark("redux_json_start")</script>
+	<script id="data" src="/dist/main.js"></script>
+	<script>__perfMark("js_deps_fetch_start")</script>
+	<script id="whitespace__LOADABLE_REQUIRED_CHUNKS__" type="application/json">
+		[
+			"CollectionCommentsPage~CommentsPage~CountryPage~Frontpage~GovernanceReleaseNotesModal~ModListing~Mod~e3d63e32",
+			"CountryPage~Frontpage~ModListing~Multireddit~ProfileComments~ProfileOverview~ProfilePosts~Subreddit",
+			"Frontpage",
+			"reddit-components-InFeedPostCreation",
+			"CollectionCommentsPage~CommentsPage~CountryPage~FramedGild~GildModal~GovernanceReleaseNotesModal~Hap~cb450973",
+			"CollectionCommentsPage~CommentsPage~EconTopAwardersModal~ModQueuePages~ModerationPages~PostCreation~~bca2b657",
+			"CollectionCommentsPage~CommentsPage~GovernanceReleaseNotesModal~ModerationPages~PostCreation~Profile~9a5d9fab",
+			"CollectionCommentsPage~CommentsPage~ModerationPages~PostCreation~ProfileComments~ProfileOverview~Pro~fd7d7cf1",
+			"CollectionCommentsPage~CommentsPage~ModerationPages~ProfileComments~ProfileOverview~ProfilePrivate~S~b1793d14",
+			"CommentsPage~Reddit~StandalonePostPage~reddit-components-ClassicPost~reddit-components-CompactPost~r~73d6ba4d",
+			"CommentsPage~Reddit~RichTextEditor~reddit-components-LargePost~reddit-components-MediumPost~reddit-c~cad4f428",
+			"ModQueuePages~ProfileOverview~reddit-components-LargePost~reddit-components-MediumPost",
+			"reddit-components-LargePost",
+			"IdCard"
+		]
+	</script>
 		<script async="" data-chunk="Reddit" src="https://www.redditstatic.com/desktop2x/runtime~Reddit.a100d33a0552e5fb8823.js"></script>
 		<script async="" data-chunk="Reddit" src="https://www.redditstatic.com/desktop2x/vendors~Governance~Reddit.2f67e72146622b933b15.js"></script>
 		<script async="" data-chunk="Reddit" src="https://www.redditstatic.com/desktop2x/vendors~CommentsPage~Reddit.dc3f6fe2c3dec48a6b53.js"></script>
@@ -406,5 +499,5 @@
 		<script async="" data-chunk="reddit-components-LargePost" src="https://www.redditstatic.com/desktop2x/ModQueuePages~ProfileOverview~reddit-components-LargePost~reddit-components-MediumPost.d198984be50251d0f344.js"></script>
 		<script async="" data-chunk="reddit-components-LargePost" src="https://www.redditstatic.com/desktop2x/reddit-components-LargePost.4eec108702538cf73019.js"></script>
 		<script async="" data-chunk="IdCard" src="https://www.redditstatic.com/desktop2x/IdCard.43e5465b0f5893206d6c.js"></script>
-	</body>
+</body>
 </html>

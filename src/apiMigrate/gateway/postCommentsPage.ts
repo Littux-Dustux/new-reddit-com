@@ -11,6 +11,7 @@ import { fetchSubredditPageExtra } from "./utils";
 
 const logger = getLogger('postComments');
 const devvitDataCacheOptions = { cache: true, maxCacheAge: 300e3 };
+const needContextComments = new Set<string>();
 
 export async function postCommentsResponse(postID: string, commentID: string | undefined, params: Record<string, string>) {
 	const postFromState = getState().posts.models[postID];
@@ -88,9 +89,19 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 		delete params.comment_awardings_by_current_user;
 
 		if (postFromState?.discussionType === "CHAT") params.sort = "live";
-		if (commentID && !params.context) {
+
+		if (
+			commentID &&
+			!params.context &&
+			(!getState().features.comments.models[commentID] || needContextComments.has(commentID))
+		) {
 			params.context = '4';
 			params.depth = '10';
+			if (needContextComments.has(commentID)) {
+				needContextComments.delete(commentID);
+			} else {
+				needContextComments.add(commentID);
+			}
 		}
 
 		const listing = await getREST(

@@ -42,21 +42,31 @@ export async function genericListingR2(
 }
 
 
-export async function arcticShiftListing(username: string, isPostPage: boolean, after?: string | null) {
+export async function arcticShiftListing(username: string, isPostPage: boolean, token?: string | null, isSortAsc?: boolean) {
 	try {
-		const pageSize = !after
+		const pageSize = !token
 			? isPostPage ? 10 : 20
 			: isPostPage ? 25 : 50;
 
 		const params: Record<string, string> = {
 			author: username,
 			limit: '' + pageSize,
-			sort: 'desc',
+			sort: isSortAsc ? 'asc' : 'desc',
 		}
 
-		if (after) {
-			params.before = after;
+		if (token) {
+			if (isSortAsc) {
+				params.after = token;
+			} else {
+				params.before = token;
+			}
+		} else if (isSortAsc) {
+			showToast({
+				kind: ToastType.Custom,
+				text: "Note: There is no \"Top\" sort in arctic-shift. Instead, you're seeing this person's oldest content first.",
+			}, 10e3);
 		}
+
 		if (isPostPage) {
 			params.md2html = 'true';
 		}
@@ -108,3 +118,5 @@ export async function arcticShiftListing(username: string, isPostPage: boolean, 
 
 export const blockedByUserNames = new Set<string>();
 export const isUserCurationActive = new Map<string, Promise<boolean>>();
+
+(window as any).curatedUsers = isUserCurationActive;

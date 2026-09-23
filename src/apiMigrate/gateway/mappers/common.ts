@@ -1,5 +1,5 @@
 import type { VideoAssetR2 } from "../types/common";
-import { FormattingFlag } from "../types/richtext";
+import { FormattingFlag, type DocumentNode, type RichTextContent } from "../types/richtext";
 
 export const getVoteStateNum = (likes: boolean | null) => (likes === null ? 0 : likes ? 1 : -1);
 
@@ -66,7 +66,7 @@ export const getMuxedMP4sDownloadRTJSON = (muxedMp4s: any) => [
 		],
 		"e": "par"
 	}
-]
+] as const satisfies DocumentNode[]
 
 
 export const antiGifFuckGifs = (mediaMetadata: Record<string, any> | null) => {

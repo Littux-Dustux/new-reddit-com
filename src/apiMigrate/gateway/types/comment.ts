@@ -4,7 +4,7 @@ import type { MediaAssetR2, PostAndCommentCommon } from "./common"
 import type { RichTextContent } from "./richtext"
 
 
-interface Media {
+export interface Media {
 	type: "rtjson",
 	rteMode: string,
 	richtextContent: RichTextContent,

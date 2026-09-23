@@ -103,8 +103,8 @@ interface PollData {
 
 
 export interface Post extends PostAndCommentCommon {
-	adPromotedUserPostIds: [],
-	adSupplementaryText: string | null,
+	adPromotedUserPostIds?: [],
+	adSupplementaryText?: string | null,
 	belongsTo: {
 		id: string,
 		type: "subreddit" | "profile",

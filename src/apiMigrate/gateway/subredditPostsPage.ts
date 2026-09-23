@@ -2,17 +2,19 @@ import { getUserSubredditPref } from "../../api/localhost";
 import { getREST, RedditAPIError } from "../../api/rest";
 import { getLogger } from "../../logging";
 import { postAndCommentsListing } from "./mappers/listing";
+import { subredditNameToId } from "./mappers/subreddit";
 import { expectStatusCodes, fetchSubredditPageExtra } from "./utils";
 
 const logger = getLogger("subredditPostsPage");
 const adhocMultiNames = new Set(["all", "popular", "mod", "friends"])
 
 export async function subredditPostsPage(subredditOrSubreddits: string, params: Record<string, string>) {
-	const isAdhocMulti = adhocMultiNames.has(subredditOrSubreddits) || subredditOrSubreddits.includes("+");
+	const isCombinedSr = subredditOrSubreddits.includes("+");
+	const isAdhocMulti = isCombinedSr || adhocMultiNames.has(subredditOrSubreddits);
 	const shouldFetchSubreddit = !params.after && !isAdhocMulti;
 	const includeStructuredStyles = params.include?.includes("structuredStyles") ?? false;
 
-	const prefs = await getUserSubredditPref(subredditOrSubreddits);
+	const prefs = isAdhocMulti ? null : await getUserSubredditPref(subredditOrSubreddits);
 	const [sortPref, t] = prefs?.sort ? prefs.sort.split("_", 2) : [];
 	const sort = params.sort ?? sortPref ?? '';
 	if (prefs) {
@@ -20,6 +22,17 @@ export async function subredditPostsPage(subredditOrSubreddits: string, params: 
 	}
 
 	if (t) params.t ??= t;
+	if (isAdhocMulti) {
+		if (isCombinedSr) {
+			// If all subreddits haven't been loaded already, fetch sr_detail
+			if (!subredditOrSubreddits.split("+").some(sr => !subredditNameToId[sr.toLowerCase()])) {
+				params.sr_detail = '1';
+			}
+		} else if (subredditOrSubreddits !== "mod") {
+			params.sr_detail = '1';
+		}
+	};
+
 	params.raw_json = '1';
 	params.limit = params.after // speed up initial load
 		? params.layout === "card" ? '25' : '50'

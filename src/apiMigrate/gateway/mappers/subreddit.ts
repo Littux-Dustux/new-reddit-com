@@ -6,6 +6,7 @@ import { processSubredditPostFlair, processSubredditUserFlair } from "./flair";
 
 const logger = getLogger('gateway:map:subreddit');
 export const subredditNameToId: Record<string, string> = {};
+(window as any).srNameToId = subredditNameToId;
 
 export const processSubredditAboutInfo = (data: any): SubredditAboutInfo => ({
 	acceptFollowers: data.accept_followers,
@@ -87,4 +88,5 @@ export const addR2SubredditToState = (state: SubredditState, r2Subreddit: any, u
 	state.subreddits[id] ??= processSubreddit(r2Subreddit);
 	state.postFlair[id] ??= processSubredditPostFlair(r2Subreddit, postFlairsV2);
 	state.userFlair[id] ??= processSubredditUserFlair(r2Subreddit, userFlairsV2);
+	subredditNameToId[r2Subreddit.display_name.toLowerCase()] = r2Subreddit.name;
 }

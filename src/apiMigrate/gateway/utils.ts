@@ -1,4 +1,4 @@
-import { getLogger, showToast } from "../../logging";
+import { getLogger, showToast, ToastType } from "../../logging";
 import { getGIPHYGifsByIds } from "../../api/giphy";
 import { gqlFetch } from "../../api/gql";
 import { getVideoMediaMetadataGql, getMuxedMP4sDownloadRTJSON } from "./mappers/common";
@@ -6,25 +6,31 @@ import { getREST, RedditAPIError } from "../../api/rest";
 import { subredditNameToId } from "./mappers/subreddit";
 import { convertUnavailableGqlSubredditToGatewayError } from "./mappers/gql/subreddit";
 import { getState } from "../../main";
-import { FormattingFlag } from "./types/richtext";
+import { FormattingFlag, type Document } from "./types/richtext";
 import { isLoggedIn } from "../../state";
 import { blockedByUserNames, isUserCurationActive } from "./listingPage";
 import { getUserSubredditPref } from "../../api/localhost";
-import type { CommentMediaDetailsQuery } from "../../api/types/gql";
+import type { ModQueueTriggerType, CommentMediaDetailsQuery } from "../../api/types/gql";
+import type { Comment, Media } from "./types/comment";
+import svcGqlFetch from "../../api/shredditGql";
 
 const logger = getLogger('apiMigrate:gateway:utils');
+const mqTriggerD2xUnsupported = new Set<ModQueueTriggerType>(["COMMENT_GUIDANCE", "DOMAIN_BAN", "POST_GUIDANCE"]);
 
-export async function fixR2CommentsMedia(comments: Record<string, any>) {
+export async function fixR2CommentsMedia(comments: Record<string, Comment>) {
 	// some giphy comments don't have the proper metadata, and have {"status":"invalid"}. So we'll fetch it from GIPHY.
-	const brokenGiphyCommentMediaMetadatas: Record<string, any[]> = {};
+	const brokenGiphyCommentMediaMetadatas: Record<string, { key: string, mediaMetadata: Media['mediaMetadata'] }[]> = {};
 	const giphyIdsToFetch: Set<string> = new Set();
 
 	// reddit doesn't include videos in comments on the old API
-	const videoCommentIncompleteMedias: Record<string, any> = {};
+	const videoCommentIncompleteMedias: Record<string, Media> = {};
 	const videoCommentIdsToFetch: string[] = [];
 
 	// get blocked user comments
 	const blockedIds: string[] = [];
+
+	// get mod queue triggers
+	const moderationInfoToFetch: string[] = [];
 
 	for (const comment of Object.values(comments)) {
 		if (comment.unrepliableReason === "NEAR_BLOCKER" && comment.media.richtextContent.document[0]?.c?.[0]?.t === "[unavailable]") {
@@ -32,9 +38,9 @@ export async function fixR2CommentsMedia(comments: Record<string, any>) {
 			continue;
 		}
 
-		const [firstMediaKey, firstMedia]: [string, any] = (comment.media.mediaMetadata && Object.entries(comment.media.mediaMetadata)[0]) ?? [null, null];
+		const [firstMediaKey, firstMedia]: [string | null, any] = (comment.media.mediaMetadata && Object.entries(comment.media.mediaMetadata)[0]) ?? [null, null];
 
-		if (firstMedia && firstMedia.status === "invalid" && firstMediaKey.startsWith("giphy|") ) {
+		if (firstMedia && firstMedia.status === "invalid" && firstMediaKey?.startsWith("giphy|") ) {
 			const giphyId = firstMediaKey.split("|")[1] as string;
 			giphyIdsToFetch.add(giphyId);
 
@@ -43,9 +49,13 @@ export async function fixR2CommentsMedia(comments: Record<string, any>) {
 				mediaMetadata: comment.media.mediaMetadata
 			});
 
-		} else if (comment.media.richtextContent.document.some((node: any) => node.e === "video")) {
+		} else if (comment.media.richtextContent.document.some(node => node.e === "video")) {
 			videoCommentIdsToFetch.push(comment.id);
 			videoCommentIncompleteMedias[comment.id] = comment.media;
+		}
+
+		if (comment.bannedAtUTC) {
+			moderationInfoToFetch.push(comment.id);
 		}
 	}
 
@@ -108,12 +118,12 @@ export async function fixR2CommentsMedia(comments: Record<string, any>) {
 					const noticeText = `Comment ${name} loaded from logged-out API (why: u/${author} blocked you)`;
 					blockedByUserNames.add(author.toLowerCase());
 
-					const comment = comments[name];
+					const comment = comments[name] as Comment;
 					comment.author = author;
 					comment.authorId = author_fullname;
 					comment.profileImage = profile_img;
 					comment.media.richtextContent = {
-						document: rtjson.document.concat(
+						document: (rtjson.document as Document).concat(
 							{ e: "hr" },
 							{ e: "par", c: [
 								{ e: "text", t: noticeText, f: [[FormattingFlag.italic, 0, noticeText.length]] }
@@ -125,6 +135,29 @@ export async function fixR2CommentsMedia(comments: Record<string, any>) {
 				logger.err("Error fetching blocked comments data: " + (e as any).message);
 			})
 		);
+	};
+
+	if (moderationInfoToFetch.length) {
+		logger.log(`Fetching moderation info for ${moderationInfoToFetch.length} comments`, true);
+		moderationInfoToFetch.forEach(id => commentFixerPromises.push(
+			svcGqlFetch("CommentModerationInfo", { id }).then(({ commentById }) => {
+				if (commentById?.moderationInfo) {
+					const info = commentById?.moderationInfo;
+					const comment = comments[id] as Comment;
+					comment.bannedBy = info.verdictByRedditorInfo?.displayName ?? null;
+					comment.banReason = info.banReason;
+					comment.modNote = info.modNote;
+					comment.modQueueTriggers = info.modQueueTriggers;
+					for (const trigger of comment.modQueueTriggers ?? []) {
+						if (trigger && mqTriggerD2xUnsupported.has(trigger?.type)) {
+							trigger.message = `(${trigger.type}) ${trigger.message}`;
+							trigger.type = "AUTOMOD";
+						}
+					}
+					comment.isRemoved = info.isRemoved;
+				}
+			}).catch(e => logger.err(`Error fetching moderation info for comment ${id}: ${e?.statusText ?? e}`))
+		));
 	};
 
 	await Promise.all(commentFixerPromises);
@@ -152,7 +185,7 @@ export async function fetchSubredditPageExtra(
 		if (id) {
 			return {
 				structuredStyles: null,
-				subredditInfo: { __typename: "__USE_CACHE__", id, name: subredditName },
+				subredditInfo: { __typename: "__USE_CACHE__", name: id  },
 				userFlairsV2: null,
 				postFlairsV2: null,
 			}
@@ -251,5 +284,9 @@ export const shouldUseArcticShiftHistory = async (username: string) => {
 		includePremiumAvatarTreatment: false,
 	}, { cache: true, maxCacheAge: 60e3 });
 
-	return redditorInfoByName?.isProfileContentFiltered;
+	const isFiltered = redditorInfoByName?.isProfileContentFiltered;
+	if (isFiltered) {
+		showToast({ kind: ToastType.Custom, text: `u/${username} has profile curation active.` }, 10e3);
+	};
+	return isFiltered;
 }

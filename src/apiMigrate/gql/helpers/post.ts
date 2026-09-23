@@ -83,7 +83,7 @@ export async function handlePostFeedAndOtherDiscussions({ postId, includeOtherDi
 	} */
 
 	await Promise.all(promises);
-	console.log(outputData);
+	//console.log(outputData);
 	return JSON.stringify({
 		data: outputData
 	});

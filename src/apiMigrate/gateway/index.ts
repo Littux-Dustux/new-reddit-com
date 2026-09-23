@@ -11,6 +11,7 @@ import { showToast, ToastType } from "../../logging";
 import { processUserAbout } from "./mappers/user";
 import { getREST } from "../../api/rest";
 import { APIError, convertFullnameToNum, upsertUserSubredditPref } from "../../api/localhost";
+import type { Subreddit } from "./types/subreddit";
 
 
 const logger = getLogger("gatewayAPI");
@@ -66,7 +67,9 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 					)
 				case "comments":
 					return await shouldUseArcticShiftHistory(onTarget.toLowerCase())
-						? arcticShiftListing(onTarget, false, params.after)
+						? params.sort === "top"
+							? arcticShiftListing(onTarget, false, params.after, true)
+							: arcticShiftListing(onTarget, false, params.after)
 						: genericListingR2(
 							`/user/${onTarget}/comments.json`,
 							{ ...params, limit: '100' }
@@ -115,7 +118,7 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 			const json = JSON.parse(data);
 			if (json.type !== "subreddit") return emptyResponse;
 			try {
-				const sr = getState().subreddits.models[json.subreddit_id];
+				const sr = getState().subreddits.models[json.subreddit_id] as Subreddit;
 				return {
 					jsonResponse: JSON.stringify((
 						await upsertUserSubredditPref({

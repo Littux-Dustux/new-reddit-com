@@ -24,3 +24,5 @@ export function convertHeadersStringToObject(headersString: string): Record<stri
 	}
 	return headers;
 }
+
+export const truncText = (text: string, limit: number) => text.length > limit ? text.slice(0, limit) + "…" : text;

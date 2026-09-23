@@ -4,7 +4,7 @@
 
 import { getCache, setCache } from "./caching";
 import { getLogger, showToast } from "../logging";
-import { convertHeadersStringToObject } from "../utils";
+import { convertHeadersStringToObject, truncText } from "../utils";
 import { getState } from "../main";
 import { getLoidState } from "../state/utils";
 import { getRedditRequestHeaders, parseResponseAndStoreAuth } from "./helpers";
@@ -146,17 +146,35 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 	}
 
 	// Execute Request via Tampermonkey GM.xmlHttpRequest (wrapped in gmFetch)
-	const response = await window.gmFetch({
-		method: (method as any),
-		url,
-		headers,
-		data: (requestData as any),
-		anonymous: true,
-		timeout: 30_000,
-		redirect: "error",
-	});
+	let response: Tampermonkey.Response<any>, tries = 0;
+	while (true) {
+		try {
+			response = await window.gmFetch({
+				method: (method as any),
+				url,
+				headers,
+				data: (requestData as any),
+				anonymous: true,
+				timeout: 32_000,
+				redirect: "manual",
+			});
+			break;
+		} catch (e: any) {
+			if (e.statusText) {
+				tries++;
+				logger.err(`Error fetching URL "${truncText(endpoint, 32)}" (tries: ${tries}): ${e.statusText}`);
+				if (tries > 20) {
+					throw new RedditAPIError(0, e.statusText);
+				}
+			} else throw e;
+		}
+	}
 	parseResponseAndStoreAuth(response.responseHeaders);
 
+	if (response.status === 301) {
+		const headers = new Headers(convertHeadersStringToObject(response.responseHeaders));
+		throw new RedditAPIError(404, `Got redirect to "${headers.get('location')}"`, "NOT_FOUND");
+	}
 	logger.log(`${method} ${url.slice(0, 128)} (status: ${response.status}) ${requestData?.slice(0, 128)}`);
 
 	const parsed = tryParseJson(response.responseText);

@@ -5,6 +5,7 @@ import { addCommentToState, addCommentTreeToState, type CommentPosition } from "
 import { fixR2CommentsMedia } from "../utils";
 import type { SubredditListingStateBase, PostListingPageState, CommentListingPageState, CommentsPageState, ConversationsPageState } from "../types/state";
 import type { GetDevvitPostDataQuery } from "../../../api/types/gql";
+import { truncText } from "../../../utils";
 
 export async function postAndCommentsListing(
 	things: Record<string, any>[],
@@ -125,7 +126,6 @@ export type ExtraComments = {
 	prev: CommentPosition,
 };
 
-const truncText = (text: string, limit: number) => text.length > limit ? text.slice(0, limit) + "…" : text;
 const printOrder = (order: [number, string, string][]) => order.map(([depth, id, body]) => `${'│'.repeat(depth)}[${depth}] ${id}: ${body ? truncText(body, 18) : '[deleted]'}`).join('\n');
 
 export async function conversationsListing(things: any[], afterToken: string) {

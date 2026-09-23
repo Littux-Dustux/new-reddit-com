@@ -11,7 +11,7 @@ export type CommentPosition = { id: string; type: string } | null;
 export const processSingleComment = (comment: any, postId?: any): Comment => {
 	const bodyText = comment.rtjson ? getRTJSONFirstText(comment.rtjson) : comment.body;
 	const isDeleted = comment.collapsed_reason_code === "DELETED" || (
-		comment.author === "[deleted]" && bodyText === "[deleted]"
+		comment.author === "[deleted]" && (bodyText === "[deleted]" || bodyText === "[removed]")
 	);
 
 	return ({
@@ -51,6 +51,7 @@ export const processSingleComment = (comment: any, postId?: any): Comment => {
 		isOp: comment.is_submitter,
 		isRemoved: comment.removed,
 		isSaved: comment.saved,
+		isSpam: comment.spam,
 		isStickied: comment.stickied,
 		isScoreHidden: comment.score_hidden,
 		media: {

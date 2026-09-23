@@ -43,36 +43,42 @@ export async function gqlFetch<T = any>(
 	logger.log(`${operationName}: ${payload?.slice(0, 160)}`);
 
 	const fetchPromise = (async () => {
-		let resp;
-
-		try {
-			resp = await window.gmFetch({
-				method: "POST",
-				url: "https://cf.gql-fed.reddit.com?" + operationName,
-				headers: {
-					"Content-Type": "application/json",
-					"User-Agent": "Reddit/Version 2026.03.0/Build 2603061/Android 13",
-					"X-Reddit-Translations": "enabled",
-					...(await getRedditRequestHeaders(options.anonymous))
-				},
-				data: JSON.stringify({
-					operationName,
-					variables,
-					extensions: {
-						persistedQuery: {
-							version: 1,
-							sha256Hash,
-						},
+		let resp, tries = 0;
+		while (true) {
+			try {
+				resp = await window.gmFetch({
+					method: "POST",
+					url: "https://cf.gql-fed.reddit.com?" + operationName,
+					headers: {
+						"Content-Type": "application/json",
+						"User-Agent": "Reddit/Version 2026.03.0/Build 2603061/Android 13",
+						"X-Reddit-Translations": "enabled",
+						...(await getRedditRequestHeaders(options.anonymous))
 					},
-				}),
-				anonymous: true,
-				timeout: 30_000,
-			});
-		} catch(e: any) {
-			if (e?.error) {
-				throw new TypeError(`Error fetching gql data: ${(e as Tampermonkey.ErrorResponse).statusText}`)
-			} else {
-				throw e;
+					data: JSON.stringify({
+						operationName,
+						variables,
+						extensions: {
+							persistedQuery: {
+								version: 1,
+								sha256Hash,
+							},
+						},
+					}),
+					anonymous: true,
+					timeout: 30_000,
+				});
+				break;
+			} catch(e: any) {
+				if (e?.statusText) {
+					tries++;
+					logger.err(`Error fetching gql data for "${operationName}" (try ${tries}): ${(e as Tampermonkey.ErrorResponse).statusText}`);
+					if (tries > 20) {
+						throw new RedditAPIError(0, e.statusText);
+					}
+				} else {
+					throw e;
+				}
 			}
 		}
 

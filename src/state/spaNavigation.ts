@@ -8,6 +8,7 @@ const scrollPosByPath = new Map<string, { pos: number, selector?: string }>();
 const allowedAnchorClasses = new Set([
 	"_1tpiOc0IxpDU113wUs4zi1", // notification link
 	"_3t5uN8xUmg0TOwRCOGQEcU", // rtjson link (comment, post etc)
+	"styled-outbound-link",
 ]);
 
 const allowedTargetClasses = new Set([
@@ -17,13 +18,27 @@ const allowedTargetClasses = new Set([
 ]);
 
 export function setupSpaNavigation() {
-	document.addEventListener('click', async (e: any) => {
-		if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+	document.addEventListener('click', async (e) => {
+		if (!e.target || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+		const targetEl = e.target as Element;
 
-		const anchor = e.target?.closest('a');
+		// Handle comment header click
+		if (targetEl.classList.contains("-Xcv3XBXmgiY2X5RqaPbO")) {
+			// Collapse/Expand comment
+			(targetEl
+				.closest('._3sf33-9rVAO_v4y0pIW_CH')
+				?.querySelector(
+					'._3Wv3am0TXfTcugZJ6niui > ._36AIN2ppxy_z-XSDxTvYj5 > .threadline,' +
+					'._2Gzh48SaLz7dQBCULfOC6V.O_Ica0k2O4KFcZyNfsJDU'
+				) as HTMLElement)?.click();
+			return
+		}
+
+		const anchor = targetEl.closest('a');
+
 		if (!anchor || !anchor.href || !(
 			allowedAnchorClasses.has(anchor.className) ||
-			allowedTargetClasses.has(e.target.className)
+			allowedTargetClasses.has(targetEl.className)
 		)) return;
 
 		const url = new URL(anchor.href, location.origin);

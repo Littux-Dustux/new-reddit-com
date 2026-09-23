@@ -1,50 +1,71 @@
+import { RedditAPIError } from "../api/rest";
+import { getLogger } from "../logging";
+
 export type InterceptorHandler = (
 	requestDetails: { url: string, domain: string, method: string, headers: Record<string, any> }, data: any
 ) => Promise<{
 	jsonResponse: string,
 	status: number,
+	statusText?: string,
 	headers?: Record<string, string>
 }>;
 
 
+
+// Make it globally available
+(window as any).addInterceptor = addInterceptor;
 const interceptorRegistry = new Map<string, Map<string, InterceptorHandler>>();
+const logger = getLogger('interceptXhr');
+
+
 
 export function addInterceptor(domain: string, method: string, handler: InterceptorHandler): void {
-    if (!interceptorRegistry.has(domain)) {
+	if (!interceptorRegistry.has(domain)) {
         interceptorRegistry.set(domain, new Map());
     }
     interceptorRegistry.get(domain)!.set(method, handler);
 }
 
-// Make it globally available
-(window as any).addInterceptor = addInterceptor;
-
-
 async function createFakeXHR(xhr: XMLHttpRequest, data: any, handler: InterceptorHandler): Promise<void> {
-	const {
-		jsonResponse,
-		status,
-		headers = {
-			"content-type": "application/json; charset=utf-8",
-		}
-	} = await handler(
+	let handlerPromise = handler(
 		{
 			url: (xhr as any)._url,
 			domain: (xhr as any)._domain,
 			method: (xhr as any)._method,
 			headers: (xhr as any)._headers
 		},
-		data
-	);
+		data,
+	).catch(e => {
+		const isApiError = e instanceof RedditAPIError;
 
-	// Superagent checks these specifically
+		if (!(isApiError && e.status === 0)) {
+			logger.err(`Error running intercepter for ${(xhr as any)._domain}: ${e?.message ?? e?.statusText ?? e}`);
+		};
+
+		return {
+			jsonResponse: undefined,
+			status: 0,
+			statusText: isApiError ? e.message : "OK",
+			headers: {} as Record<string, string>,
+		};
+	});
+
+	const {
+		jsonResponse,
+		status,
+		statusText = "OK",
+		headers = {
+			"content-type": "application/json; charset=utf-8",
+		}
+	} = await handlerPromise;
+
+
 	Object.defineProperties(xhr, {
-		status: { value: status || 200 },
-		statusText: { value: "OK" },
+		status: { value: status },
+		statusText: { value: statusText },
 		readyState: { value: 4 },
 		responseText: { value: jsonResponse },
 		response: { value: jsonResponse },
-		// Superagent uses this to decide if the request was successful
 		responseURL: { value: (xhr as any)._url },
 		withCredentials: { value: true },
 	});

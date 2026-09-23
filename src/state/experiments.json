@@ -1721,6 +1721,12 @@
         "variant": "enabled",
         "version": "3"
     },
+    "d2x_remove_hide_post_overflowmenu": {
+        "id": 0,
+        "name": "d2x_remove_hide_post_overflowmenu",
+        "variant": "enabled",
+        "version": "1"
+    },
     "d2x_remove_hide_post_overflowmenu_v2": {
         "id": 8649,
         "name": "d2x_remove_hide_post_overflowmenu_v2",
@@ -1754,8 +1760,14 @@
     "d2x_show_supporting_link_ads": {
         "id": 5053,
         "name": "d2x_show_supporting_link_ads",
-        "variant": "control_1",
+        "variant": "enabled",
         "version": "10"
+    },
+    "d2x_shreddit_player_remaining_feeds_and_types": {
+        "id": 0,
+        "name": "d2x_shreddit_player_remaining_feeds_and_types",
+        "variant": "control_1",
+        "version": "1"
     },
     "d2x_signal_collection": {
         "id": 3146,
@@ -5812,6 +5824,12 @@
         "name": "watch_feed_pipeline",
         "variant": "watch_feed_inventory_expansion",
         "version": "6"
+    },
+    "web2x_animation_count_v2": {
+        "id": 0,
+        "name": "web2x_animation_count_v2",
+        "variant": "enabled",
+        "version": "14"
     },
     "web2x_call_to_action_bar": {
         "id": 4484,
