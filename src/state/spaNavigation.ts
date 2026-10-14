@@ -2,7 +2,7 @@ import { gqlFetch } from "../api/gql";
 import { getLogger, showToast, ToastType } from "../logging";
 
 const logger = getLogger("state:spaNavigation");
-const redditDomains = new Set(['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com', 'np.reddit.com', window.location.host]);
+const redditDomains = new Set(['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com', 'np.reddit.com', 'redd.it', window.location.host]);
 const scrollPosByPath = new Map<string, { pos: number, selector?: string }>();
 
 const allowedAnchorClasses = new Set([

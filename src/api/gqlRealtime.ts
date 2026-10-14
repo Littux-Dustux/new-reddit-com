@@ -30,9 +30,7 @@ function initSocket() {
 		this.send(JSON.stringify({
 			type: "connection_init",
 			payload: {
-				headers: {
-					Authorization: `Bearer ${await (isLoggedIn.value ? window.getToken : getAnonymousToken)()}`,
-				},
+				Authorization: `Bearer ${await (isLoggedIn.value ? window.getToken : getAnonymousToken)()}`,
 			},
 		}));
 	}

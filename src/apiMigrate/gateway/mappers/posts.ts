@@ -82,6 +82,8 @@ const getMedia = (data: any, devvitData?: DevvitPostFragmentFragment): Media | n
 					id: it.id,
 					mediaId: it.media_id,
 					adEvents: it.ad_events ?? [],
+					outboundUrl: it.outbound_url,
+					isDeleted: it.is_deleted,
 				})),
 			},
 			mediaMetadata: antiGifFuckGifs(data.media_metadata),
@@ -146,10 +148,10 @@ const getMedia = (data: any, devvitData?: DevvitPostFragmentFragment): Media | n
 	};
 
 	if (data.is_self || data.selftext || data.selftext_html || data.rtjson?.document.length) {
-		if (typeof data.selftext === "string") {
+		if (data.is_self) {
+			baseMedia.type = data.rtjson ? "rtjson" : "text";
+		} else if (typeof data.selftext_html === "string") {
 			baseMedia.type = "text";
-		} else if (data.is_self && data.rtjson) {
-			baseMedia.type = "rtjson";
 		}
 		return baseMedia;
 	};
