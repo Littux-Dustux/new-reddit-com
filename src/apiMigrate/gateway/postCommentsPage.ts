@@ -1,9 +1,11 @@
 import { gqlFetch } from "../../api/gql";
 import { getUserSubredditPref } from "../../api/localhost";
-import { getREST, postREST, RedditAPIError } from "../../api/rest";
+import { getREST, postREST } from "../../api/rest";
+import { RedditAPIError } from "../../api/restErr";
 import type { GetDevvitPostDataQuery } from "../../api/types/gql";
 import { getLogger } from "../../logging";
 import { getState } from "../../main";
+import { errToStr } from "../../utils";
 import { moreComments, postAndCommentsListing, postComments } from "./mappers/listing";
 import { type CommentsPageState } from "./types/state";
 import { fetchSubredditPageExtra } from "./utils";
@@ -62,6 +64,7 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 							getCrossPost: true,
 						}, devvitDataCacheOptions)
 					]);
+					// @ts-ignore
 					if (post.postInfoById?.devvit?.__typename === "DevvitPost") {
 						return post;
 					} else {
@@ -114,7 +117,7 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 					raw_json: "1",
 					raw_media_syntax: "1",
 				})
-		}`);
+		}`, { cookieAuth: true });
 
 
 		return {
@@ -143,9 +146,7 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 		} else if (e && (e as any).status && (e as any).jsonResponse) {
 			return e as { jsonResponse: string, status: number };
 		} else {
-			logger.crt(`Error fetching ${params.onOtherDiscussions === "true" ? "other discussions" : "comments"}: ${
-				(e as any)?.message ?? JSON.stringify(e)
-			}`);
+			logger.crt(`Error fetching ${params.onOtherDiscussions === "true" ? "other discussions" : "comments"}: ${errToStr(e)}`);
 			throw e;
 		}
 	}
@@ -159,7 +160,8 @@ export const moreCommentsResponse = async (postID: string, childrenIDs: string) 
 				link_id: postID,
 				children: childrenIDs,
 				api_type: "json",
-			})
+			}),
+			{ cookieAuth: true }
 		);
 		return {
 			jsonResponse: JSON.stringify(await moreComments(data.json.data.things, postID)),

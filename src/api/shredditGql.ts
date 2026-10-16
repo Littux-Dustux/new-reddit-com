@@ -1,6 +1,6 @@
 import { getLogger } from "../logging";
 import { multiErrorToast } from "../logging/toast";
-import { RedditAPIError } from "./rest";
+import { RedditAPIError } from "./restErr";
 
 const logger = getLogger("api:gql-shreddit");
 

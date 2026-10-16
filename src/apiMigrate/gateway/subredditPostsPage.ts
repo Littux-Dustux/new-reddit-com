@@ -1,6 +1,8 @@
 import { getUserSubredditPref } from "../../api/localhost";
-import { getREST, RedditAPIError } from "../../api/rest";
+import { getREST } from "../../api/rest";
+import { RedditAPIError } from "../../api/restErr";
 import { getLogger } from "../../logging";
+import { errToStr } from "../../utils";
 import { postAndCommentsListing } from "./mappers/listing";
 import { subredditNameToId } from "./mappers/subreddit";
 import { expectStatusCodes, fetchSubredditPageExtra } from "./utils";
@@ -46,7 +48,7 @@ export async function subredditPostsPage(subredditOrSubreddits: string, params: 
 	try {
 		const [listing, subredditPageExtra] = await Promise.all([
 			getREST(`/r/${subredditOrSubreddits}/${sort}.json?${new URLSearchParams(params)}`,
-				{ expectStatusCodes }
+				{ expectStatusCodes, cookieAuth: true }
 			).catch(e => {
 				if (!shouldFetchSubreddit) throw e;
 			}),
@@ -75,7 +77,7 @@ export async function subredditPostsPage(subredditOrSubreddits: string, params: 
 		} else if (e && (e as any).status && (e as any).jsonResponse) {
 			return e as { jsonResponse: string, status: number };
 		} else {
-			logger.crt(`Error fetching subreddit page: ${(e as any)?.message ?? JSON.stringify(e)}`, e);
+			logger.crt(`Error fetching subreddit page: ${errToStr(e)}`, e);
 			throw e;
 		}
 	}

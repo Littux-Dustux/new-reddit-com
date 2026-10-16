@@ -1,5 +1,6 @@
-import { RedditAPIError } from "../api/rest";
+import { RedditAPIError } from "../api/restErr";
 import { getLogger } from "../logging";
+import { errToStr } from "../utils";
 
 export type InterceptorHandler = (
 	requestDetails: { url: string, domain: string, method: string, headers: Record<string, any> }, data: any
@@ -39,7 +40,7 @@ async function createFakeXHR(xhr: XMLHttpRequest, data: any, handler: Intercepto
 		const isApiError = e instanceof RedditAPIError;
 
 		if (!(isApiError && e.status === 0)) {
-			logger.err(`Error running intercepter for ${(xhr as any)._domain}: ${e?.message ?? e?.statusText ?? e}`);
+			logger.err(`Error running intercepter for ${(xhr as any)._domain}: ${errToStr(e)}`);
 		};
 
 		return {

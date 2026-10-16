@@ -2,7 +2,8 @@ import { getLogger, showToast, ToastType } from "../../logging";
 import { getGIPHYGifsByIds } from "../../api/giphy";
 import { gqlFetch } from "../../api/gql";
 import { getVideoMediaMetadataGql, getMuxedMP4sDownloadRTJSON } from "./mappers/common";
-import { getREST, RedditAPIError } from "../../api/rest";
+import { getREST } from "../../api/rest";
+import { RedditAPIError } from "../../api/restErr";
 import { subredditNameToId } from "./mappers/subreddit";
 import { convertUnavailableGqlSubredditToGatewayError } from "./mappers/gql/subreddit";
 import { getState } from "../../main";
@@ -13,6 +14,7 @@ import { getUserSubredditPref } from "../../api/localhost";
 import type { ModQueueTriggerType, CommentMediaDetailsQuery } from "../../api/types/gql";
 import type { Comment, Media } from "./types/comment";
 import svcGqlFetch from "../../api/shredditGql";
+import { errToStr } from "../../utils";
 
 const logger = getLogger('apiMigrate:gateway:utils');
 const mqTriggerD2xUnsupported = new Set<ModQueueTriggerType>(["COMMENT_GUIDANCE", "DOMAIN_BAN", "POST_GUIDANCE"]);
@@ -77,7 +79,7 @@ export async function fixR2CommentsMedia(comments: Record<string, Comment>) {
 					}
 				}
 			}).catch(e => {
-				logger.err("Error fetching GIPHY GIF data: " + (e as any).message);
+				logger.err("Error fetching GIPHY GIF data: " + errToStr(e));
 			})
 		);
 	}
@@ -104,7 +106,7 @@ export async function fixR2CommentsMedia(comments: Record<string, Comment>) {
 					}
 				}
 			}).catch(e => {
-				logger.err("Error fetching videos in comments: " + (e as any).message);
+				logger.err("Error fetching videos in comments: " + errToStr(e));
 			})
 		);
 	}
@@ -132,7 +134,7 @@ export async function fixR2CommentsMedia(comments: Record<string, Comment>) {
 					};
 				}
 			}).catch(e => {
-				logger.err("Error fetching blocked comments data: " + (e as any).message);
+				logger.err("Error fetching blocked comments data: " + errToStr(e));
 			})
 		);
 	};
@@ -156,7 +158,7 @@ export async function fixR2CommentsMedia(comments: Record<string, Comment>) {
 					}
 					comment.isRemoved = info.isRemoved;
 				}
-			}).catch(e => logger.err(`Error fetching moderation info for comment ${id}: ${e?.statusText ?? e}`))
+			}).catch(e => logger.err(`Error fetching moderation info for comment ${id}: ${errToStr(e)}`))
 		));
 	};
 
@@ -205,15 +207,15 @@ export async function fetchSubredditPageExtra(
 
 	const [structuredStyles, postFlairsV2, userFlairsV2, gqlOrR2SubredditInfo, prefs] = await Promise.all([
 		includeStructuredStyles && getREST(`/api/v1/structured_styles/${subredditName}.json?raw_json=1`)
-		.catch(e => logger.err(`Error fetching structuredStyles for r/${subredditName}: ${e.message}`, true, e)),
+		.catch(e => logger.err(`Error fetching structuredStyles for r/${subredditName}: ${errToStr(e)}`, true, e)),
 
 		includePostFlairs && getREST(`/r/${subredditName}/api/link_flair_v2.json?raw_json=1`,
 			{ expectStatusCodes }
-		).catch(e => logger.err(`Error fetching post flairs for r/${subredditName}: ${e.message}`, true, e)),
+		).catch(e => logger.err(`Error fetching post flairs for r/${subredditName}: ${errToStr(e)}`, true, e)),
 
 		includeUserFlairs && getREST(`/r/${subredditName}/api/user_flair_v2.json?raw_json=1`,
 			{ expectStatusCodes }
-		).catch(e => logger.err(`Error fetching user flairs for r/${subredditName}: ${e.message}`, true, e)),
+		).catch(e => logger.err(`Error fetching user flairs for r/${subredditName}: ${errToStr(e)}`, true, e)),
 
 		isNotPreload && getREST(`/r/${subredditName}/about.json?raw_json=1`).catch(e => {
 			if (e instanceof RedditAPIError) {
@@ -227,10 +229,10 @@ export async function fetchSubredditPageExtra(
 					includeWelcomePage: false,
 					includeDevvitData: false,
 				}).catch(e => logger.err(
-					`Error fetching gql subreddit info for r/${subredditName}: ${e.message}`, true, e
+					`Error fetching gql subreddit info for r/${subredditName}: ${errToStr(e)}`, true, e
 				));
 			};
-			logger.err(`Error fetching r2 subreddit info for r/${subredditName}: ${e.message}`, true, e);
+			logger.err(`Error fetching r2 subreddit info for r/${subredditName}: ${errToStr(e)}`, true, e);
 		}),
 
 		isNotPreload && getUserSubredditPref(subredditName),

@@ -26,3 +26,6 @@ export function convertHeadersStringToObject(headersString: string): Record<stri
 }
 
 export const truncText = (text: string, limit: number) => text.length > limit ? text.slice(0, limit) + "…" : text;
+
+export const errToStr = (err: any) =>
+	!err ? 'Unknown error' : err.statusText ?? err.message ?? JSON.stringify(err);

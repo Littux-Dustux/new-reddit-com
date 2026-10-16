@@ -4,7 +4,7 @@ import { getLogger } from "../../logging/logger";
 import idMapping from './oldGqlIdNameMap.json';
 import { type OldOperation, gqlFedMap } from "./mapping";
 import svcGqlFetch from "../../api/shredditGql";
-import { RedditAPIError } from "../../api/rest";
+import { RedditAPIError } from "../../api/restErr";
 
 const logger = getLogger("gqlMigrate");
 

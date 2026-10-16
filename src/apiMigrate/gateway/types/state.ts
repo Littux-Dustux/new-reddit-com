@@ -11,7 +11,7 @@ export interface StateBase {
 	authorFlair: Record<string, Record<string, Flair | null>>;
 	postFlair: Record<string, any>;
 	posts: Record<string, Post>;
-	profiles: Record<string, any>;
+	profiles: Record<string, Subreddit>;
 	userFlair: Record<string, any>;
 	subredditAboutInfo: Record<string, SubredditAboutInfo>;
 	subreddits: Record<string, Subreddit>;
@@ -55,9 +55,12 @@ export interface ConversationsPageState extends PostListingPageState {
 	continueThreads: Record<string, any>;
 	moreComments: Record<string, any>;
 	extraComments: Record<string, ExtraComments>;
-}export type SubredditState = {
+}
+
+export type SubredditState = {
 	subredditAboutInfo: Record<string, SubredditAboutInfo>;
 	subreddits: Record<string, Subreddit>;
+	profiles: Record<string, Subreddit>;
 	postFlair: Record<string, any>;
 	userFlair: Record<string, any>;
 	subredditPermissions?: Record<string, any> | null;

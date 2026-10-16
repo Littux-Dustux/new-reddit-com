@@ -1,5 +1,7 @@
-import { getREST, RedditAPIError } from "../../api/rest";
+import { getREST } from "../../api/rest";
+import { RedditAPIError } from "../../api/restErr";
 import { getLogger, showToast, ToastType } from "../../logging";
+import { errToStr } from "../../utils";
 import { conversationsListing, postAndCommentsListing } from "./mappers/listing";
 
 const logger = getLogger('genericListing');
@@ -32,8 +34,8 @@ export async function genericListingR2(
 			),
 			status: 200,
 		}
-	} catch (e) {
-		logger.crt(`Error fetching listing ${url}: ${e}`, e);
+	} catch (e: any) {
+		logger.crt(`Error fetching listing ${url}: ${errToStr(e)}`, e);
 		return {
 			jsonResponse: e instanceof RedditAPIError ? e.rawPayload : '{"status":500,"message":"Error fetching listing"}',
 			status: 500,
@@ -108,7 +110,7 @@ export async function arcticShiftListing(username: string, isPostPage: boolean, 
 			status: 200,
 		}
 	} catch (e) {
-		logger.crt(`Error fetching arctic-shift listing for ${JSON.stringify({ username, isPostPage })}: ${e}`, e);
+		logger.crt(`Error fetching arctic-shift listing for ${JSON.stringify({ username, isPostPage })}: ${errToStr(e)}`, e);
 		return {
 			jsonResponse: e instanceof RedditAPIError ? e.rawPayload : '{"status":500,"message":"Error fetching listing"}',
 			status: 500,

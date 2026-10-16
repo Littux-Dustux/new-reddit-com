@@ -1,5 +1,6 @@
 import { subscribe, unsubscribe } from "../api/gqlRealtime";
-import { getREST, RedditAPIError } from "../api/rest";
+import { getREST } from "../api/rest";
+import { RedditAPIError } from "../api/restErr";
 import { getLogger } from "../logging";
 import { getState } from "../main";
 import { processSingleComment } from "./gateway/mappers/comments";

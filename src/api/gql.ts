@@ -1,9 +1,10 @@
 import { getLogger } from "../logging/logger";
 import { multiErrorToast } from "../logging/toast";
 import { isLoggedIn } from "../state";
+import { errToStr } from "../utils";
 import { getCache, setCache } from "./caching";
 import { getRedditRequestHeaders, parseResponseAndStoreAuth } from "./helpers";
-import { RedditAPIError } from "./rest";
+import { RedditAPIError } from "./restErr";
 
 const logger = getLogger("api:gql");
 
@@ -72,7 +73,7 @@ export async function gqlFetch<T = any>(
 			} catch(e: any) {
 				if (e?.statusText) {
 					tries++;
-					logger.err(`Error fetching gql data for "${operationName}" (try ${tries}): ${(e as Tampermonkey.ErrorResponse).statusText}`);
+					logger.err(`Error fetching gql data for "${operationName}" (try ${tries}): ${errToStr(e)}`);
 					if (tries > 20) {
 						throw new RedditAPIError(0, e.statusText);
 					}

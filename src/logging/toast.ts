@@ -17,10 +17,14 @@ export enum ToastType {
 
 export type ToastOptions = {
 	kind: ToastType;
-	id?: string;
 	text: string;
+	id?: string;
+	customIconAsset?: string;
 	buttonText?: string;
 	buttonAction?: () => void;
+	secondButtonText?: string;
+	secondButtonAction?: () => void;
+	onClose?: () => void;
 };
 
 export const clearToast = (id: string) => window.store?.dispatch({ type: "TOAST__DISMISSED", payload: id });

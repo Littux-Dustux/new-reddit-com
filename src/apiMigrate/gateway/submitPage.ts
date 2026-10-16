@@ -1,5 +1,7 @@
-import { getREST, RedditAPIError } from "../../api/rest";
+import { getREST } from "../../api/rest";
+import { RedditAPIError } from "../../api/restErr";
 import { getLogger } from "../../logging";
+import { errToStr } from "../../utils";
 import { postAndCommentsListing } from "./mappers/listing";
 import { addPostToState } from "./mappers/posts";
 import { addR2SubredditToState } from "./mappers/subreddit";
@@ -12,6 +14,7 @@ export async function submitPage({ include, subreddit }: any) {
 	const state: SubredditState = {
 		subredditAboutInfo: {},
 		subreddits: {},
+		profiles: {},
 		subredditPermissions: {},
 		postFlair: {},
 		userFlair: {},
@@ -41,7 +44,7 @@ export async function submitPage({ include, subreddit }: any) {
 		if (e && e.status && e.jsonResponse) {
 			return e as { jsonResponse: string, status: number };
 		} else {
-			logger.crt(`Error fetching subreddit for submit page: ${(e as any)?.message ?? JSON.stringify(e)}`, e);
+			logger.crt(`Error fetching subreddit for submit page: ${errToStr(e)}`, e);
 			throw e;
 		}
 	}

@@ -3,100 +3,11 @@
 // It is fine now.
 
 import { getCache, setCache } from "./caching";
-import { getLogger, showToast } from "../logging";
-import { convertHeadersStringToObject, truncText } from "../utils";
-import { getState } from "../main";
-import { getLoidState } from "../state/utils";
+import { getLogger } from "../logging";
+import { convertHeadersStringToObject, errToStr, truncText } from "../utils";
 import { getRedditRequestHeaders, parseResponseAndStoreAuth } from "./helpers";
 import { isLoggedIn } from "../state";
-
-const logger = getLogger('api:rest');
-
-export class RedditAPIError extends Error {
-	public status: number;
-	public reason: string;
-	public rawPayload: any;
-	public fields?: string[];
-
-	constructor(status: number, message: string, reason: string = "UNKNOWN_ERROR", rawPayload: any = null, fields?: string[]) {
-		super(message);
-		showToast({
-			kind: 4,
-			text: message
-		}, 10000);
-		this.name = "RedditAPIError";
-		this.status = status;
-		this.reason = reason;
-		this.rawPayload = rawPayload;
-		this.fields = fields ?? [];
-	}
-}
-
-/**
- * Attempts to parse JSON from response text. Returns parsed object or null if invalid JSON.
- */
-function tryParseJson(responseText: string): any | null {
-	try {
-		return JSON.parse(responseText);
-	} catch {
-		return null;
-	}
-}
-
-/**
- * Normalizes the varying error structures returned by Reddit into a single RedditAPIError.
- */
-function parseRedditError(status: number, responseText: string, parsed?: any): RedditAPIError {
-	if (!parsed) {
-		parsed = tryParseJson(responseText);
-		if (!parsed) {
-			// Handle <text/html> or empty responses (e.g., 503 Service Unavailable, 502 Bad Gateway)
-			const trimmedResponse = responseText.trim().toLowerCase();
-			const isHtml = trimmedResponse.startsWith("<!doctype html") || trimmedResponse.startsWith("<html");
-			const message = isHtml
-				? `Reddit returned an HTML page (status: ${status})`
-				: `Reddit returned a non JSON response (status: ${status}): ${responseText.slice(0, 100)}`;
-			return new RedditAPIError(status, message, "HTML_OR_TEXT_ERROR", responseText);
-		}
-	}
-
-	// 1. Format: { json: { errors: [ [reason, message, field], ... ] } }
-	// Note: Reddit sometimes returns HTTP 200 OK with this format!
-	if (parsed?.json?.errors && Array.isArray(parsed.json.errors) && parsed.json.errors.length > 0) {
-		const firstError = parsed.json.errors[0];
-		// firstError is usually an array: ["USER_REQUIRED", "Please log in to do that.", "username"]
-		const reason = firstError[0] || "UNKNOWN_REASON";
-		const message = firstError[1] || "An error occurred";
-		const field = firstError[2];
-		return new RedditAPIError(status, `${reason}: "${message}" on field "${field}"`, reason, parsed, field ? [field] : undefined);
-	}
-
-	// 2. Format: {"fields": ["subject"], "explanation": "we need something here", "message": "Bad Request", "reason": "NO_TEXT"}
-	if (parsed?.explanation && parsed?.reason) {
-		return new RedditAPIError(
-			status,
-			`${status}: ${parsed.message}: ${parsed.reason}: "${parsed.explanation}" on field(s) "${parsed.fields}"`,
-			parsed.reason, parsed, parsed.fields
-		);
-	}
-
-	// 3. Format: { reason: "MAY_NOT_VIEW", message: "Forbidden" }
-	// 4. Format: { error: 403, message: "Forbidden", reason: "gold_only" }
-	// 5. Format: { error: 404, message: "Not Found" }
-	if (parsed?.message) {
-		const actualStatus = parsed.error && typeof parsed.error === "number" ? parsed.error : status;
-		const reason = parsed.reason || (parsed.error && typeof parsed.error === "string" ? parsed.error : "UNKNOWN_REASON");
-		return new RedditAPIError(
-			actualStatus,
-			`${actualStatus}: ${parsed.message}${parsed.reason ? `: ${parsed.reason.replaceAll('_', ' ')}` : ""}`,
-			reason, parsed
-		);
-	}
-
-	// Fallback for unrecognized JSON objects
-	return new RedditAPIError(status, `${status}: Unknown JSON error`, "UNKNOWN_JSON_ERROR", parsed);
-}
-
+import { parseRedditError, RedditAPIError, tryParseJson } from "./restErr";
 
 
 export interface RequestOptions {
@@ -106,9 +17,17 @@ export interface RequestOptions {
 	/** If true, uses getCache/setCache. Only works for GET requests. */
 	cacheMaxAge?: number | undefined;
 	anonymous?: boolean;
+	cookieAuth?: boolean;
 	expectStatusCodes?: Set<number>;
 }
 
+
+const logger = getLogger('api:rest');
+const defaultHeaders = {
+	"Accept": "application/json",
+	"Origin": "https://oauth.reddit.com",
+	"Referer": "https://oauth.reddit.com/",
+}
 
 /**
  * Base function to make authenticated requests to oauth.reddit.com.
@@ -130,7 +49,7 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 	const url = endpoint.startsWith("http") ? endpoint : `https://oauth.reddit.com${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
 
 	const headers: Record<string, string> = {
-		...(await getRedditRequestHeaders(options.anonymous)),
+		...(options.cookieAuth ? defaultHeaders : await getRedditRequestHeaders(options.anonymous)),
 		...options.headers,
 	};
 
@@ -154,7 +73,7 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 				url,
 				headers,
 				data: (requestData as any),
-				anonymous: true,
+				anonymous: !options.cookieAuth,
 				timeout: 32_000,
 				redirect: "manual",
 			});
@@ -162,14 +81,14 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 		} catch (e: any) {
 			if (e.statusText) {
 				tries++;
-				logger.err(`Error fetching URL "${truncText(endpoint, 32)}" (tries: ${tries}): ${e.statusText}`);
+				logger.err(`Error fetching URL "${truncText(endpoint, 32)}" (tries: ${tries}): ${errToStr(e)}`);
 				if (tries > 20) {
 					throw new RedditAPIError(0, e.statusText);
 				}
 			} else throw e;
 		}
 	}
-	parseResponseAndStoreAuth(response.responseHeaders);
+	if (!options.cookieAuth) parseResponseAndStoreAuth(response.responseHeaders);
 
 	if (response.status === 301) {
 		const headers = new Headers(convertHeadersStringToObject(response.responseHeaders));
@@ -180,8 +99,9 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 	const parsed = tryParseJson(response.responseText);
 	const isErrorPayload = parsed?.json?.errors && Array.isArray(parsed.json.errors) && parsed.json.errors.length > 0;
 
-	if (isErrorPayload || (!options.expectStatusCodes?.has(response.status) && response.status >= 400)) {
-		throw parseRedditError(response.status, response.responseText, parsed);
+	if (isErrorPayload || !parsed || (!options.expectStatusCodes?.has(response.status) && response.status >= 400)) {
+		const err = parseRedditError(response, options, parsed);
+		if (err) throw err;
 	}
 
 	const result = parsed ?? response.responseText;
@@ -204,8 +124,8 @@ export async function getREST<T = any>(endpoint: string, options: RequestOptions
 /**
  * Convenience method for POST requests
  */
-export async function postREST<T = any>(endpoint: string, data: any): Promise<T> {
-	return redditRequest<T>(endpoint, { method: "POST", data });
+export async function postREST<T = any>(endpoint: string, data: any, options?: RequestOptions): Promise<T> {
+	return redditRequest<T>(endpoint, { method: "POST", data, ...options });
 }
 
 (window as any).redditRequest = redditRequest;
