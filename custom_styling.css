@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Reddit+Sans:ital,wght@0,200..900;1,200..900&display=swap');
+
+._1gg1MfJZaNkaPmqHpGQHni { /* GIFS in comments */
+    height: 200px !important;
+}
+._3K6DCjWs2dQ93YYZDOHjib {
+    width: 100% !important;
+}
+.RichTextJSON-root {
+    font-family: 'Reddit Sans';
+    overflow-y: hidden;
+}
+._2QZW3qVaM5fa8vo4uwbT42 > img { /* Trophy image */
+    width: 70px;
+    height: 70px;
+}
+._35oEP5zLnhKEbj5BlkTBUA { /* gallery image */
+    width: 100%
+}
+.m3aNC6yp8RrNM_-a0rrfa { /* Embed content */
+    max-height: 512px !important;
+}
+._35oEP5zLnhKEbj5BlkTBUA > video {
+    width: 100%
+}
+
+
+.P8SGAKMtRxNwlmLz1zdJu._1z5rdmX8TDr6mqwNv7A70U { /* Comment div */
+    margin-top: 0.5em !important;
+}
+._3GfQMgsm3HGd3838lwqCST { /* Comment author icon */
+    width: 2rem !important; /* shreddit size */
+    height: 2rem !important;
+}
+.wM6scouPXXsFDSZmZPHRo { /* Comment author name */
+    font-weight: bold !important;
+}
+._2Gzh48SaLz7dQBCULfOC6V.O_Ica0k2O4KFcZyNfsJDU { /* Expand button - visible */
+    width: 1em !important;
+}
+._2Gzh48SaLz7dQBCULfOC6V > .icon-expand {
+    width: 1em !important;
+    font-size: 1em !important;
+}
+.Comment {
+    padding: 6px 0 0 6px !important;
+}
+._3tw__eCCe7j-epNCKGXUKk { /* Comment content */
+    max-width: unset !important;
+}
+.Comment._1z5rdmX8TDr6mqwNv7A70U { /* Top level comment */
+    border-top: 0.2rem solid var(--newCommunityTheme-line);
+}
+.threadline {
+    border-right: 0.15rem solid var(--newCommunityTheme-line) !important;
+}
+.hovered > .threadline {
+    border-right: 0.15rem solid white !important;
+}
+.-Xcv3XBXmgiY2X5RqaPbO[data-testid="post-comment-header"] { /* Comment top bar */
+    margin-top: 3px !important;
+}
+.-Xcv3XBXmgiY2X5RqaPbO._3c9Go6433BnvYx8_7MkPnt { /* Collapsed comment top bar */
+    margin-top: 10px !important;
+}
+._2HYsucNpMdUpYlGBMviq8M { /* more comments */
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    height: 20px !important;
+}
+._1OVBBWLtHoSPfGCRaPzpTf._2udhMC-jldHp_EpAuBeSR1 { /* Post comments (full page) */
+    max-width: 1080px !important;
+}
+._1_TJAX-8zAT3vVN1Iz7cys { /* Top menu links */
+    max-width: 1400px !important;
+}
+._2RkQc9Gtsq3cPQNZLYv4zc { /* Container holding subreddit name on banner */
+    max-width: 1400px !important;
+}
+._2ED-O3JtIcOqp8iIL1G5cg { /* Crosspost box */
+    max-width: 1800px !important;
+}
+.iUP9nbvcaxfwKrQTgt0sw {
+    width: 100%;
+}
+
+.u35lf2ynn4jHsVUwPmNU { /* Post comments pop-up view */
+    max-width: unset !important;
+}
+.K4Eem3pMbRbAYioOfqN5E { /* Post comments pop-up top bar */
+    padding: 0 !important;
+}
+.lrzZ8b0L6AzLkQj5Ww7H1 { /* Post indicators container */
+    display: flex !important;
+}
+._3BPVpMSn5b1vb1yTQuqCRH, ._1wzhGvvafQFOWAyA157okr { /* Top bar NSFW/Spoiler etc indicator */
+    height: 18px !important;
+}
+._2hSecp_zkPm_s5ddV2htoj { /* Post flair */
+    vertical-align: unset !important;
+}
