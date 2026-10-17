@@ -31,7 +31,7 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 		// Crosspost creation page
 		if (params.truncate === '0') {
 			params.id = postID;
-			const listing = await getREST(`/api/info.json?raw_json=1&${new URLSearchParams(params)}`);
+			const listing = await getREST(`/api/info.json?raw_json=1&${new URLSearchParams(params)}`, { cookieAuth: true });
 			return {
 				jsonResponse: JSON.stringify({
 					commentLists: {},
