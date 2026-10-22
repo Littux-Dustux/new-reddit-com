@@ -1082,6 +1082,7 @@ export const gqlFedMap: GqlFedMapping = {
 	ReportForm: {
 		operationName: "ReportForm",
 		useShredditGqlProxy: true,
+		mapResp: resp => resp,
 	},
 	ReportPost: {
 		operationName: "ReportPost",

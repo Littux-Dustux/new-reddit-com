@@ -317,6 +317,101 @@
 	._3cJNzWW-kTTUFiqoBkRMRk {
 		display: block !important;
 	}
+
+	.original-image-modal {
+		position: fixed;
+		inset: 0;
+		z-index: 2147483647;
+		display: flex;
+		flex-direction: column;
+		background: rgb(0 0 0 / 94%);
+		color: #fff;
+		font-family: system-ui, sans-serif;
+	}
+
+	.original-image-toolbar {
+		flex: 0 0 auto;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		padding: 10px;
+		background: rgba(0, 0, 0, 0.6);
+		border-bottom: 1px solid #444;
+		border-radius: 1em;
+		width: fit-content;
+		align-self: center;
+		z-index: 1;
+	}
+
+	.original-image-toolbar button {
+		min-width: 38px;
+		height: 36px;
+		padding: 0 10px;
+		border: 1px solid #555;
+		border-radius: 5px;
+		background: #333;
+		color: #fff;
+		font: inherit;
+		cursor: pointer;
+	}
+
+	.original-image-toolbar button:hover:not(:disabled) {
+		background: #505050;
+	}
+
+	.original-image-toolbar button:disabled {
+		opacity: 0.4;
+		cursor: default;
+	}
+
+	.original-image-zoom-label {
+		min-width: 58px;
+		text-align: center;
+		font-size: 14px;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.original-image-viewport {
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow: auto;
+		overscroll-behavior: contain;
+		display: flex;
+		align-items: flex-start;
+		justify-content: flex-start;
+		padding: 16px;
+		margin-top: -3em;
+	}
+
+	.original-image-content {
+		display: block;
+		flex: none;
+		width: auto;
+		height: auto;
+		max-width: none !important;
+		max-height: none !important;
+		object-fit: initial;
+		margin: auto;
+		user-select: none;
+	}
+
+	/* Allow the modal to fill the screen on narrow devices. */
+	@media (max-width: 480px) {
+		.original-image-toolbar {
+			gap: 6px;
+			padding: 8px 4px;
+		}
+
+		.original-image-toolbar button {
+			min-width: 34px;
+			padding: 0 7px;
+		}
+
+		.original-image-viewport {
+			padding: 8px;
+		}
+	}
 	</style>
 
 	<link rel="apple-touch-icon" sizes="57x57" href="https://www.redditstatic.com/desktop2x/img/favicon/apple-icon-57x57.png" />

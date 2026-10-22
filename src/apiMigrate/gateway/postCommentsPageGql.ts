@@ -1,6 +1,7 @@
 import { gqlFetch } from "../../api/gql";
 import { getUserSubredditPref } from "../../api/localhost";
-import { getREST, postREST, RedditAPIError } from "../../api/rest";
+import { getREST, postREST } from "../../api/rest";
+import { RedditAPIError } from "../../api/restErr";
 import { getLogger } from "../../logging";
 import { getState } from "../../main";
 import { moreComments, postAndCommentsListing, postComments } from "./mappers/listing";
@@ -23,7 +24,7 @@ export async function postCommentsResponseGql(postId: string, focusedCommentId: 
 		// Crosspost creation page
 		if (params.truncate === '0') {
 			params.id = postId;
-			const listing = await getREST(`/api/info.json?raw_json=1&${new URLSearchParams(params)}`);
+			const listing = await getREST(`/api/info.json?raw_json=1&${new URLSearchParams(params)}`, { cookieAuth: true });
 			return {
 				jsonResponse: JSON.stringify({
 					commentLists: {},

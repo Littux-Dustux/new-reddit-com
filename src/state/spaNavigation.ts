@@ -1,5 +1,6 @@
 import { gqlFetch } from "../api/gql";
 import { getLogger, showToast, ToastType } from "../logging";
+import { openImageModal, seeFullImageBtnClasses } from "../ui/imageModal";
 
 const logger = getLogger("state:spaNavigation");
 const redditDomains = new Set(['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com', 'np.reddit.com', 'redd.it', window.location.host]);
@@ -22,6 +23,7 @@ export function setupSpaNavigation() {
 		if (!e.target || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
 		const targetEl = e.target as Element;
 
+
 		// Handle comment header click
 		if (targetEl.classList.contains("-Xcv3XBXmgiY2X5RqaPbO")) {
 			// Collapse/Expand comment
@@ -33,6 +35,22 @@ export function setupSpaNavigation() {
 				) as HTMLElement)?.click();
 			return
 		}
+
+		// Make the "SEE FULL IMAGE" "button" actually work
+		if (seeFullImageBtnClasses.has(targetEl.className)) {
+			const prev = targetEl.previousElementSibling;
+			const img = prev
+				? prev instanceof HTMLImageElement ? prev : prev?.querySelector('img')
+				: null;
+
+			if (img) {
+				e.preventDefault();
+				e.stopPropagation();
+				openImageModal(img.src, img.alt);
+			}
+			return;
+		}
+
 
 		const anchor = targetEl.closest('a');
 

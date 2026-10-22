@@ -18,7 +18,7 @@
     width: 100%
 }
 .m3aNC6yp8RrNM_-a0rrfa { /* Embed content */
-    max-height: 512px !important;
+    /* max-height: 512px !important; */
 }
 ._35oEP5zLnhKEbj5BlkTBUA > video {
     width: 100%
@@ -88,7 +88,7 @@
     max-width: unset !important;
 }
 .K4Eem3pMbRbAYioOfqN5E { /* Post comments pop-up top bar */
-    padding: 0 !important;
+    padding: 0 2em !important;
 }
 .lrzZ8b0L6AzLkQj5Ww7H1 { /* Post indicators container */
     display: flex !important;
