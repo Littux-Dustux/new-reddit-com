@@ -4,3 +4,4 @@ html/
 api_archives/
 *.db
 __pycache__/
+bundles/cached

@@ -67,7 +67,7 @@ async function main() {
 	initAPIMigratorInterceptors();
 	patchWebSocket();
 	setupSpaNavigation();
-	await addScript("https://www.redditstatic.com/desktop2x/Reddit.e6908df657b523d36c19.js");
+	await addScript(location.origin+"/bundles/cached/Reddit.e6908df657b523d36c19.js");
 
 	const timer = setInterval(() => {
 		const store = container._reactRootContainer?._internalRoot?.current?.alternate?.memoizedState?.element?.props?.children?.props?.store;
