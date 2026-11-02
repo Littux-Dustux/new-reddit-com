@@ -20,6 +20,9 @@ export const userscriptLoaded = ((): Promise<void> => {
 	});
 })();
 
+let markClientLoaded: (value: unknown) => void;
+export const clientLoaded = new Promise(r => markClientLoaded = r);
+
 export type State = typeof initialState;
 
 
@@ -74,6 +77,7 @@ async function main() {
 			logger.dbg("Redux store captured successfully!");
 			clearInterval(timer);
 			window.clientLoaded = true;
+			markClientLoaded(true);
 
 			// Hack to load the required chunks
 			const originalPath = location.pathname + location.search + location.hash;
@@ -106,5 +110,5 @@ async function main() {
 main();
 
 export const getState = (): State => {
-	return window.store?.getState() ?? initialState
+	return window.store?.getState?.() ?? initialState
 }

@@ -1,3 +1,4 @@
+import { clientConfig } from "../ui/settings";
 import * as toaster from "./toast";
 
 type LogLevel = "dbg" | "inf" | "log" | "wrn" | "err" | "crt";
@@ -47,19 +48,19 @@ class Logger {
 		log({ level: "dbg", msg, func: this.funcName }, ...args);
 		// toaster.showToast({ type: toaster.ToastType.Custom, text: `(${this.funcName}) ${msg}` }, 1500);
 	}
-	public inf(msg: string, withToast = true, ...args: any[]) {
+	public inf(msg: string, withToast = clientConfig.toastMessages.info, ...args: any[]) {
 		log({ level: "inf", msg, func: this.funcName }, ...args);
 		withToast && toaster.showToast({ kind: toaster.ToastType.SuccessCommunityGreen, text: `[${this.funcName}] ${msg}` }, 3000);
 	}
-	public log(msg: string, withToast = false, ...args: any[]) {
+	public log(msg: string, withToast = clientConfig.toastMessages.log, ...args: any[]) {
 		log({ level: "log", msg, func: this.funcName }, ...args);
 		withToast && toaster.showToast({ kind: toaster.ToastType.SuccessCommunity, text: `[${this.funcName}] ${msg}` }, 3000);
 	}
-	public wrn(msg: string, withToast = true, ...args: any[]) {
+	public wrn(msg: string, withToast = clientConfig.toastMessages.warn, ...args: any[]) {
 		log({ level: "wrn", msg, func: this.funcName }, ...args);
 		withToast && toaster.showToast({ kind: toaster.ToastType.Error, text: `[${this.funcName}] ${msg}` }, 4000);
 	}
-	public err(msg: string, withToast = true, ...args: any[]) {
+	public err(msg: string, withToast = clientConfig.toastMessages.err, ...args: any[]) {
 		log({ level: "err", msg, func: this.funcName }, ...args);
 		withToast && toaster.showToast({ kind: toaster.ToastType.Error, text: `[${this.funcName}] ${msg}` }, 7000);
 	}

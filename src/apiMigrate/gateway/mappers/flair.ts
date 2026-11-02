@@ -56,7 +56,7 @@ export const processSubredditUserFlair = (data: any, userFlairsV2?: any[]) => ({
 	...(userFlairsV2?.length && reduceFlairsV2R2(userFlairsV2)),
 });
 
-export const processSubredditUserFlairGql = ({ authorFlairSettings, modPermissions, authorFlair }: any, userFlairsV2?: any[]) => ({
+export const processSubredditUserFlairGql = ({ authorFlairSettings = {}, modPermissions, authorFlair }: any, userFlairsV2?: any[]) => ({
 	displaySettings: { isEnabled: authorFlairSettings.isEnabled, isUserEnabled: authorFlairSettings.isOwnFlairEnabled, position: "right" },
 	permissions: {
 		canUserChange: authorFlairSettings.isSelfAssignable,

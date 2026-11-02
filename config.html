@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>new.reddit.com client options</title>
+	<style>
+		:root {
+			color-scheme: light dark;
+			font:
+				14px/1.5 system-ui,
+				-apple-system,
+				BlinkMacSystemFont,
+				"Segoe UI",
+				sans-serif;
+			--page: #f6f7f8;
+			--surface: #fff;
+			--text: #202124;
+			--muted: #666;
+			--border: #dadce0;
+			--soft-border: #f0f0f0;
+			--control-border: #c8cdd2;
+			--control-bg: #fff;
+			--accent: #356ac3;
+			--success: #47734a;
+			--error: #b3261e;
+			color: var(--text);
+			background: var(--page);
+		}
+		@media (prefers-color-scheme: dark) {
+			:root {
+				--page: #111315;
+				--surface: #1b1e21;
+				--text: #e5e7eb;
+				--muted: #a1a1aa;
+				--border: #3a3f45;
+				--soft-border: #2b3035;
+				--control-border: #50565e;
+				--control-bg: #24282d;
+				--accent: #79a9fa;
+				--success: #91c99a;
+				--error: #ff8a80;
+			}
+		}
+		* {
+			box-sizing: border-box;
+		}
+		body {
+			margin: 0;
+			padding: 28px 16px 48px;
+		}
+		main {
+			width: min(720px, 100%);
+			margin: 0 auto;
+		}
+		h1 {
+			margin: 0 0 6px;
+			font-size: 22px;
+			line-height: 1.25;
+		}
+		.subtitle {
+			margin: 0 0 22px;
+			color: var(--muted);
+		}
+		fieldset {
+			min-width: 0;
+			margin: 0 0 14px;
+			padding: 16px;
+			border: 1px solid var(--border);
+			border-radius: 10px;
+			background: var(--surface);
+		}
+		legend {
+			padding: 0 7px;
+			font-size: 15px;
+			font-weight: 650;
+		}
+		.setting {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 18px;
+			min-height: 38px;
+			padding: 5px 0;
+		}
+		.setting + .setting {
+			border-top: 1px solid var(--soft-border);
+		}
+		.setting label,
+		.setting .setting-label {
+			flex: 1;
+		}
+		.hint {
+			display: block;
+			color: var(--muted);
+			font-size: 12px;
+		}
+		input[type="checkbox"] {
+			width: 16px;
+			height: 16px;
+			accent-color: var(--accent);
+			flex: 0 0 auto;
+		}
+		input[type="number"],
+		select {
+			width: 170px;
+			max-width: 48%;
+			padding: 7px 9px;
+			border: 1px solid var(--control-border);
+			border-radius: 6px;
+			background: var(--control-bg);
+			color: var(--text);
+			font: inherit;
+		}
+		.checklist {
+			margin: 4px 0 8px 14px;
+			padding-left: 12px;
+			border-left: 2px solid var(--border);
+		}
+		.checklist .setting {
+			border: 0;
+		}
+		.experiment-list {
+			display: grid;
+			gap: 8px;
+			margin: 8px 0 10px;
+		}
+		.experiment-row {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+			gap: 8px;
+		}
+		.experiment-row input {
+			width: 100%;
+			min-width: 0;
+			padding: 7px 9px;
+			border: 1px solid var(--control-border);
+			border-radius: 6px;
+			background: var(--control-bg);
+			color: var(--text);
+			font: inherit;
+		}
+		.experiment-row button {
+			min-width: 36px;
+			padding: 5px 10px;
+		}
+		.subsection-label {
+			display: block;
+			margin-top: 10px;
+			font-weight: 600;
+		}
+		.actions {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 9px;
+			margin-top: 18px;
+		}
+		button,
+		.file-label {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-height: 36px;
+			padding: 7px 13px;
+			border: 1px solid var(--control-border);
+			border-radius: 7px;
+			background: var(--control-bg);
+			color: var(--text);
+			font: inherit;
+			cursor: pointer;
+		}
+		button.primary {
+			color: #fff;
+			background: #356ac3;
+			border-color: #356ac3;
+		}
+		button:hover,
+		.file-label:hover {
+			filter: brightness(0.97);
+		}
+		#import-file {
+			display: none;
+		}
+		#status {
+			margin-left: auto;
+			color: #47734a;
+			font-size: 12px;
+		}
+		@media (max-width: 480px) {
+			body {
+				padding: 20px 12px 36px;
+			}
+			fieldset {
+				padding: 12px;
+			}
+			.setting {
+				gap: 10px;
+			}
+			input[type="number"],
+			select {
+				width: 145px;
+			}
+			.experiment-row {
+				grid-template-columns: 1fr 1fr auto;
+				gap: 6px;
+			}
+			.experiment-row input {
+				width: 100%;
+			}
+			#status {
+				width: 100%;
+				margin-left: 0;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<h1>new.reddit.com client options</h1>
+		<p class="subtitle">Settings are saved automatically in this browser.</p>
+
+		<form id="config-form">
+			<fieldset>
+				<legend>UI</legend>
+				<div class="setting">
+					<label for="forceLightMode">Default to light mode</label>
+					<input id="forceLightMode" type="checkbox" />
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend>API</legend>
+				<div class="setting">
+					<span class="setting-label">Use GraphQL for:</span>
+				</div>
+				<div class="checklist">
+					<div class="setting">
+						<label for="graphql-subredditPage">Subreddit page</label>
+						<input id="graphql-subredditPage" type="checkbox" data-graphql-key="subredditPage" />
+					</div>
+				</div>
+				<div class="setting">
+					<label for="curationArcticComments">If profile curation is active, use arctic-shift for comments</label>
+					<input id="curationArcticComments" type="checkbox" />
+				</div>
+				<div class="setting">
+					<label for="curationPosts">If profile curation is active, use for posts</label>
+					<select id="curationPosts">
+						<option value="0">Arctic shift</option>
+						<option value="1">Reddit Search</option>
+						<option value="2">Unchanged</option>
+					</select>
+				</div>
+				<div class="setting">
+					<label for="fetchDevvitPostInfo">Fetch Devvit post info</label>
+					<input id="fetchDevvitPostInfo" type="checkbox" />
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend>Enhancements</legend>
+				<div class="setting">
+					<label for="mp4Gifs">Use mp4 for GIFs in galleries</label>
+					<input id="mp4Gifs" type="checkbox" />
+				</div>
+				<div class="setting">
+					<label for="commentVideoDownloads">Inject download links for videos in comments</label>
+					<input id="commentVideoDownloads" type="checkbox" />
+				</div>
+				<div class="setting">
+					<label for="saveScrollPosition">Save scroll position for pages</label>
+					<input id="saveScrollPosition" type="checkbox" />
+				</div>
+				<div class="setting">
+					<label for="spaNavigation">Try to open links without refreshing (SPA navigation)</label>
+					<input id="spaNavigation" type="checkbox" />
+				</div>
+				<div class="setting">
+					<label for="revealBlockedComments">Reveal comments from people that blocked you (otherwise showing as [unavailable])</label>
+					<input id="revealBlockedComments" type="checkbox" />
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend>Debug</legend>
+				<div class="setting"><span class="setting-label">Enable toast messages for:</span></div>
+				<div class="checklist">
+					<div class="setting">
+						<label for="toast-debug">debug</label><input id="toast-debug" type="checkbox" data-toast-key="debug" />
+					</div>
+					<div class="setting"><label for="toast-info">info</label><input id="toast-info" type="checkbox" data-toast-key="info" /></div>
+					<div class="setting"><label for="toast-log">log</label><input id="toast-log" type="checkbox" data-toast-key="log" /></div>
+					<div class="setting"><label for="toast-warn">warn</label><input id="toast-warn" type="checkbox" data-toast-key="warn" /></div>
+					<div class="setting"><label for="toast-err">err</label><input id="toast-err" type="checkbox" data-toast-key="err" /></div>
+				</div>
+				<span class="subsection-label">Experiments override</span>
+				<span class="hint">Add experiment name-value pairs. Leave a row's name empty to ignore it.</span>
+				<div id="experiments-list" class="experiment-list"></div>
+				<button id="add-experiment" type="button">Add experiment</button>
+				<div class="setting">
+					<label for="gqlFedTimeout">gql-fed API timeout ms</label>
+					<input id="gqlFedTimeout" type="number" min="0" step="1" />
+				</div>
+				<div class="setting">
+					<label for="shredditGqlTimeout">shreddit gql API timeout ms</label>
+					<input id="shredditGqlTimeout" type="number" min="0" step="1" />
+				</div>
+				<div class="setting">
+					<label for="restTimeout">rest API timeout ms</label>
+					<input id="restTimeout" type="number" min="0" step="1" />
+				</div>
+				<div class="setting">
+					<label for="giphyTimeout">GIPHY API timeout ms</label>
+					<input id="giphyTimeout" type="number" min="0" step="1" />
+				</div>
+			</fieldset>
+		</form>
+
+		<div class="actions">
+			<button class="primary" id="export-btn" type="button">Export JSON</button>
+			<label class="file-label" for="import-file">Load JSON</label>
+			<input id="import-file" type="file" accept="application/json,.json" />
+			<button id="reset-btn" type="button">Reset defaults</button>
+			<span id="status" role="status" aria-live="polite"></span>
+		</div>
+	</main>
+
+	<script>
+		(() => {
+			"use strict";
+
+			const STORAGE_KEY = "ReturnNewRedditPrefs";
+
+			const DEFAULTS = {
+				commentVideoDownloads: true,
+				curationArcticComments: true,
+				curationPosts: 1, // 0 = Arctic shift, 1 = Reddit Search, 2 = Unchanged
+				experimentsOverride: {},
+				fetchDevvitPostInfo: true,
+				forceLightMode: false,
+				giphyTimeout: 10000,
+				gqlFedTimeout: 30000,
+				mp4Gifs: true,
+				restTimeout: 35000,
+				revealBlockedComments: true,
+				saveScrollPosition: true,
+				shredditGqlTimeout: 30000,
+				spaNavigation: true,
+				toastMessages: { debug: false, info: false, log: false, warn: true, err: true },
+				useGraphQL: { subredditPage: false },
+			};
+
+			const form = document.getElementById("config-form");
+			const status = document.getElementById("status");
+			let statusTimer;
+
+			const clone = value => JSON.parse(JSON.stringify(value));
+
+			function readConfig() {
+				try {
+					const raw = localStorage.getItem(STORAGE_KEY);
+					if (!raw) return clone(DEFAULTS);
+					const saved = JSON.parse(raw);
+					if (!saved || typeof saved !== "object" || Array.isArray(saved)) return clone(DEFAULTS);
+					return {
+						...clone(DEFAULTS),
+						...saved,
+						useGraphQL: { ...DEFAULTS.useGraphQL, ...(saved.useGraphQL || {}) },
+						toastMessages: { ...DEFAULTS.toastMessages, ...(saved.toastMessages || {}) },
+						experimentsOverride: { ...(saved.experimentsOverride || {}) },
+					};
+				} catch (error) {
+					console.warn("Could not load ReturnNewRedditPrefs:", error);
+					return clone(DEFAULTS);
+				}
+			}
+
+			function collectConfig() {
+				const config = {};
+				for (const el of form.querySelectorAll("input, select")) {
+					if (el.dataset.graphqlKey || el.dataset.toastKey || el.dataset.experimentField) continue;
+					if (el.type === "checkbox") config[el.id] = el.checked;
+					else if (el.type === "number") config[el.id] = el.value === "" ? 0 : Number(el.value);
+					else config[el.id] = Number(el.value);
+				}
+				config.useGraphQL = {};
+				form.querySelectorAll("[data-graphql-key]").forEach(el => {
+					config.useGraphQL[el.dataset.graphqlKey] = el.checked;
+				});
+				config.toastMessages = {};
+				form.querySelectorAll("[data-toast-key]").forEach(el => {
+					config.toastMessages[el.dataset.toastKey] = el.checked;
+				});
+				config.experimentsOverride = {};
+				form.querySelectorAll(".experiment-row").forEach(row => {
+					const key = row.querySelector('[data-experiment-field="key"]').value.trim();
+					const value = row.querySelector('[data-experiment-field="value"]').value;
+					if (key) config.experimentsOverride[key] = value;
+				});
+				return config;
+			}
+
+			function applyConfig(config) {
+				for (const el of form.querySelectorAll("input, select")) {
+					if (el.dataset.experimentField) continue;
+					if (el.dataset.graphqlKey) {
+						el.checked = Boolean(config.useGraphQL?.[el.dataset.graphqlKey]);
+					} else if (el.dataset.toastKey) {
+						el.checked = Boolean(config.toastMessages?.[el.dataset.toastKey]);
+					} else if (el.type === "checkbox") {
+						el.checked = Boolean(config[el.id]);
+					} else if (el.type === "number") {
+						const value = Number(config[el.id]);
+						el.value = Number.isFinite(value) && value >= 0 ? String(value) : String(DEFAULTS[el.id]);
+					} else {
+						el.value = String(config[el.id] ?? DEFAULTS[el.id]);
+					}
+				}
+				renderExperiments(config.experimentsOverride || {});
+			}
+
+			function addExperimentRow(key = "", value = "") {
+				const row = document.createElement("div");
+				row.className = "experiment-row";
+
+				const keyInput = document.createElement("input");
+				keyInput.type = "text";
+				keyInput.placeholder = "Experiment name";
+				keyInput.setAttribute("aria-label", "Experiment name");
+				keyInput.dataset.experimentField = "key";
+				keyInput.value = key;
+
+				const valueInput = document.createElement("input");
+				valueInput.type = "text";
+				valueInput.placeholder = "Value";
+				valueInput.setAttribute("aria-label", "Experiment value");
+				valueInput.dataset.experimentField = "value";
+				valueInput.value = value;
+
+				const removeButton = document.createElement("button");
+				removeButton.type = "button";
+				removeButton.textContent = "Remove";
+				removeButton.setAttribute("aria-label", "Remove experiment override");
+				removeButton.addEventListener("click", () => {
+					row.remove();
+					save();
+				});
+
+				row.append(keyInput, valueInput, removeButton);
+				document.getElementById("experiments-list").append(row);
+			}
+
+			function renderExperiments(experiments) {
+				const list = document.getElementById("experiments-list");
+				list.replaceChildren();
+				const entries = Object.entries(experiments || {});
+				entries.forEach(([key, value]) => addExperimentRow(key, String(value)));
+				if (entries.length === 0) addExperimentRow();
+			}
+
+			function showStatus(message, isError = false) {
+				status.textContent = message;
+				status.style.color = isError ? "var(--error)" : "var(--success)";
+				clearTimeout(statusTimer);
+				statusTimer = setTimeout(() => {
+					status.textContent = "";
+				}, 3000);
+			}
+
+			function save() {
+				try {
+					localStorage.setItem(STORAGE_KEY, JSON.stringify(collectConfig()));
+					showStatus("Saved");
+				} catch (error) {
+					showStatus("Could not save settings", true);
+					console.error(error);
+				}
+			}
+
+			form.addEventListener("change", save);
+			form.addEventListener("input", event => {
+				if (event.target.matches('input[type="number"], [data-experiment-field]')) save();
+			});
+
+			document.getElementById("add-experiment").addEventListener("click", () => {
+				addExperimentRow();
+				const rows = document.querySelectorAll(".experiment-row");
+				rows[rows.length - 1]?.querySelector('[data-experiment-field="key"]')?.focus();
+			});
+
+			document.getElementById("export-btn").addEventListener("click", () => {
+				const json = JSON.stringify(collectConfig(), null, 2);
+				const blob = new Blob([json], { type: "application/json" });
+				const url = URL.createObjectURL(blob);
+				const link = document.createElement("a");
+				link.href = url;
+				link.download = "new-reddit-client-options.json";
+				link.click();
+				URL.revokeObjectURL(url);
+				showStatus("Config exported");
+			});
+
+			document.getElementById("import-file").addEventListener("change", async event => {
+				const file = event.target.files?.[0];
+				if (!file) return;
+				try {
+					const parsed = JSON.parse(await file.text());
+					if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+						throw new Error("The JSON root must be an object.");
+					}
+					const merged = {
+						...clone(DEFAULTS),
+						...parsed,
+						useGraphQL: { ...DEFAULTS.useGraphQL, ...(parsed.useGraphQL || {}) },
+						toastMessages: { ...DEFAULTS.toastMessages, ...(parsed.toastMessages || {}) },
+						experimentsOverride: { ...(parsed.experimentsOverride || {}) },
+					};
+					applyConfig(merged);
+					save();
+					showStatus("Config loaded");
+				} catch (error) {
+					showStatus("Invalid config JSON: " + error.message, true);
+				} finally {
+					event.target.value = "";
+				}
+			});
+
+			document.getElementById("reset-btn").addEventListener("click", () => {
+				applyConfig(clone(DEFAULTS));
+				save();
+				showStatus("Defaults restored");
+			});
+
+			applyConfig(readConfig());
+		})();
+	</script>
+</body>
+</html>

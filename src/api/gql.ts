@@ -1,6 +1,7 @@
 import { getLogger } from "../logging/logger";
 import { multiErrorToast } from "../logging/toast";
 import { isLoggedIn } from "../state";
+import { clientConfig } from "../ui/settings";
 import { errToStr } from "../utils";
 import { getCache, setCache } from "./caching";
 import { getRedditRequestHeaders, parseResponseAndStoreAuth } from "./helpers";
@@ -11,10 +12,10 @@ const logger = getLogger("api:gql");
 // Track in-flight requests to deduplicate identical concurrent requests
 const inFlightRequests = new Map<string, Promise<any>>();
 
-export async function gqlFetch<T = any>(
+export async function gqlFetch<T = any, V = any>(
 	operationName: string,
 	sha256Hash: string,
-	variables: any,
+	variables: V,
 	options: { parseJSON?: boolean, cache?: boolean, maxCacheAge?: number, anonymous?: boolean } = {},
 ): Promise<T> {
 	options.parseJSON ??= true;
@@ -67,7 +68,7 @@ export async function gqlFetch<T = any>(
 						},
 					}),
 					anonymous: true,
-					timeout: 30_000,
+					timeout: clientConfig.gqlFedTimeout,
 				});
 				break;
 			} catch(e: any) {

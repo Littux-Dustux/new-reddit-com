@@ -1,6 +1,8 @@
 import { gqlFetch } from "../api/gql";
 import { getLogger, showToast, ToastType } from "../logging";
+import { clientLoaded } from "../main";
 import { openImageModal, seeFullImageBtnClasses } from "../ui/imageModal";
+import { clientConfig } from "../ui/settings";
 
 const logger = getLogger("state:spaNavigation");
 const redditDomains = new Set(['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com', 'np.reddit.com', 'redd.it', window.location.host]);
@@ -18,7 +20,7 @@ const allowedTargetClasses = new Set([
 	"_2tFYRyhxfQeK2QFUlYSYz0", // Right icon (on followers display)
 ]);
 
-export function setupSpaNavigation() {
+export async function setupSpaNavigation() {
 	document.addEventListener('click', async (e) => {
 		if (!e.target || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
 		const targetEl = e.target as Element;
@@ -51,6 +53,8 @@ export function setupSpaNavigation() {
 			return;
 		}
 
+		if (!clientConfig.spaNavigation) return;
+
 
 		const anchor = targetEl.closest('a');
 
@@ -77,7 +81,7 @@ export function setupSpaNavigation() {
 				fullPath = url.pathname + url.search + url.hash;
 			}
 
-			saveScrollPos();
+			if (clientConfig.saveScrollPosition) saveScrollPos();
 
 			logger.log(`Redirecting link to internal route: ${fullPath}`, true);
 			window.store.dispatch({
@@ -90,8 +94,33 @@ export function setupSpaNavigation() {
 		}
 	}, true);
 
+	document.addEventListener('reddit.urlChanged', (data: any) => {
+		// Hack to get user search working
+		const location = data.detail.location;
+		console.log(location);
+		if (location.pathname.startsWith('/user/')) {
+			const user = location.pathname.split('/', 3)[2];
+			if (user) {
+				window.store?.dispatch?.({
+					type: 'SEARCH__SET_SEARCH_SCOPE',
+					payload: {
+						type: 0,
+						enabled: true,
+						payload: {
+							url: `/r/u|${user}/`,
+							displayText: 'u/' + user,
+							icon: {
+								height: 256,
+								url: 'https://www.redditstatic.com/avatars/avatar_default_02_24A0ED.png',
+								width: 256
+							},
+						}
+					}
+				})
+			}
+		}
 
-	window.addEventListener('popstate', () => {
+		if (!clientConfig.saveScrollPosition) return;
 		const path = window.location.pathname + window.location.search + window.location.hash;
 		const scrollPos = scrollPosByPath.get(path);
 		if (scrollPos) {
@@ -106,6 +135,14 @@ export function setupSpaNavigation() {
 			}, 700);
 		}
 	});
+
+	await clientLoaded;
+
+	const meta = document.createElement('meta');
+	meta.name = 'jsapi.consumer';
+	meta.content = 'ReturnNewReddit';
+	document.head.appendChild(meta);
+	meta.dispatchEvent(new CustomEvent("reddit.ready"));
 }
 
 

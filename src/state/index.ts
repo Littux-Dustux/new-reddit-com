@@ -1,6 +1,7 @@
 import type { Comment } from '../apiMigrate/gateway/types/comment';
 import type { Post } from '../apiMigrate/gateway/types/post';
 import type { Subreddit, SubredditAboutInfo } from '../apiMigrate/gateway/types/subreddit';
+import { clientConfig } from '../ui/settings';
 import { addIdentityToState, addPrefsV1ToState } from './addIdentity';
 import addUserRels from './addUserRels';
 import experiments from './experiments.json';
@@ -312,7 +313,7 @@ export const state = {
 	},
 	emailVerificationTooltip: { isShowing: false },
 	emojis: { api: { list: { pending: {} } }, models: {} },
-	experimentOverrides: {},
+	experimentOverrides: clientConfig.experimentsOverride,
 	externalAccount: {
 		api: {
 			connect: { error: {}, pending: {} },
@@ -858,7 +859,7 @@ export const state = {
 			liveBarRecommendationsEnabled: false,
 			loginOtpEnabled: false,
 			markMessagesRead: false,
-			nightmode: true,
+			nightmode: !clientConfig.forceLightMode,
 			openPostInNewTab: false,
 			over18: true,
 			quarantineOptIn: false,

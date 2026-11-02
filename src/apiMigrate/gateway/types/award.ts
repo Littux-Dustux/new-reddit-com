@@ -1,6 +1,6 @@
 type AwardType = 'GLOBAL' | 'MODERATOR' | 'COMMUNITY';
 type AwardSubType = 'GLOBAL' | 'MODERATOR' | 'COMMUNITY' | 'APPRECIATION' | 'PREMIUM' | 'GROUP' | 'CHAT_REACTION';
-type MediaUrl = { url: string };
+type MediaUrl = { url?: string | null | undefined };
 
 export interface Award {
 	awardType: AwardType,

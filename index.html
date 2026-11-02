@@ -41,6 +41,9 @@
 				if (e && e.styles && e.styles.legacyIcon) {
 					e.styles.legacyIcon.dimensions = { height: 256, width: 256 };
 				}
+				e.type ??= "PUBLIC";
+				e.publicDescription ??= {};
+				e.allowedPostTypes ??= [];
 				return originalNormalizeSubreddit(e);
 			}
 

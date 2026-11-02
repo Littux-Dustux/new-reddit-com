@@ -27,7 +27,7 @@ export async function genericListingR2(
 			}, 10e3);
 		}
 
-		const { data } = await getREST(url, { anonymous: anonymousAuth });
+		const { data } = await getREST(url, { anonymous: anonymousAuth, cookieAuth: true });
 		return {
 			jsonResponse: JSON.stringify(
 				await fn(data.children, data.after)

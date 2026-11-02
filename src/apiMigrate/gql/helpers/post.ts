@@ -1,9 +1,10 @@
 import { gqlFetch } from "../../../api/gql";
 import { fixAwardings } from "./award";
 import { fixFlair } from "./flair";
+import { convertShredditMediaRes } from "./media";
 
-export function fixGqlPost(node: any) {
-	if (node.__typename === "PostRecommendation") node = node.postInfo;
+export function fixGqlPost(node: any, flattenRecs: boolean = false) {
+	if (flattenRecs && node.__typename === "PostRecommendation") node = node.postInfo;
 	if (node.crosspostRoot?.post) {
 		node.crosspostRoot.postInfo = fixGqlPost(node.crosspostRoot.post);
 		delete node.crosspostRoot.post;
@@ -14,31 +15,34 @@ export function fixGqlPost(node: any) {
 	return node;
 }
 
-export function fixGqlListing(connection: any) {
+export function fixSvcGqlPost(node: any) {
+	if (node.postInfo) node = node.postInfo; 
+	if (node.crosspostRoot?.postInfo) fixSvcGqlPost(node.crosspostRoot.postInfo);
+
+	if (node.media) {
+		const media = node.media;
+		if (media.still) convertShredditMediaRes(media.still);
+		if (media.animated) media.animated = {
+			mp4_source: media.animated.variant
+		};
+		if (media.obfuscated) {
+			media.obfuscatedStill = media.obfuscated;
+			delete media.obfuscated;
+			convertShredditMediaRes(media.obfuscatedStill);
+		}
+	}
+	if (node.gallery?.items) {
+		node.gallery.items.forEach((it: any) => convertShredditMediaRes(it.media))
+	}
+	return node;
+}
+
+export function fixGqlListing(connection: any, fn = fixGqlPost, ...params: any[]) {
 	for (const { node } of connection.edges) {
-		fixGqlPost(node);
+		fn(node, ...params);
 	}
 	return connection;
 }
-
-export function fixPopularElements(connection: any) {
-	for (const edge of connection.edges) {
-		if (edge.node.__typename === "PostRecommendation") {
-			edge.node = edge.node.postInfo;
-		}
-		// iOS query lacks this, resulting in u/[deleted]
-		const authorInfo = edge.node.authorInfo;
-		if (authorInfo) {
-			authorInfo.__typename = "Redditor";
-			if (authorInfo.profile) {
-				authorInfo.profile.__typename = "Profile"
-			}
-		}
-		fixGqlPost(edge.node);
-	}
-	return connection;
-}
-
 
 export async function handlePostFeedAndOtherDiscussions({ postId, includeOtherDiscussions, includePostFeed, ...rest }: any) {
 	const outputData: Record<string, any> = {};

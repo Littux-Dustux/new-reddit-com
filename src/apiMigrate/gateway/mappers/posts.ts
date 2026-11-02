@@ -6,6 +6,7 @@ import { antiGifFuckGifs, getVoteStateNum } from "./common";
 import { getAuthorFlairFromR2Thing, processSubredditPostFlair, processSubredditUserFlair } from "./flair";
 import type { StateBase } from "../types/state.ts";
 import { processSubredditAboutInfo, processSubreddit } from "./subreddit";
+import { clientConfig } from "../../../ui/settings";
 
 
 const getFlair = (data: any): PostFlair[] => {
@@ -86,7 +87,9 @@ const getMedia = (data: any, devvitData?: DevvitPostFragmentFragment): Media | n
 					isDeleted: it.is_deleted,
 				})),
 			},
-			mediaMetadata: antiGifFuckGifs(data.media_metadata),
+			mediaMetadata: clientConfig.mp4Gifs
+				? antiGifFuckGifs(data.media_metadata)
+				: data.media_metadata,
 		}
 	};
 
@@ -217,7 +220,7 @@ export const processPost = (data: any, devvitData?: DevvitPostFragmentFragment):
 		created: data.created_utc * 1000, // Reddit API returns seconds, UI usually needs ms
 		crosspostParentId: crossPostId,
 		crosspostRootId: crossPostId,
-		discussionType: (/discussion thread|(match|race) discussion/i).test(data.title)
+		discussionType: (/discussion thread|(match|race) discussion/i).test(data.title) && ((Date.now() / 1000) - data.created_utc < 50000)
 			? "CHAT"
 			: data.discussion_type
 				? data.discussion_type.toUpperCase()

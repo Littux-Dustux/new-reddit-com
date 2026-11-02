@@ -1,21 +1,26 @@
 import type { InterceptorHandler } from "../interceptXhr";
 import { getLogger } from "../../logging/logger";
 import { moreCommentsResponse, postCommentsResponse } from "./postCommentsPage";
-import { subredditPostsPage } from "./subredditPostsPage";
-import { arcticShiftListing, blockedByUserNames, genericListingR2, isUserCurationActive } from "./listingPage";
+import { arcticShiftListing, blockedByUserNames, genericListingR2 } from "./listingPage";
 import { conversationsListing } from "./mappers/listing";
 import { getState } from "../../main";
 import { duplicates, submitPage } from "./submitPage";
 import { shouldUseArcticShiftHistory } from "./utils";
-import { showToast, ToastType } from "../../logging";
 import { processUserAbout } from "./mappers/user";
 import { getREST } from "../../api/rest";
 import { APIError, convertFullnameToNum, upsertUserSubredditPref } from "../../api/localhost";
 import type { Subreddit } from "./types/subreddit";
+import { subredditPostsPageGql } from "./subredditPostsPageGql";
+import { subredditPostsPage } from "./subredditPostsPage";
+import { clientConfig, CurationPostsMode } from "../../ui/settings";
 
 
 const logger = getLogger("gatewayAPI");
 const emptyResponse = { jsonResponse: "{}", status: 501 };
+const subredditPostsPageHandler = clientConfig.useGraphQL.subredditPage
+	? subredditPostsPageGql
+	: subredditPostsPage;
+
 
 export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: target, method: string }, data) => {
 	const url = new URL(target);
@@ -28,7 +33,7 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 	switch (operation) {
 		case "subreddit":
 		case "subreddits":
-			return subredditPostsPage(onTarget as string, params);
+			return subredditPostsPageHandler(onTarget as string, params);
 		case "postcomments":
 			return postCommentsResponse(onTarget as string, path[0], params);
 		case "morecomments":
@@ -66,7 +71,7 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 						blockedByUserNames.has(onTarget.toLowerCase()),
 					)
 				case "comments":
-					return await shouldUseArcticShiftHistory(onTarget.toLowerCase())
+					return clientConfig.curationArcticComments && await shouldUseArcticShiftHistory(onTarget.toLowerCase())
 						? params.sort === "top"
 							? arcticShiftListing(onTarget, false, params.after, true)
 							: arcticShiftListing(onTarget, false, params.after)
@@ -75,16 +80,17 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 							{ ...params, limit: '100' }
 						)
 				case "posts":
-					return await shouldUseArcticShiftHistory(onTarget.toLowerCase())
-						// ? arcticShiftListing(onTarget, true, params.after)
-						? genericListingR2('/search.json', {
-							q: `author:${onTarget}`,
-							sort: params.sort || "new",
-							t: params.t || "all",
-							include_over_18: params.allow_over18 ?? '0',
-							...params
-						})
-						: genericListingR2(`/user/${onTarget}/submitted.json`, params)
+					return clientConfig.curationPosts !== CurationPostsMode.Unchanged && await shouldUseArcticShiftHistory(onTarget.toLowerCase())
+						? (clientConfig.curationPosts === CurationPostsMode.ArcticShift
+							? arcticShiftListing(onTarget, true, params.after)
+							: genericListingR2('/search.json', {
+								q: `author:(${onTarget})`,
+								sort: params.sort || "new",
+								t: params.t || "all",
+								include_over_18: params.allow_over18 ?? '0',
+								...params
+							})
+						) : genericListingR2(`/user/${onTarget}/submitted.json`, params)
 				case "about":
 					return {
 						jsonResponse: JSON.stringify(

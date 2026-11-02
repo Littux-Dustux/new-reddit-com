@@ -34,7 +34,7 @@ interface MediaGifVideo extends MediaBase {
 	width: number,
 	height: number,
 	gifBackgroundImage: string,
-	gifBackgroundResolutions: any[],
+	gifBackgroundResolutions?: any[],
 	resolutions: any[],
 }
 
@@ -67,14 +67,16 @@ interface MediaEmbed extends MediaBase {
 	provider: string | null,
 }
 
-interface MediaGallery extends MediaBase {
+export interface MediaGallery extends MediaBase {
 	type: "gallery",
 	gallery: {
 		items: {
-			caption?: string;
-			id?: string;
+			caption?: string | null;
+			id?: number;
 			mediaId?: string;
-			adEvents?: any[];
+			callToAction?: any;
+			displayAddress?: any;
+			adEvents?: { type: number, url: string }[];
 		}[];
 	};
 }
@@ -82,7 +84,7 @@ interface MediaGallery extends MediaBase {
 export type Media = MediaText | MediaRichtext | MediaImage | MediaGifVideo | MediaVideo | MediaEmbed | MediaGallery;
 
 
-interface PollData {
+export interface PollData {
 	isPrediction?: boolean,
 	predictionStatus?: string,
 	options: {
@@ -93,7 +95,7 @@ interface PollData {
 	}[],
 	totalVoteCount: number,
 	userSelection: number,
-	voteUpdatesRemained: number,
+	voteUpdatesRemained: number | null,
 	votingEndTimestamp: number,
 	totalStakeAmount?: number,
 	tournamentId?: string,
@@ -103,43 +105,45 @@ interface PollData {
 
 
 export interface Post extends PostAndCommentCommon {
-	adPromotedUserPostIds?: [],
+	adPromotedUserPostIds?: string[],
 	adSupplementaryText?: string | null,
 	belongsTo: {
 		id: string,
 		type: "subreddit" | "profile",
 	},
-	callToAction: string | null,
+	callToAction?: string | null | undefined,
 	contestMode: boolean,
-	crosspostParentId: string | null,
-	crosspostRootId: string | null,
-	discussionType: string,
+	crosspostParentId: string | undefined,
+	crosspostRootId: string | undefined,
+	discussionType?: string,
 	domain: string,
 	domainOverride: string | null,
-	events: [],
+	eventInfo?: { eventIsLive: boolean, eventStart: number, eventEnd: number },
+	events: { type: number, url: string }[],
 	flair: PostFlair[],
 	hidden: boolean,
-	impressionId: string | null,
-	impressionIdStr: string | null,
+	impressionId?: string | null,
+	impressionIdStr?: string | null,
 	isArchived: boolean,
-	isBlank: boolean,
-	isCreatedFromAdsUi: boolean,
+	isBlank?: boolean,
+	isCreatedFromAdsUi?: boolean,
 	isCrosspostable: boolean,
-	isMediaOnly: boolean,
-	isMeta: boolean,
+	isFollowed?: boolean,
+	isMediaOnly?: boolean,
+	isMeta?: boolean,
 	isNSFW: boolean,
 	isPinned: boolean,
-	isOriginalContent: boolean,
+	isOriginalContent?: boolean,
 	isSpoiler: boolean,
-	isSponsored: boolean,
-	isSurveyAd: boolean,
-	liveCommentsWebsocket: string,
+	isSponsored?: boolean,
+	isSurveyAd?: boolean,
+	liveCommentsWebsocket?: string,
 	media: Media | null,
 	numComments: number,
 	numCrossposts: number,
 	numDuplicates: number,
 	pollData: PollData | null,
-	postCategories: {
+	postCategories?: {
 		categoryId: string,
 		categoryName: string
 	}[],
@@ -148,7 +152,7 @@ export interface Post extends PostAndCommentCommon {
 		width: number,
 		height: number,
 	} | null,
-	removedBy: string | null,
+	removedBy?: string | null,
 	removedByCategory: RemovedByCategory,
 	saved: boolean,
 	source: {
@@ -158,7 +162,7 @@ export interface Post extends PostAndCommentCommon {
 		outboundUrlCreated?: number,
 		outboundUrlExpires?: number,
 	} | null,
-	suggestedSort: CommentSort,
+	suggestedSort?: CommentSort,
 	thumbnail: {
 		height: number,
 		url: string,

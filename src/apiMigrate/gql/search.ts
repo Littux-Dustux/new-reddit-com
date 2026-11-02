@@ -5,8 +5,17 @@ import { getLogger } from "../../logging";
 const logger = getLogger("gql:search");
 
 export async function processGeneralSearch({ includePosts, postsAfter, includeComments, commentsAfter, includeCommunities, communitiesAfter, communityRows, includeAuthors, authorsAfter, authorRows, ...vars }: Record<string, any>) {
-	console.log({ includePosts, includeComments, includeCommunities, includeAuthors });
+	//console.log({ includePosts, includeComments, includeCommunities, includeAuthors });
 	const searchPromises = [];
+	for (const filter of vars.filters) {
+		if (filter.key === "subreddit_names" && filter.value[1] === "|") { // hack to get user search working
+			filter.key = "author_names";
+			filter.value = filter.value.slice(2);
+			includeCommunities = false;
+			includeAuthors = false;
+			break;
+		}
+	};
 
 	includePosts &&
 		searchPromises.push(

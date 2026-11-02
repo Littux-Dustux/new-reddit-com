@@ -8,6 +8,7 @@ import { convertHeadersStringToObject, errToStr, truncText } from "../utils";
 import { getRedditRequestHeaders, parseResponseAndStoreAuth } from "./helpers";
 import { isLoggedIn } from "../state";
 import { parseRedditError, RedditAPIError, tryParseJson } from "./restErr";
+import { clientConfig } from "../ui/settings";
 
 
 export interface RequestOptions {
@@ -74,7 +75,7 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 				headers,
 				data: (requestData as any),
 				anonymous: !options.cookieAuth,
-				timeout: 32_000,
+				timeout: clientConfig.restTimeout,
 				redirect: "manual",
 			});
 			break;

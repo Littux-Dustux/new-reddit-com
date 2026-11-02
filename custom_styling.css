@@ -55,7 +55,7 @@
     border-right: 0.15rem solid var(--newCommunityTheme-line) !important;
 }
 .hovered > .threadline {
-    border-right: 0.15rem solid white !important;
+    border-right: 0.15rem solid var(--newCommunityTheme-button) !important;
 }
 .-Xcv3XBXmgiY2X5RqaPbO[data-testid="post-comment-header"] { /* Comment top bar */
     margin-top: 3px !important;

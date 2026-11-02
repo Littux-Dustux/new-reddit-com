@@ -369,7 +369,7 @@ export async function addIdentityToState(state: State) {
 		inRedesignBeta: true,
 		isEmployee: redditor.isEmployee,
 		isFPR: identity.isForcePasswordReset,
-		isGold: false,
+		isGold: redditor.isGilded,
 		isMod: identity.isModerator,
 		isNameEditable: identity.isNameEditable,
 		isPasswordSet: identity.isPasswordSet,

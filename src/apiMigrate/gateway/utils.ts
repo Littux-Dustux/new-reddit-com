@@ -15,6 +15,7 @@ import type { ModQueueTriggerType, CommentMediaDetailsQuery } from "../../api/ty
 import type { Comment, Media } from "./types/comment";
 import svcGqlFetch from "../../api/shredditGql";
 import { errToStr } from "../../utils";
+import { clientConfig } from "../../ui/settings";
 
 const logger = getLogger('apiMigrate:gateway:utils');
 const mqTriggerD2xUnsupported = new Set<ModQueueTriggerType>(["COMMENT_GUIDANCE", "DOMAIN_BAN", "POST_GUIDANCE"]);
@@ -35,7 +36,7 @@ export async function fixR2CommentsMedia(comments: Record<string, Comment>) {
 	const moderationInfoToFetch: string[] = [];
 
 	for (const comment of Object.values(comments)) {
-		if (comment.unrepliableReason === "NEAR_BLOCKER" && comment.media.richtextContent.document[0]?.c?.[0]?.t === "[unavailable]") {
+		if (clientConfig.revealBlockedComments && comment.unrepliableReason === "NEAR_BLOCKER" && comment.media.richtextContent.document[0]?.c?.[0]?.t === "[unavailable]") {
 			blockedIds.push(comment.id);
 			continue;
 		}
@@ -100,7 +101,7 @@ export async function fixR2CommentsMedia(comments: Record<string, Comment>) {
 							[videoAsset.id]: getVideoMediaMetadataGql(videoAsset)
 						};
 						const muxedMp4s = videoAsset.packagedMedia?.muxedMp4s;
-						if (muxedMp4s) {
+						if (clientConfig.commentVideoDownloads && muxedMp4s) {
 							incompleteMedia.richtextContent.document.push(...getMuxedMP4sDownloadRTJSON(muxedMp4s))
 						}
 					}

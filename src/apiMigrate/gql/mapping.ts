@@ -5,7 +5,7 @@ import { getREST } from "../../api/rest";
 import { subredditNameToId } from "../gateway/mappers/subreddit";
 import { gqlFetch } from "../../api/gql";
 import { fixAwardIconSize } from "./helpers/award";
-import { fixGqlListing, fixGqlPost, fixPopularElements, handlePostFeedAndOtherDiscussions } from "./helpers/post";
+import { fixGqlListing, fixGqlPost, fixSvcGqlPost, handlePostFeedAndOtherDiscussions } from "./helpers/post";
 import { addModSubToState } from "../../state/addModeratedSubs";
 import { isUserCurationActive } from "../gateway/listingPage";
 import type { ContentLanguagesQuery, SpokenLanguagesQuery } from "../../api/types/gql";
@@ -559,7 +559,7 @@ export const gqlFedMap: GqlFedMapping = {
 		sha256Hash: "17e5b5c12054899fe24a9de98e82a5c139e7d056cd70701f42717c7820ee3e2a",
 	},
 	Frontpage: {
-		operationName: "HomeElements",
+		/* operationName: "HomeElements",
 		//sha256Hash: "a85f0afccfd8c623355a4ca3b144781eea668836ae02d2bf1bf298f26f74f2f1", // 2023 android app
 		sha256Hash: "60f2737fad67382ef010e4e65f9c921f85f767ff8a3426a17157a70ed6a1ee41", // 2024 android app
 		mapVars: (vars) => ({
@@ -575,8 +575,8 @@ export const gqlFedMap: GqlFedMapping = {
 				elements: fixGqlListing(postFeed.elements),
 			},
 			...rest
-		}),
-		/* operationName: "Frontpage",
+		}), */
+		operationName: "Frontpage",
 		useShredditGqlProxy: true,
 		mapVars: ({ pageSize, ...rest }) => ({
 			first: pageSize,
@@ -586,9 +586,9 @@ export const gqlFedMap: GqlFedMapping = {
 		}),
 		mapResp: ({ feed }) => ({
 			home: {
-				elements: fixGqlListing(feed.elements)
+				elements: fixGqlListing(feed.elements, fixSvcGqlPost)
 			}
-		}) */
+		})
 /*
 {
       after: "",
@@ -923,6 +923,7 @@ export const gqlFedMap: GqlFedMapping = {
 	PopularFeedElements: {
 		operationName: "PopularFeedElements",
 		sha256Hash: "728c0f9a4d12c17b8cffe07669bb1a8770b0f2ec0c84e040485f8fad2d9c417f",
+	/*
 		mapVars: (vars) => ({
 			...vars,
 			advancedConfiguration: {
@@ -938,7 +939,7 @@ export const gqlFedMap: GqlFedMapping = {
 			},
 			recentPosts: [],
 			trendingSubreddits: []
-		})
+		}) */
 		/*
 		operationName: "Popular",
 		useShredditGqlProxy: true,
@@ -1082,7 +1083,7 @@ export const gqlFedMap: GqlFedMapping = {
 	ReportForm: {
 		operationName: "ReportForm",
 		useShredditGqlProxy: true,
-		mapResp: resp => resp,
+		mapResp: resp => resp, // required to remove the empty "errors" array from the response
 	},
 	ReportPost: {
 		operationName: "ReportPost",
