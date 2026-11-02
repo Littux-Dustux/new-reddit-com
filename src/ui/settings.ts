@@ -44,7 +44,7 @@ export const clientConfig: ReturnNewRedditPrefs = {
 	mp4Gifs: true,
 	restTimeout: 35e3,
 	revealBlockedComments: true,
-	saveScrollPosition: true,
+	saveScrollPosition: false,
 	shredditGqlTimeout: 30e3,
 	spaNavigation: true,
 	toastMessages: { debug: false, info: false, log: false, warn: true, err: true },

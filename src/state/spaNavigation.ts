@@ -147,6 +147,7 @@ export async function setupSpaNavigation() {
 
 
 function saveScrollPos() {
+	if (location.pathname === '/') return;
 	const path = location.pathname + location.search + location.hash;
 	const overlayScrollContainer = path.includes('/comments/') && document.getElementById("overlayScrollContainer");
 
