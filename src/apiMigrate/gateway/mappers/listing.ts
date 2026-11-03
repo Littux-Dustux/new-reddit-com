@@ -179,7 +179,7 @@ export async function conversationsListing(things: any[], afterToken: string) {
 	};
 
 	await fixR2CommentsMedia(state.comments);
-	console.debug("Conversations state:", state);
+	/* console.debug("Conversations state:", state);
 
 	for (const postId of state.postIds) {
 		const commentLists = state.commentLists[postId];
@@ -214,6 +214,6 @@ export async function conversationsListing(things: any[], afterToken: string) {
 		if (orderAsc.toString() !== orderDesc.reverse().toString()) {
 			console.error(`commentLists[${postId}] order mismatch!`);
 		}
-	};
+	}; */
 	return state;
 }

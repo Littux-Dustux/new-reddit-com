@@ -97,7 +97,7 @@ export async function setupSpaNavigation() {
 	document.addEventListener('reddit.urlChanged', (data: any) => {
 		// Hack to get user search working
 		const location = data.detail.location;
-		console.log(location);
+		//console.log(location);
 		if (location.pathname.startsWith('/user/')) {
 			const user = location.pathname.split('/', 3)[2];
 			if (user) {
