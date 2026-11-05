@@ -71,7 +71,7 @@ export interface MediaGallery extends MediaBase {
 	type: "gallery",
 	gallery: {
 		items: {
-			caption?: string | null;
+			caption?: string;
 			id?: number;
 			mediaId?: string;
 			callToAction?: any;

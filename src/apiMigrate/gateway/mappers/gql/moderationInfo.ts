@@ -7,7 +7,7 @@ type ModerationInfo = {
 	verdictAt: string;
 	banReason: string;
 	reportCount: number;
-	isRemoved: boolean;
+	//isRemoved?: boolean;
 	verdictByRedditorInfo:
 		| { __typename: "DeletedRedditor"; id: string; name: string }
 		| {
@@ -56,7 +56,7 @@ export function mapModerationInfoCommon(info: ModerationInfo | null | undefined)
 	};
 
 	if (info.verdict) {
-		const ts = Date.parse(info.verdictAt) / 1000;
+		const ts = Date.parse(info.verdictAt);
 		const byName = info.verdictByRedditorInfo?.name;
 
 		switch (info.verdict) {

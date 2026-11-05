@@ -42,12 +42,24 @@ export interface CommentListingPageState extends FlatListingStateBase {
 }
 
 export interface CommentsPageState extends SubredditListingStateBase {
-	commentLists: Record<string, { head: CommentPosition; tail: CommentPosition; }>;
+	commentLists: Record<string, { head: CommentPosition | null; tail: CommentPosition | null; }>;
 	comments: Record<string, Comment>;
 	continueThreads: Record<string, any>;
 	moreComments: Record<string, any>;
 	postMeta: null;
 }
+
+
+export interface CommentTreeState {
+	authorFlair: Record<string, Record<string, Flair | null>>;
+	commentLists: Record<string, {
+		head: CommentPosition | null,
+		tail: CommentPosition | null,
+	}>;
+	comments: Record<string, Comment>;
+	continueThreads: Record<string, any>;
+	moreComments: Record<string, any>;
+};
 
 export interface ConversationsPageState extends PostListingPageState {
 	commentLists: Record<string, { head: CommentPosition; tail: CommentPosition; }>;

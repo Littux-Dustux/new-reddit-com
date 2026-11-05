@@ -1,13 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Reddit+Sans:ital,wght@0,200..900;1,200..900&display=swap');
-
 ._1gg1MfJZaNkaPmqHpGQHni { /* GIFS in comments */
     height: 200px !important;
 }
 ._3K6DCjWs2dQ93YYZDOHjib {
     width: 100% !important;
 }
+
+._3m20hIKOhTTeMgPnfMbVNN > div { /* Images in comments */
+    height: unset !important;
+}
+._2_tDEnGMLxpM6uOa2kaDB3.vgwLfcw0MneE2ejmdh_l9 {
+    max-width: unset !important;
+    max-height: 240px !important;
+}
+
 .RichTextJSON-root {
-    font-family: 'Reddit Sans';
+    font-family: RedditSans;
     overflow-y: hidden;
 }
 ._2QZW3qVaM5fa8vo4uwbT42 > img { /* Trophy image */

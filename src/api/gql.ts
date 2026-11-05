@@ -1,3 +1,4 @@
+import { GQL_URL } from "../constants";
 import { getLogger } from "../logging/logger";
 import { multiErrorToast } from "../logging/toast";
 import { isLoggedIn } from "../state";
@@ -50,7 +51,7 @@ export async function gqlFetch<T = any, V = any>(
 			try {
 				resp = await window.gmFetch({
 					method: "POST",
-					url: "https://cf.gql-fed.reddit.com?" + operationName,
+					url: `${GQL_URL}?${operationName}`,
 					headers: {
 						"Content-Type": "application/json",
 						"User-Agent": "Reddit/Version 2026.03.0/Build 2603061/Android 13",

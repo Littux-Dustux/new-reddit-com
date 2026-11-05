@@ -31,7 +31,7 @@ export const getRedditRequestHeaders = async (anonymous: boolean = false) => {
 	const headers: Record<string, string> = {
 		"Accept": "application/json",
 		"Origin": "https://new.reddit.com",
-		"Referer": "https://new.reddit.com/",
+		"Referer": "https://new.reddit.com/r/ReturnNewReddit/",
 	}
 
 	headers['Authorization'] = `Bearer ${await (anonymous ? getAnonymousToken : window.getToken)()}`;

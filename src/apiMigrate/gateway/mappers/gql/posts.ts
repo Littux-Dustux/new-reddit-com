@@ -60,7 +60,7 @@ const getMedia = (data: GqlPostNonDeleted, devvitData?: DevvitPostFragmentFragme
 			baseMedia.mediaMetadata[it.media.id] = convertSingleGqlMediaAsset(it.media);
 			mappedItems.push({
 				adEvents: it.adEvents ? mapAdEvents(it.adEvents) : [],
-				caption: it.caption,
+				caption: it.caption ?? undefined,
 				callToAction: it.callToAction,
 				displayAddress: it.displayAddress,
 				id: Number(it.id),
@@ -225,11 +225,11 @@ function getSource(post: GqlPostNonDeleted) {
 
 
 export function processGqlPost(post: GqlPost, subId?: string | null, devvit?: any): Post {
-	if (post.__typename === "DeletedSubredditPost") {
-		throw new Error("Unexpected 'DeletedSubredditPost' node");
+	if (post.__typename === "DeletedSubredditPost" || post.__typename === "UnavailablePost") {
+		throw new Error(`Unexpected '${post.__typename}' node`);
 	}
 
-	const author = post.authorInfo.__typename === "Redditor" ? post.authorInfo : null;
+	const author = post.authorInfo?.__typename === "Redditor" ? post.authorInfo : null;
 	const subreddit = post.__typename === "SubredditPost" ? post.subreddit : post.profile;
 
 	return {
@@ -237,7 +237,7 @@ export function processGqlPost(post: GqlPost, subId?: string | null, devvit?: an
 		...mapModerationInfoCommon(post.moderationInfo),
 		author: author?.name ?? "[deleted]",
 		authorId: author?.id ?? null,
-		authorIsBlocked: false,
+		authorIsBlocked: (post as any).isAuthorBlocked,
 		belongsTo: {
 			type: post.__typename === "SubredditPost" ? 'subreddit' : 'profile',
 			id: subreddit?.id ?? subId ?? ''
@@ -266,6 +266,7 @@ export function processGqlPost(post: GqlPost, subId?: string | null, devvit?: an
 		isLocked: post.isLocked,
 		isNSFW: post.isNsfw,
 		isPinned: post.isStickied,
+		isScoreHidden: post.isScoreHidden,
 		isSpoiler: post.isSpoiler,
 		isStickied: post.isStickied,
 		media: getMedia(post, devvit),
@@ -288,7 +289,8 @@ export function processGqlPost(post: GqlPost, subId?: string | null, devvit?: an
 		thumbnail: post.thumbnail
 			? { url: post.thumbnail.url, ...post.thumbnail.dimensions }
 			: { url: 'default', width: 0, height: 0 },
-		title: post.title,
+		// @ts-ignore
+		title: post.title ?? post.postTitle,
 		upvoteRatio: post.upvoteRatio,
 		viewCount: post.viewCount,
 		voteState: post.voteState === "NONE" ? 0 : post.voteState === "UP" ? 1 : -1,
@@ -311,21 +313,23 @@ export function processGqlPost(post: GqlPost, subId?: string | null, devvit?: an
 }
 
 
-export function addGqlPostToState(post: GqlPostNonDeleted, subId: string | null, state: StateBase, postWithDevvit?: GetDevvitPostDataQuery['postInfoById']) {
+export function addGqlPostToState(post: GqlPostNonDeleted, subId: string | null, state: StateBase) {
 	// @ts-ignore
-	state.posts[post.id] = processGqlPost(post, subId, postWithDevvit?.devvit);
+	state.posts[post.id] = processGqlPost(post, subId, post.devvit);
 
 	const crossPost = post.crosspostRoot?.post;
 	if (crossPost) {
 		// @ts-ignore
-		addGqlPostToState(crossPost, null, state, postWithDevvit?.crosspostRoot?.postInfo);
+		addGqlPostToState(crossPost, null, state);
 	}
 
 	const appState = getState();
 	const sub = post.__typename === "SubredditPost" ? post.subreddit : post.profile;
-	subId ??= sub?.id as string;
-	state.authorFlair[subId] ??= {};
-	state.authorFlair[subId][post.authorInfo.name] = getAuthorFlairFromGqlThing(post.authorFlair);
+	subId ??= (sub as any).id as string;
+	state.authorFlair[subId] ??= { '[deleted]': null };
+	if (post.authorInfo?.name)
+		(state.authorFlair[subId] as any)[post.authorInfo.name] = getAuthorFlairFromGqlThing(post.authorFlair);
+
 
 	if (sub) {
 		if (!appState.postFlair[subId])
@@ -339,6 +343,7 @@ export function addGqlPostToState(post: GqlPostNonDeleted, subId: string | null,
 		} else {
 			state.profiles[subId] ??= processSubredditGql(post.profile);
 		}
+
 	} else if (!state.subreddits[subId]) {
 		//logger.err(`Missing subreddit data for ${subId}!`);
 		if (!appState.subreddits.models[subId])
@@ -375,3 +380,5 @@ export function addGqlPostToState(post: GqlPostNonDeleted, subId: string | null,
 	}
 	return state;
 }
+
+(window as any).addGqlPostToState = addGqlPostToState;

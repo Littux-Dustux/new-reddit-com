@@ -461,7 +461,12 @@
 	<script>__perfMark("app_html_start")</script>
 	<div id="2x-container"></div>
 	<script>__perfMark("ads_dot_js_fetch_start")</script>
-	<script src="https://www.redditstatic.com/desktop2x/js/xads.js"></script>
+	<script>
+		var e = document.createElement('div');
+		e.id = 'a2ba06a4-a2ec-4182-b295-c15ffe5f1181';
+		e.style.display = 'none';
+		document.body.appendChild(e);
+	</script>
 	<script>__perfMark("redux_json_start")</script>
 	<script id="data" src="/dist/main.js"></script>
 	<script>__perfMark("js_deps_fetch_start")</script>

@@ -1,16 +1,50 @@
 import { gqlFetch } from "../../api/gql";
-import { getUserSubredditPref } from "../../api/localhost";
-import { getREST, postREST } from "../../api/rest";
+import { getREST } from "../../api/rest";
 import { RedditAPIError } from "../../api/restErr";
 import { getLogger } from "../../logging";
 import { getState } from "../../main";
-import { moreComments, postAndCommentsListing, postComments } from "./mappers/listing";
-import { type CommentsPageState } from "./types/state";
+import { userPrefs } from "../../state/addIdentity";
+import { errToStr } from "../../utils";
+import { addGqlCommentForestToState } from "./mappers/gql/comment";
+import { makePostCommentsStateGql } from "./mappers/gql/listing";
+import { postAndCommentsListing } from "./mappers/listing";
 import { fetchSubredditPageExtra } from "./utils";
-
+import type { PostCommentsQuery, CommentSort, PostCommentsQueryVariables, PostsByIdsQuery, PostsByIdsQuery_postsInfoByIds, PostsByIdsQueryVariables, CommentForestTreesFragmentFragment, GetCommentByIdWithChildrenQuery, GetCommentByIdWithChildrenQueryVariables } from "../../api/types/gql";
+import type { Post } from "./types/post";
+import type { CommentsPageState } from "./types/state";
 
 const logger = getLogger('postCommentsGql');
-const devvitDataCacheOptions = { cache: true, maxCacheAge: 300e3 };
+const fetchedPostIds = new Set<string>();
+
+async function fetchPost(id: string): Promise<PostsByIdsQuery_postsInfoByIds> {
+	fetchedPostIds.add(id);
+	const data = await gqlFetch<PostsByIdsQuery, PostsByIdsQueryVariables>(
+		'PostsByIds', '0e471495bcba33554b6c540b3cf1cae23dd5432a8b741dddc7fd6717dc2520a7',
+		{
+			ids: [id],
+			includeSubredditInPosts: false,
+			includeExtendedVideoAsset: true,
+			includeDevvitData: true,
+			includeCommunityStatus: false,
+			includeVideoPlaybackInComments: true,
+			includeUnavailablePostReason: true,
+			includeIsAuthorBlocked: true,
+			includePostContentPostHint: false,
+			includePostContentThumbnailEnabled: false,
+		}
+	);
+	const post = data.postsInfoByIds[0] as PostsByIdsQuery_postsInfoByIds | null;
+	if (!post) {
+		throw new RedditAPIError(404, 'Not Found');
+	}
+	if (post.__typename === "UnavailablePost") {
+		logger.err(`${post.unavailableReason}: ${post.unavailableTitle}`);
+		logger.err(post.unavailableMessage?.message as string);
+
+		throw new RedditAPIError(451, post.unavailableTitle as string);
+	};
+	return post;
+}
 
 export async function postCommentsResponseGql(postId: string, focusedCommentId: string | undefined, params: Record<string, string>) {
 	const postFromState = getState().posts.models[postId];
@@ -37,85 +71,74 @@ export async function postCommentsResponseGql(postId: string, focusedCommentId: 
 			}
 		}
 
-		let postWithDevvit;
 
-		if (!postFromState || postFromState.crosspostParentId || postFromState.thumbnail.url === "self" || postFromState.thumbnail.url === "default") {
-			if (postFromState) {
-				postWithDevvit = gqlFetch("GetDevvitPostData", "c1b617abd8eec6232ae0c97893316d44a2f09cb7cef56c646680b2d9de0d8802", {
-					postId: postId,
-					getCrossPost: Boolean(postFromState.crosspostParentId),
-				}, devvitDataCacheOptions);
+		let useCommentsChildrenQuery = false;
+		const isPreload = params.truncate === '25' || !subredditName;
+		const gqlVars = {
+			sortType: (params.sort?.toUpperCase() as CommentSort) ?? undefined,
+			maxDepth: 10,
+			count: userPrefs?.num_comments ?? 100,
+			includeIsGildable: true,
+			includeVideoPlaybackInComments: true,
+			includePremiumAvatarTreatment: true,
+			focusedCommentContext: focusedCommentId ? { commentId: focusedCommentId } : undefined,
+			numParents: 0,
+			...(isPreload && {
+				count: 25,
+				truncate: 10,
+				includeAwards: false
+			}),
+		}
+
+		if (postFromState?.discussionType === "CHAT") gqlVars.sortType = "LIVE";
+		if (focusedCommentId) {
+			if (params.context) {
+				useCommentsChildrenQuery = true;
+				gqlVars.numParents = Number(params.context);
 			} else {
-				postWithDevvit = (async () => {
-					const [post, postWithCrosspost] = await Promise.all([
-						gqlFetch("GetDevvitPostData", "c1b617abd8eec6232ae0c97893316d44a2f09cb7cef56c646680b2d9de0d8802", {
-							postId: postId,
-							getCrossPost: false,
-						}, devvitDataCacheOptions),
-						gqlFetch("GetDevvitPostData", "c1b617abd8eec6232ae0c97893316d44a2f09cb7cef56c646680b2d9de0d8802", {
-							postId: postId,
-							getCrossPost: true,
-						}, devvitDataCacheOptions)
-					]);
-					if (post?.postInfoById?.devvit?.__typename === "DevvitPost") {
-						return post;
-					} else {
-						return postWithCrosspost;
-					}
-				})();
+				const commentFromState = getState().features.comments.models[focusedCommentId];
+				if (commentFromState && commentFromState.depth < 10) {
+					gqlVars.numParents = 4;
+					gqlVars.maxDepth = 10;
+				} else {
+					useCommentsChildrenQuery = true;
+				}
 			}
 		}
 
-		const isPreload = params.truncate === '25';
-		if (isPreload) {
-			params.count = '25';
-			params.truncate = '10';
-		}
 
 		const subredditPageExtra = subredditName && params.include?.includes("structuredStyles")
 			? fetchSubredditPageExtra(subredditName, !isPreload, !isPreload)
 			: null;
-
-		delete params.include;
-		delete params.subredditName;
-		delete params.hasSortParam;
-		delete params.instanceId;
-		delete params.onOtherDiscussions;
-		delete params.comment_awardings_by_current_user;
-
-		if (postFromState?.discussionType === "CHAT") params.sort = "live";
-		if (focusedCommentId && !params.context) {
-			params.context = '4';
-			params.depth = '10';
+		const post = fetchedPostIds.has(postId) ? null : fetchPost(postId);
+		let commentForest: CommentForestTreesFragmentFragment;
+		if (useCommentsChildrenQuery) {
+			const data = await gqlFetch<GetCommentByIdWithChildrenQuery, GetCommentByIdWithChildrenQueryVariables>(
+				'GetCommentByIdWithChildren', '21877473f62d8a98010a2549c810803aef4d6a0f5598715bd78a90218b99df21',
+				{ id: focusedCommentId as string, ...gqlVars }
+			);
+			commentForest = data.commentById?.children as CommentForestTreesFragmentFragment;
+		} else {
+			const data = await gqlFetch<PostCommentsQuery, PostCommentsQueryVariables>(
+				'PostComments', '059182c64536c086b09c79e6aa4da72622a208a8c416a9aa9b61dcf8aada8d0c',
+				{ id: postId, ...gqlVars }
+			);
+			commentForest = data.postInfoById?.commentForest as CommentForestTreesFragmentFragment;
 		}
-
-		const listing = await getREST(
-			`${subredditPrefix}/comments/${postId.slice(3)}/_/${(focusedCommentId?.slice(3)) ?? ''}.json?${
-				new URLSearchParams({
-					...params,
-					always_include_media: "1",
-					feature: "link_preview",
-					threaded: "false",
-					raw_json: "1",
-					raw_media_syntax: "1",
-				})
-		}`);
 
 
 		return {
 			jsonResponse: JSON.stringify(
-				await postComments(
-					listing[0].data.children[0].data,
-					listing[1].data.children,
-					{
-						postWithDevvit:	(await postWithDevvit)?.postInfoById,
-						...(subredditPageExtra
-							? await subredditPageExtra
-							: { structuredStyles: null, subredditInfo: null }
-						),
-					},
-					!isPreload,
-				)
+				makePostCommentsStateGql({
+					post: await post,
+					postId,
+					appliedSort: gqlVars.sortType,
+					commentForest,
+					...(subredditPageExtra
+						? await subredditPageExtra
+						: { structuredStyles: null, subredditInfo: null }
+					),
+				})
 			),
 			status: 200
 		};
@@ -128,26 +151,40 @@ export async function postCommentsResponseGql(postId: string, focusedCommentId: 
 		} else if (e && (e as any).status && (e as any).jsonResponse) {
 			return e as { jsonResponse: string, status: number };
 		} else {
-			logger.crt(`Error fetching ${params.onOtherDiscussions === "true" ? "other discussions" : "comments"}: ${
-				(e as any)?.message ?? JSON.stringify(e)
-			}`);
+			logger.crt(`Error fetching ${params.truncate === '0' ? "crossposted post info" : "GraphQL post comments"}: ${errToStr(e)}`);
 			throw e;
 		}
 	}
 }
 
-export const moreCommentsResponse = async (postID: string, childrenIDs: string) => {
+export const moreCommentsResponseGql = async (postId: string, payload: string) => {
 	try {
-		const data = await postREST(
-			"/api/morechildren.json?raw_json=1&raw_media_syntax=1&profile_img=1&emotes_as_images=true&rtj=only&threaded=false&redditWebClient=web2x&app=web2x-client-production", 
-			new URLSearchParams({
-				link_id: postID,
-				children: childrenIDs,
-				api_type: "json",
-			})
+		const [depth, cursor, sortType] = JSON.parse(payload) as [number, string, string];
+		const data = await gqlFetch<PostCommentsQuery, PostCommentsQueryVariables>(
+			'PostComments', '059182c64536c086b09c79e6aa4da72622a208a8c416a9aa9b61dcf8aada8d0c',
+			{
+				id: postId,
+				after: cursor,
+				sortType: sortType as CommentSort || undefined,
+				maxDepth: 10,
+				count: userPrefs?.num_comments ?? 100,
+				includeIsGildable: true,
+				includeVideoPlaybackInComments: true,
+				includePremiumAvatarTreatment: true,
+			}
 		);
+		const commentTrees = ((data.postInfoById as any).commentForest as CommentForestTreesFragmentFragment).trees;
+
 		return {
-			jsonResponse: JSON.stringify(await moreComments(data.json.data.things, postID)),
+			jsonResponse: JSON.stringify(
+				addGqlCommentForestToState(getState().posts.models[postId] as Post, commentTrees, {
+					authorFlair: {},
+					commentLists: {},
+					comments: {},
+					moreComments: {},
+					continueThreads: {},
+				}, depth)
+			),
 			status: 200
 		};
 	} catch(e) {

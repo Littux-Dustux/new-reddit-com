@@ -77,10 +77,16 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 			}
 		}
 
-		const isPreload = params.truncate === '25';
+		const isPreload = params.truncate === '25' || !subredditName;
 		if (isPreload) {
-			params.count = '25';
-			params.truncate = '10';
+			if (postFromState) {
+				params.truncate = '10';
+			} else {
+				// Speed up loading of redd.it shortlinks
+				params.limit = '1',
+				params.truncate = '0';
+				params.depth = '0';
+			}
 		}
 
 		const subredditPageExtra = subredditName && params.include?.includes("structuredStyles")
@@ -149,7 +155,7 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 		} else if (e && (e as any).status && (e as any).jsonResponse) {
 			return e as { jsonResponse: string, status: number };
 		} else {
-			logger.crt(`Error fetching ${params.onOtherDiscussions === "true" ? "other discussions" : "comments"}: ${errToStr(e)}`);
+			logger.crt(`Error fetching ${params.truncate === '0' ? "crossposted post" : "post comments"}: ${errToStr(e)}`);
 			throw e;
 		}
 	}

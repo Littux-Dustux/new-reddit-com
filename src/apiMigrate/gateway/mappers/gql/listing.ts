@@ -1,6 +1,12 @@
-import type { GetModSubredditFeedPostElementsQuery, SubredditFeedElementsQuery } from "../../../../api/types/gql";
-import type { SubredditListingStateBase, PostListingPageState, CommentListingPageState } from "../../types/state";
+import type { CommentForestTreesFragmentFragment, GetDevvitPostDataQuery, GetModSubredditFeedPostElementsQuery, PdsBasicPostInfoFragmentFragment, PostCommentsQuery_postInfoById, PostsByIdsQuery_postsInfoByIds, SubredditFeedElementsQuery } from "../../../../api/types/gql";
+import { getState } from "../../../../main";
+import type { Post } from "../../types/post";
+import type { SubredditListingStateBase, PostListingPageState, CommentListingPageState, CommentsPageState, CommentTreeState } from "../../types/state";
+import { fixR2CommentsMedia } from "../../utils";
+import { addCommentTreeToState } from "../comments";
+import { addPostToState } from "../posts";
 import { addR2SubredditToState } from "../subreddit";
+import { addGqlCommentForestToState } from "./comment";
 import { addGqlPostToState } from "./posts";
 import { processModPermissionsGql } from "./subreddit";
 
@@ -74,6 +80,50 @@ export function postsListingGql(
 			}
 		};
 	}
+
+	return state;
+}
+
+
+export function makePostCommentsStateGql(
+	{ post, postId, appliedSort, commentForest, structuredStyles, subredditInfo, preferences, postFlairsV2, userFlairsV2 }: {
+		post: PostsByIdsQuery_postsInfoByIds | null,
+		postId: string,
+		appliedSort: string,
+		commentForest: CommentForestTreesFragmentFragment,
+		structuredStyles: AnyRecord | null,
+		subredditInfo: AnyRecord | null,
+		preferences?: any,
+		postFlairsV2?: any[] | null,
+		userFlairsV2?: any[] | null,
+	},
+) {
+	const state: CommentsPageState = {
+		account: null,
+		authorFlair: {},
+		commentLists: {},
+		comments: {},
+		features: null,
+		moreComments: {},
+		postFlair: {},
+		postMeta: null,
+		posts: {},
+		profiles: {},
+		subreddits: {},
+		preferences,
+		continueThreads: {},
+		subredditAboutInfo: {},
+		structuredStyles,
+		userFlair: {},
+		subredditPermissions: preferences,
+	};
+
+	addR2SubredditToState(state, subredditInfo, userFlairsV2, postFlairsV2);
+
+	if (post) addGqlPostToState(post, subredditInfo?.name, state);
+	else state.posts[postId] = getState().posts.models[postId] as Post;
+
+	addGqlCommentForestToState(state.posts[postId] as Post, commentForest.trees, state, 0, appliedSort);
 
 	return state;
 }

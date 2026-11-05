@@ -3,10 +3,10 @@ import type { Comment } from "../types/comment";
 import { getRTJSONFirstText, getVoteStateNum } from "./common";
 import { getAuthorFlairFromR2Thing } from "./flair";
 import type { ExtraComments } from "./listing";
-import type { CommentListingPageState } from "../types/state";
+import type { CommentListingPageState, CommentTreeState } from "../types/state";
 import { markdownToRichText } from "./richtext";
 
-export type CommentPosition = { id: string; type: string } | null;
+export type CommentPosition = { id: string; type: string };
 
 export const processSingleComment = (comment: any, postId?: any): Comment => {
 	const bodyText = comment.rtjson ? getRTJSONFirstText(comment.rtjson) : comment.body;
@@ -37,7 +37,6 @@ export const processSingleComment = (comment: any, postId?: any): Comment => {
 		distinguishType: comment.distinguished,
 		editedAt: comment.edited,
 		// gildings: null,
-		goldCount: 0,
 		id: comment.name,
 		ignoreReports: comment.ignore_reports,
 		isAdmin: comment.distinguished === "admin",
@@ -170,17 +169,6 @@ export function addCommentToState(comment: any, state: CommentListingPageState) 
 }
 
 
-
-type CommentTreeState = {
-	authorFlair: Record<string, Record<string, any>>;
-	commentLists: Record<string, {
-		head: CommentPosition,
-		tail: CommentPosition,
-	}>;
-	comments: Record<string, any>;
-	continueThreads: Record<string, any>;
-	moreComments: Record<string, any>;
-};
 
 export function addCommentTreeToState(
 	commentChildren: Record<string, any>[],

@@ -12,7 +12,7 @@ import { isLoggedIn } from "../../state";
 import { blockedByUserNames, isUserCurationActive } from "./listingPage";
 import { getUserSubredditPref } from "../../api/localhost";
 import type { ModQueueTriggerType, CommentMediaDetailsQuery } from "../../api/types/gql";
-import type { Comment, Media } from "./types/comment";
+import type { Comment, CommentMedia } from "./types/comment";
 import svcGqlFetch from "../../api/shredditGql";
 import { errToStr } from "../../utils";
 import { clientConfig } from "../../ui/settings";
@@ -22,11 +22,11 @@ const mqTriggerD2xUnsupported = new Set<ModQueueTriggerType>(["COMMENT_GUIDANCE"
 
 export async function fixR2CommentsMedia(comments: Record<string, Comment>) {
 	// some giphy comments don't have the proper metadata, and have {"status":"invalid"}. So we'll fetch it from GIPHY.
-	const brokenGiphyCommentMediaMetadatas: Record<string, { key: string, mediaMetadata: Media['mediaMetadata'] }[]> = {};
+	const brokenGiphyCommentMediaMetadatas: Record<string, { key: string, mediaMetadata: CommentMedia['mediaMetadata'] }[]> = {};
 	const giphyIdsToFetch: Set<string> = new Set();
 
 	// reddit doesn't include videos in comments on the old API
-	const videoCommentIncompleteMedias: Record<string, Media> = {};
+	const videoCommentIncompleteMedias: Record<string, CommentMedia> = {};
 	const videoCommentIdsToFetch: string[] = [];
 
 	// get blocked user comments
@@ -188,7 +188,7 @@ export async function fetchSubredditPageExtra(
 		if (id) {
 			return {
 				structuredStyles: null,
-				subredditInfo: { __typename: "__USE_CACHE__", name: id  },
+				subredditInfo: { __typename: "__USE_CACHE__", name: id },
 				userFlairsV2: null,
 				postFlairsV2: null,
 			}

@@ -92,3 +92,5 @@ export async function handlePostFeedAndOtherDiscussions({ postId, includeOtherDi
 		data: outputData
 	});
 }
+
+(window as any).fixSvcGqlPost = fixSvcGqlPost;

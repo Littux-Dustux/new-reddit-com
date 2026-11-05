@@ -1,3 +1,4 @@
+import { SHREDDIT_GQL_URL } from "../constants";
 import { getLogger } from "../logging";
 import { multiErrorToast } from "../logging/toast";
 import { clientConfig } from "../ui/settings";
@@ -12,12 +13,12 @@ export default async function svcGqlFetch(operation: string, variables: any, opt
 
 	const resp = await window.gmFetch({
 		method: "POST",
-		url: "https://www.reddit.com/svc/shreddit/graphql?" + operation,
+		url: `${SHREDDIT_GQL_URL}?${operation}`,
 		headers: {
 			"Accept": "application/json",
 			"Content-Type": "application/json",
 			"Origin": "https://www.reddit.com",
-			"Referer": "https://www.reddit.com/",
+			"Referer": "https://www.reddit.com/r/ReturnNewReddit/",
 		},
 		data: JSON.stringify({
 			operation,

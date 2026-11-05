@@ -9,6 +9,7 @@ import { getRedditRequestHeaders, parseResponseAndStoreAuth } from "./helpers";
 import { isLoggedIn } from "../state";
 import { parseRedditError, RedditAPIError, tryParseJson } from "./restErr";
 import { clientConfig } from "../ui/settings";
+import { REST_URL } from "../constants";
 
 
 export interface RequestOptions {
@@ -27,7 +28,7 @@ const logger = getLogger('api:rest');
 const defaultHeaders = {
 	"Accept": "application/json",
 	"Origin": "https://oauth.reddit.com",
-	"Referer": "https://oauth.reddit.com/",
+	"Referer": "https://oauth.reddit.com/r/ReturnNewReddit/",
 }
 
 /**
@@ -47,7 +48,7 @@ export async function redditRequest<T = any>(endpoint: string, options: RequestO
 		if (cached) return cached as T;
 	}
 
-	const url = endpoint.startsWith("http") ? endpoint : `https://oauth.reddit.com${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
+	const url = endpoint.startsWith("http") ? endpoint : `${REST_URL}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
 
 	const headers: Record<string, string> = {
 		...(options.cookieAuth ? defaultHeaders : await getRedditRequestHeaders(options.anonymous)),

@@ -220,7 +220,7 @@ export const processPost = (data: any, devvitData?: DevvitPostFragmentFragment):
 		created: data.created_utc * 1000, // Reddit API returns seconds, UI usually needs ms
 		crosspostParentId: crossPostId,
 		crosspostRootId: crossPostId,
-		discussionType: (/discussion thread|(match|race) discussion/i).test(data.title) && ((Date.now() / 1000) - data.created_utc < 50000)
+		discussionType: (/discussion thread|(match|race|live) discussion/i).test(data.title) && ((Date.now() / 1000) - data.created_utc) < 86400
 			? "CHAT"
 			: data.discussion_type
 				? data.discussion_type.toUpperCase()

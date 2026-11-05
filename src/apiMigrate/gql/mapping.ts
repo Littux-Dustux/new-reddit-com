@@ -921,9 +921,9 @@ export const gqlFedMap: GqlFedMapping = {
 		sha256Hash: "4fd0ee0e581d1abb0d3fb583b8fa6fc16d354f855c62aeae2d733c39a6c976db",
 	},
 	PopularFeedElements: {
+		/*
 		operationName: "PopularFeedElements",
 		sha256Hash: "728c0f9a4d12c17b8cffe07669bb1a8770b0f2ec0c84e040485f8fad2d9c417f",
-	/*
 		mapVars: (vars) => ({
 			...vars,
 			advancedConfiguration: {
@@ -940,20 +940,19 @@ export const gqlFedMap: GqlFedMapping = {
 			recentPosts: [],
 			trendingSubreddits: []
 		}) */
-		/*
 		operationName: "Popular",
 		useShredditGqlProxy: true,
 		mapVars: ({ pageSize, ...rest }) => ({
 			first: pageSize,
-			navigationSessionId: "",
+			navigationSessionId: crypto.randomUUID(),
 			includeAwards: true,
 			...rest
 		}),
 		mapResp: ({ feed }) => ({
 			popular: {
-				elements: fixPopularElements(feed.elements)
+				elements: fixGqlListing(feed.elements, fixSvcGqlPost)
 			}
-		}) */
+		})
 	},
 	PostFeedAndOtherDiscussions: {
 		operationName: "SubredditFeed+GetDuplicatePosts",
@@ -1152,6 +1151,10 @@ export const gqlFedMap: GqlFedMapping = {
 				}
 			});
 		}
+	},
+	StoreUxTargetingAction: {
+		operationName: 'StoreUxTargetingAction',
+		sha256Hash: '00b00a01230f42debbdc8eae8c9f770b7f963f03264bce41530169fc3012b2bb',
 	},
 	SubmitMediaUpload: {
 		operationName: "SubmitMediaUpload",

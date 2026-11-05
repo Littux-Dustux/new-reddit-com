@@ -171,12 +171,15 @@ const convertPrefsV1ToState = (prefs: PrefsV1): PrefsState => ({
 	useMarkdown: true,
 });
 
+export let userPrefs: PrefsV1 | undefined;
+
 export async function addPrefsV1ToState() {
 	try {
 		const prefs = await getREST<PrefsV1>("/api/v1/me/prefs?raw_json=1");
 		if (!prefs) return;
 
 		getState().user.prefs = convertPrefsV1ToState(prefs);
+		userPrefs = prefs;
 	} catch {}
 };
 

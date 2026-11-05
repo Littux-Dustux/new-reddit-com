@@ -1,3 +1,4 @@
+import { GQL_REALTIME_URL } from "../constants";
 import { getLogger } from "../logging";
 import { isLoggedIn } from "../state";
 import { getAnonymousToken } from "./helpers";
@@ -24,7 +25,7 @@ function initSocket() {
 	hasConnectionInitialized = false;
 	isClosedIntentionally = false;
 
-	websocket = new WebSocket("wss://gql-realtime.reddit.com/query", "graphql-ws");
+	websocket = new WebSocket(GQL_REALTIME_URL, "graphql-ws");
 	websocket.onmessage = handleSocketMessage;
 	websocket.onopen = async function() {
 		this.send(JSON.stringify({
