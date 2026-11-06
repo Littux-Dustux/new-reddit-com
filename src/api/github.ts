@@ -1,6 +1,7 @@
 import { REPO_API_PATH, REPO_PATH, VERSION } from "../constants";
 import { clearToast, showToast, ToastType } from "../logging";
-import { compareVersions } from "../utils";
+import { compareVersions, errToStr } from "../utils";
+import { gqlFetch } from "./gql";
 import { restartServer, triggerClientUpdate } from "./localhost";
 import { getREST } from "./rest";
 
@@ -58,11 +59,11 @@ export async function checkForUpdates() {
 async function seeChangeLog(newUpdates: string[]) {
 	if (newUpdates.length === 1) {
 		const annPost = await getREST(
-			`/api/info?url=${REPO_PATH}/releases/tag/${newUpdates[0] as string}&limit=100`,
+			`/api/info.json?url=${REPO_PATH}/releases/tag/${newUpdates[0] as string}&limit=100&raw_json=1`,
 			{ cookieAuth: true }
 		);
 
-		for (const { post } of annPost.data.children) {
+		for (const { data: post } of annPost.data.children) {
 			// r/Littux
 			if (post.subreddit_id === "t5_efsaqc") {
 				return window.store.dispatch({
@@ -87,21 +88,66 @@ async function seeChangeLog(newUpdates: string[]) {
 
 
 async function doUpdate(url: string) {
+	clearToast('updateChangelog');
 	showToast({
 		id: 'updateProgress',
 		kind: ToastType.Custom,
 		text: 'Updating, this will take a while... (meanwhile you can continue browsing)',
 	}, 0);
 
-	const { newVersion } = await triggerClientUpdate({ releasesUrl: url, currentVersion: VERSION });
-	await restartServer();
+	try {
+		const { newVersion } = await triggerClientUpdate({ releasesUrl: url, currentVersion: VERSION });
+		await restartServer();
 
-	clearToast('updateProgress');
-	showToast({
-		id: 'updateSuccess',
-		kind: ToastType.SuccessCommunity,
-		text: `Update to ${newVersion} successful!`,
-		buttonText: "Refresh Page",
-		buttonAction: () => window.location.reload(),
-	}, 0);
+		clearToast('updateProgress');
+		showToast({
+			id: 'updateSuccess',
+			kind: ToastType.SuccessCommunityGreen,
+			text: `Update to ${newVersion} successful!`,
+			buttonText: "Refresh Page",
+			buttonAction: () => window.location.reload(),
+		}, 0);
+
+	} catch (e: any) {
+		clearToast('updateProgress');
+		const msg = `Error updating: ${errToStr(e)}`;
+		console.error(msg);
+		showToast({
+			kind: ToastType.Error,
+			text: msg,
+			buttonText: "Report issue",
+			buttonAction: async () => {
+				if (confirm("Ok to make a comment under https://redd.it/1x7lpr7 with this info?\n\n" + msg)) {
+					const { createComment } = await gqlFetch(
+						"CreateComment",
+						"6b793908708a4ba5c774e0828a9659977b9aebad5f56a424ffe95b48057bf2e2",
+						{
+							input: {
+								postId: "t3_1x7lpr7",
+								content: {
+									markdown: "Submitted from client:\n\n\t" + msg,
+								}
+							}
+						}
+					);
+
+					if (!createComment?.ok) {
+						prompt(
+							"Error making comment: " +
+							JSON.stringify(createComment.errors) + " " +
+							JSON.stringify(createComment.fieldErrors) +
+							"\n\nCopy the error text from below:",
+							msg 
+						)
+					} else window.store.dispatch({
+						type: "@@router/CALL_HISTORY_METHOD",
+						payload: {
+							method: "push",
+							args: [createComment.commentInfo.permalink]
+						}
+					});
+				}
+			}
+		}, 0);
+	}
 }

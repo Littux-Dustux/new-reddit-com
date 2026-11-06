@@ -20,12 +20,14 @@ def update_from_github_releases(releases_url: str, current_version: str) -> tupl
     """
 
     try:
-        target_dir = Path(__file__).resolve().parent
+        target_dir = Path(__file__).resolve().parent.parent
     except NameError:
-        target_dir = Path(sys.argv[0]).resolve().parent
-    else:
-        target_dir = target_dir.resolve()
+        target_dir = Path(sys.argv[0]).resolve().parent.parent
+    except Exception as e:
+        return False, "Error getting target_dir"
 
+    if target_dir.name not in ("release", "new-reddit-com"):
+        return False, "Name of the new reddit directory must be either 'release' or 'new-reddit-com'"
 
     print(f"Fetching release information from: {releases_url}")
     req = urllib.request.Request(releases_url, headers=headers)

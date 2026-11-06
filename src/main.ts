@@ -3,6 +3,7 @@ import { initAPIMigratorInterceptors } from "./apiMigrate";
 import { hydrateState, state as initialState, isLoggedIn } from "./state";
 import { patchWebSocket } from "./apiMigrate/liveChat";
 import { setupSpaNavigation } from "./state/spaNavigation";
+import { checkForUpdates } from "./api/github";
 
 const logger = getLogger('init');
 
@@ -78,6 +79,8 @@ async function main() {
 			clearInterval(timer);
 			window.clientLoaded = true;
 			markClientLoaded(true);
+
+			checkForUpdates();
 
 			// Hack to load the required chunks
 			const originalPath = location.pathname + location.search + location.hash;

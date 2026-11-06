@@ -55,5 +55,5 @@ export const upsertUserSubredditPref = (input: PatchSubredditPrefInput): Promise
 		return data;
 	})
 
-export const triggerClientUpdate = (input: Update) => request<UpdateResponse>('POST', '/api/update');
+export const triggerClientUpdate = (input: Update) => request<UpdateResponse>('POST', '/api/update', input);
 export const restartServer = () => request('POST', '/api/restart', {}).catch(() => {});

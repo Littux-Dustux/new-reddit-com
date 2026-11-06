@@ -1,4 +1,4 @@
-export const VERSION = 'v0.6.0';
+export const VERSION = 'v0.8.1';
 export const REPO_PATH = 'https://github.com/Littux-Dustux/new-reddit-com';
 export const REPO_API_PATH = 'https://api.github.com/repos/Littux-Dustux/new-reddit-com';
 
