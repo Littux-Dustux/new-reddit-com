@@ -1,28 +1,9 @@
-"""
-API routes for the development server
-Handles API endpoints and proxying
-"""
-
-from server.utils import json_response
-from flask import Blueprint
 from http.cookiejar import CookieJar
-from time import time
-from urllib.request import Request
-
 import threading
+from time import time
 import urllib
-
-api_bp = Blueprint('api', __name__, url_prefix='/api')
-
-@api_bp.route('/anonymous-token', methods=['GET'])
-def anonymous_token():
-    """Get anonymous access token for Reddit API"""
-    try:
-        access_token = get_access_token()
-        return json_response(200, data=access_token)
-    except Exception as e:
-        print(f"Error getting access token: {e}")
-        return json_response(500, error=str(e))
+from urllib.request import Request
+from ..utils import json_response
 
 
 cached_token = None
@@ -98,3 +79,15 @@ def get_access_token():
         with _token_lock:
             _token_fetch_in_progress = False
             _token_fetch_event.set()
+
+
+def token_response(payload, query):
+	"""
+	Returns a JSON response containing the anonymous access token.
+	"""
+	try:
+		access_token = get_access_token()
+		return json_response(200, data=access_token)
+	except Exception as e:
+		print("Error getting access token:", e)
+		return json_response(500, error=str(e))

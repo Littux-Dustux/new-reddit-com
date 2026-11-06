@@ -47,3 +47,12 @@ export interface SubredditPrefResponse {
 	subreddit: Subreddit;
 	prefs: SubredditPref;
 }
+
+
+export interface Update {
+	releasesUrl: string;
+	currentVersion: string;
+}
+export interface UpdateResponse {
+	newVersion: string
+}

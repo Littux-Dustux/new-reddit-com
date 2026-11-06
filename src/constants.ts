@@ -1,4 +1,5 @@
 export const VERSION = 'v0.6.0';
+export const REPO_PATH = 'https://github.com/Littux-Dustux/new-reddit-com';
 export const REPO_API_PATH = 'https://api.github.com/repos/Littux-Dustux/new-reddit-com';
 
 export const GQL_URL = 'https://cf.gql-fed.reddit.com';

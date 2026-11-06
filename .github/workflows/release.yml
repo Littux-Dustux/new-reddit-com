@@ -35,7 +35,7 @@ jobs:
         run: pnpm run build
 
       - name: Create ZIP archive
-        run: zip -r release.zip LICENSE README.md index.html embed.html config.html custom_styling.css serve.py dist/ bundles/
+        run: zip -r release.zip LICENSE README.md index.html embed.html config.html custom_styling.css serve.py dist/ bundles/ server/
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2

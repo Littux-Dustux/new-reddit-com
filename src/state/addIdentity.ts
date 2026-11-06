@@ -341,6 +341,7 @@ export async function addIdentityToState(state: State) {
 	if (!identity) {
 		// @ts-ignore
 		state.user.account = null;
+		isLoggedIn.value = false;
 		return;
 	}
 

@@ -1,6 +1,6 @@
 import { getLogger } from "../logging";
 import { getState } from "../main";
-import type { APIResponse, AuthData, ErrorDetails, PatchSubredditPrefInput, SubredditPref, SubredditPrefInput, SubredditPrefResponse } from "./types/localhost";
+import type { APIResponse, AuthData, ErrorDetails, PatchSubredditPrefInput, SubredditPref, SubredditPrefInput, SubredditPrefResponse, Update, UpdateResponse } from "./types/localhost";
 
 export class APIError extends Error {
 	public status: number;
@@ -34,11 +34,11 @@ async function request<T>(method: string, url: string, body?: any): Promise<T> {
 	}
 }
 
-export const getAnonymousToken = (): Promise<AuthData> => request<AuthData>('GET', '/api/anonymous-token');
+
 
 export const convertFullnameToNum = (id: string) => parseInt(id.slice(3), 36);
-
 const cachedPrefs = new Map<string, SubredditPref>;
+export const getAnonymousToken = (): Promise<AuthData> => request<AuthData>('GET', '/api/anonymous-token');
 
 export const getUserSubredditPref = (srName: string): SubredditPref | Promise<SubredditPref | void> =>
 	cachedPrefs.get(srName.toLowerCase()) ?? request<SubredditPrefResponse>(
@@ -54,3 +54,6 @@ export const upsertUserSubredditPref = (input: PatchSubredditPrefInput): Promise
 		cachedPrefs.set(data.subreddit.name.toLowerCase(), data.prefs);
 		return data;
 	})
+
+export const triggerClientUpdate = (input: Update) => request<UpdateResponse>('POST', '/api/update');
+export const restartServer = () => request('POST', '/api/restart', {}).catch(() => {});
