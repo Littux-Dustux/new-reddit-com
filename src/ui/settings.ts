@@ -1,9 +1,13 @@
 export interface ReturnNewRedditPrefs {
 	// UI
 	forceLightMode: boolean;
+	commentMaxDepth: number;
 
 	// API
-	useGraphQL: { subredditPage: boolean; [key: string]: boolean };
+	useGraphQL: {
+		subredditPage: boolean;
+		postComments: boolean;
+	};
 	curationArcticComments: boolean;
 	curationPosts: CurationPostsMode;
 	fetchDevvitPostInfo: boolean;
@@ -33,6 +37,7 @@ export enum CurationPostsMode {
 
 
 export const clientConfig: ReturnNewRedditPrefs = {
+	commentMaxDepth: 10,
 	commentVideoDownloads: true,
 	curationArcticComments: true,
 	curationPosts: CurationPostsMode.RedditSearch,
@@ -48,7 +53,10 @@ export const clientConfig: ReturnNewRedditPrefs = {
 	shredditGqlTimeout: 30e3,
 	spaNavigation: true,
 	toastMessages: { debug: false, info: false, log: false, warn: true, err: true },
-	useGraphQL: { subredditPage: false }
+	useGraphQL: {
+		subredditPage: false,
+		postComments: true,
+	}
 };
 
 function setClientConfig(newConfig: Record<string, any>, currentConfig: Record<string, any> = clientConfig): void {

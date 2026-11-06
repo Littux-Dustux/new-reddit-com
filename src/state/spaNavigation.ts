@@ -22,6 +22,7 @@ const allowedTargetClasses = new Set([
 
 export async function setupSpaNavigation() {
 	document.addEventListener('click', async (e) => {
+		if (clientConfig.saveScrollPosition) saveScrollPos();
 		if (!e.target || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
 		const targetEl = e.target as Element;
 
@@ -81,8 +82,6 @@ export async function setupSpaNavigation() {
 				fullPath = url.pathname + url.search + url.hash;
 			}
 
-			if (clientConfig.saveScrollPosition) saveScrollPos();
-
 			logger.log(`Redirecting link to internal route: ${fullPath}`, true);
 			window.store.dispatch({
 				type: "@@router/CALL_HISTORY_METHOD",
@@ -93,6 +92,8 @@ export async function setupSpaNavigation() {
 			});
 		}
 	}, true);
+
+	let pendingScroll;
 
 	document.addEventListener('reddit.urlChanged', (data: any) => {
 		// Hack to get user search working
@@ -124,10 +125,14 @@ export async function setupSpaNavigation() {
 		const path = window.location.pathname + window.location.search + window.location.hash;
 		const scrollPos = scrollPosByPath.get(path);
 		if (scrollPos) {
-			setTimeout(() => {
+			const timeoutId = setTimeout(async () => {
+				pendingScroll = timeoutId;
 				const el = scrollPos.selector ? document.getElementById(scrollPos.selector) : document.documentElement;
-				if (el) {
-					el.scrollTop = scrollPos.pos;
+				if (el && el.scrollTop !== scrollPos.pos) {
+					while (el.scrollTop !== scrollPos.pos && pendingScroll === timeoutId) {
+						el.scrollTop = scrollPos.pos;
+						await new Promise(r => setTimeout(r, 50));
+					}
 					logger.log(`Restored scroll position ${scrollPos.pos} for ${path}`, true);
 				} else {
 					logger.err(`Error restoring scroll position: element with ID '${scrollPos.selector}' was not found`);

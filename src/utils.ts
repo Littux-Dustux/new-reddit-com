@@ -30,7 +30,7 @@ export const truncText = (text: string, limit: number) => text.length > limit ? 
 export const errToStr = (err: any) =>
 	!err ? 'Unknown error' : (err.statusText === ""
 		? 'Unknown network error'
-		: (err.message || JSON.stringify(err))
+		: err.statusText ?? (err.message || JSON.stringify(err))
 	);
 
 

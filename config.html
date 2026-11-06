@@ -227,6 +227,10 @@
 					<label for="forceLightMode">Default to light mode</label>
 					<input id="forceLightMode" type="checkbox" />
 				</div>
+				<div class="setting">
+					<label for="commentMaxDepth">Max comments depth (GQL)</label>
+					<input id="commentMaxDepth" type="number" min="1" step="1" />
+				</div>
 			</fieldset>
 
 			<fieldset>
@@ -238,6 +242,10 @@
 					<div class="setting">
 						<label for="graphql-subredditPage">Subreddit page</label>
 						<input id="graphql-subredditPage" type="checkbox" data-graphql-key="subredditPage" />
+					</div>
+					<div class="setting">
+						<label for="graphql-postComments">Post comments</label>
+						<input id="graphql-postComments" type="checkbox" data-graphql-key="postComments" />
 					</div>
 				</div>
 				<div class="setting">
@@ -333,6 +341,7 @@
 			const STORAGE_KEY = "ReturnNewRedditPrefs";
 
 			const DEFAULTS = {
+				commentMaxDepth: 10,
 				commentVideoDownloads: true,
 				curationArcticComments: true,
 				curationPosts: 1, // 0 = Arctic shift, 1 = Reddit Search, 2 = Unchanged
@@ -348,7 +357,10 @@
 				shredditGqlTimeout: 30000,
 				spaNavigation: false,
 				toastMessages: { debug: false, info: false, log: false, warn: true, err: true },
-				useGraphQL: { subredditPage: false },
+				useGraphQL: {
+					subredditPage: false,
+					postComments: true,
+				},
 			};
 
 			const form = document.getElementById("config-form");

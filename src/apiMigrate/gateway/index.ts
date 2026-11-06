@@ -18,9 +18,13 @@ import { moreCommentsResponseGql, postCommentsResponseGql } from "./postComments
 
 const logger = getLogger("gatewayAPI");
 const emptyResponse = { jsonResponse: "{}", status: 501 };
+
 const subredditPostsPageHandler = clientConfig.useGraphQL.subredditPage
-	? subredditPostsPageGql
-	: subredditPostsPage;
+	? subredditPostsPageGql : subredditPostsPage;
+const postCommentsHandler = clientConfig.useGraphQL.postComments
+	? postCommentsResponseGql : postCommentsResponse;
+const moreCommentsHandler = clientConfig.useGraphQL.postComments
+	? moreCommentsResponseGql : moreCommentsResponse
 
 
 export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: target, method: string }, data) => {
@@ -36,11 +40,11 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 		case "subreddits":
 			return subredditPostsPageHandler(onTarget as string, params);
 		case "postcomments":
-			return postCommentsResponseGql(onTarget as string, path[0], params);
+			return postCommentsHandler(onTarget as string, path[0], params);
 		case "morecomments":
 			// https://gateway.reddit.com/desktopapi/v1/morecomments/t3_1u4d7zb?emotes_as_images=true&rtj=only&redditWebClient=web2x&app=web2x-client-production&profile_img=true&allow_over18=1&include=identity
 			// {"token":"orcih9a,orcjb7w,orcod95,orcykh8"}
-			return moreCommentsResponseGql(onTarget as string, JSON.parse(data).token);
+			return moreCommentsHandler(onTarget as string, JSON.parse(data).token);
 		case "mod":
 			return params.filtered === "true"
 				? genericListingR2(`/me/f/mod/${params.sort}.json`, params)

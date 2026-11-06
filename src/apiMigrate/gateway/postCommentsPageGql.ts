@@ -12,6 +12,7 @@ import { fetchSubredditPageExtra } from "./utils";
 import type { PostCommentsQuery, CommentSort, PostCommentsQueryVariables, PostsByIdsQuery, PostsByIdsQuery_postsInfoByIds, PostsByIdsQueryVariables, CommentForestTreesFragmentFragment, GetCommentByIdWithChildrenQuery, GetCommentByIdWithChildrenQueryVariables } from "../../api/types/gql";
 import type { Post } from "./types/post";
 import type { CommentsPageState } from "./types/state";
+import { clientConfig } from "../../ui/settings";
 
 const logger = getLogger('postCommentsGql');
 const fetchedPostIds = new Set<string>();
@@ -76,7 +77,7 @@ export async function postCommentsResponseGql(postId: string, focusedCommentId: 
 		const isPreload = params.truncate === '25' || !subredditName;
 		const gqlVars = {
 			sortType: (params.sort?.toUpperCase() as CommentSort) ?? undefined,
-			maxDepth: 10,
+			maxDepth: clientConfig.commentMaxDepth,
 			count: userPrefs?.num_comments ?? 100,
 			includeIsGildable: true,
 			includeVideoPlaybackInComments: true,
@@ -97,7 +98,11 @@ export async function postCommentsResponseGql(postId: string, focusedCommentId: 
 				gqlVars.numParents = Number(params.context);
 			} else {
 				const commentFromState = getState().features.comments.models[focusedCommentId];
-				if (commentFromState && commentFromState.depth < 10) {
+				if (
+					commentFromState &&
+					clientConfig.commentMaxDepth > 4 &&
+					commentFromState.depth < (clientConfig.commentMaxDepth-4)
+				) {
 					gqlVars.numParents = 4;
 					gqlVars.maxDepth = 10;
 				} else {
@@ -166,7 +171,7 @@ export const moreCommentsResponseGql = async (postId: string, payload: string) =
 				id: postId,
 				after: cursor,
 				sortType: sortType as CommentSort || undefined,
-				maxDepth: 10,
+				maxDepth: clientConfig.commentMaxDepth - depth,
 				count: userPrefs?.num_comments ?? 100,
 				includeIsGildable: true,
 				includeVideoPlaybackInComments: true,

@@ -1,5 +1,6 @@
 import type { CommentForestTreesFragmentFragment, PdsBasicPostInfoFragmentFragment, PostCommentsQuery_postInfoById } from "../../../../api/types/gql";
 import { getState } from "../../../../main";
+import { clientConfig } from "../../../../ui/settings";
 import type { Comment } from "../../types/comment";
 import type { Post } from "../../types/post";
 import type { CommentsPageState, CommentTreeState } from "../../types/state";
@@ -13,11 +14,12 @@ import { mapModerationInfoCommon } from "./moderationInfo";
 export function addGqlCommentToState(
 	state: CommentTreeState,
 	tree: CommentForestTreesFragmentFragment['trees'][number],
-	{ postId, subredditId, postAuthorId, appliedSort }: {
+	{ postId, subredditId, postAuthorId, appliedSort, maxDepth }: {
 		postId: string,
 		appliedSort: string,
 		subredditId: string,
 		postAuthorId: string | null | undefined,
+		maxDepth: number
 	}
 ): CommentPosition {
 	const node = tree.node ?? tree.more;
@@ -130,7 +132,7 @@ export function addGqlCommentToState(
 				next: null,
 				prev: null,
 			}
-			if (node.isTooDeepForCount) {
+			if (tree.depth >= maxDepth) {
 				const id = `continueThread-${tree.parentId}`;
 				data.id = id
 				state.continueThreads[id] = data;
@@ -156,17 +158,21 @@ export function addGqlCommentForestToState(
 	currentDepth: number = 0,
 	appliedSort = ''
 ): CommentTreeState {
-
+	
+	if (commentTrees[0] && commentTrees[0].depth < 0) {
+		currentDepth = Math.abs(commentTrees[0].depth);
+	}
+	const order: CommentPosition[] = [];
 	const additionalInfo = {
 		postId: post.id,
 		subredditId: post.belongsTo.id,
 		postAuthorId: post.authorId,
 		appliedSort,
+		maxDepth: clientConfig.commentMaxDepth - currentDepth,
 	}
 	const subredditId = additionalInfo.subredditId;
 	state.authorFlair[subredditId] ??= { '[deleted]': null };
 
-	const order: CommentPosition[] = [];
 
 	for (const tree of commentTrees) {
 		const comment = tree.node?.__typename === "Comment" ? tree.node : null;

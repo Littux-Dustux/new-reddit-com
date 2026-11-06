@@ -330,6 +330,7 @@ export function addGqlPostToState(post: GqlPostNonDeleted, subId: string | null,
 	if (post.authorInfo?.name)
 		(state.authorFlair[subId] as any)[post.authorInfo.name] = getAuthorFlairFromGqlThing(post.authorFlair);
 
+	if (appState.subreddits.models[subId]) return state;
 
 	if (sub) {
 		if (!appState.postFlair[subId])
