@@ -60,6 +60,7 @@ export function addGqlCommentToState(
 				isOp: node.authorInfo.id === postAuthorId,
 				isRemoved: node.moderationInfo?.isRemoved,
 				isSaved: node.isSaved,
+				isScoreHidden: node.isScoreHidden,
 				isStickied: node.isStickied,
 				media: {
 					// @ts-ignore
@@ -176,8 +177,10 @@ export function addGqlCommentForestToState(
 
 	for (const tree of commentTrees) {
 		const comment = tree.node?.__typename === "Comment" ? tree.node : null;
-		if (comment?.authorFlair)
-			state.authorFlair[subredditId][comment.authorInfo.name] ??= getAuthorFlairFromGqlThing(comment.authorFlair);
+		if (comment && (comment.authorFlair || comment.authorCommunityBadge))
+			state.authorFlair[subredditId][comment.authorInfo.name] ??= getAuthorFlairFromGqlThing(
+				comment.authorFlair, comment.authorCommunityBadge
+			);
 
 		tree.depth += currentDepth;
 		order.push(addGqlCommentToState(state, tree, additionalInfo));

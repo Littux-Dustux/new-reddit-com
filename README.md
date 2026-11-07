@@ -8,7 +8,7 @@ Network requests are routed through the userscript manager, so to see them, you 
 
 # How to use
 
-See: <https://www.reddit.com/r/ReturnNewReddit/comments/1vmgvmt/beautiful_right_now_you_can_enjoy_it_too/>
+See: <https://www.reddit.com/r/ReturnNewReddit/comments/1xq5mzq/updated_tutorial_on_how_to_get_the_newredditcom/>
 
 # DISCLAIMER
 
