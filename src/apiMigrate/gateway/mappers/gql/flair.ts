@@ -13,10 +13,12 @@ export function getAuthorFlairFromGqlThing(
 			{ e: "text", t: " "+achievementFlair.label }
 		] : [];
 
-	if (rtjson && achievementFlair) {
-		rtjson.push({ e: "text", t: " │ " }, ...acheivementRtjson);
-	} else {
-		rtjson = acheivementRtjson;
+	if (achievementFlair) {
+		if (rtjson) {
+			rtjson.push({ e: "text", t: " │ " }, ...acheivementRtjson);
+		} else {
+			rtjson = acheivementRtjson;
+		}
 	}
 
 	if (!data) {

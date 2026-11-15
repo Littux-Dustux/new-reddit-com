@@ -62,7 +62,12 @@ interface ImageAssetR2 {
 		u: string,
 		x: number,
 		y: number
-	}
+	},
+	p: {
+		x: number,
+		y: number,
+		u: string
+	}[],
 }
 
 export type MediaAssetR2 =

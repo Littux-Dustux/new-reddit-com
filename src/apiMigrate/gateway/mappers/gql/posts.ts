@@ -1,4 +1,4 @@
-import type { SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node as GqlPost, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_AdPost, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_AdPost_crosspostRoot_CrosspostRoot_post_Post_poll_PostPoll as GqlPoll, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_ProfilePost, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_SubredditPost, DevvitPostFragmentFragment, GetDevvitPostDataQuery } from "../../../../api/types/gql"
+import type { PostsByIdsQuery_postsInfoByIds as GqlPost, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_AdPost, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_AdPost_crosspostRoot_CrosspostRoot_post_Post_poll_PostPoll as GqlPoll, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_ProfilePost, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_SubredditPost, DevvitPostFragmentFragment, GetDevvitPostDataQuery, RemovedByCategory } from "../../../../api/types/gql"
 import { getLogger } from "../../../../logging";
 import { getState } from "../../../../main";
 import type { CommentSort } from "../../types/common";
@@ -10,7 +10,7 @@ import { convertDevvitDataToIFrame } from "../posts";
 import { processSubredditAboutInfo, processSubreddit } from "../subreddit";
 import { mapAdEvents } from "./ads";
 import { processAwards } from "./award";
-import { convertGqlMediaAssets, convertGqlResolutions, convertSingleGqlMediaAsset } from "./common";
+import { convertGqlMediaAssets, convertGqlResolutions, convertSingleGqlMediaAsset, getLargestImage } from "./common";
 import { getAuthorFlairFromGqlThing } from "./flair";
 import { mapModerationInfoCommon } from "./moderationInfo";
 import { processSubredditAboutInfoGql, processSubredditGql } from "./subreddit";
@@ -35,7 +35,7 @@ const getMedia = (data: GqlPostNonDeleted, devvitData?: DevvitPostFragmentFragme
 		...(data.content && {
 			markdownContent: data.content.markdown,
 			richtextContent: JSON.parse(data.content.richtext),
-			mediaMetadata: convertGqlMediaAssets(data.content.richtextMedia),
+			mediaMetadata: convertGqlMediaAssets(data.content.richtextMedia, true),
 		})
 	} as MediaText | MediaRichtext;
 
@@ -43,7 +43,7 @@ const getMedia = (data: GqlPostNonDeleted, devvitData?: DevvitPostFragmentFragme
 	if (devvitData?.__typename === "DevvitPost") {
 		return {
 			...baseMedia,
-			content: `devvit:http://${location.host}/embed.html?${encodeURIComponent(convertDevvitDataToIFrame(devvitData).outerHTML)}`,
+			content: `devvit:${location.hostname}/embed.html?${encodeURIComponent(convertDevvitDataToIFrame(devvitData).outerHTML)}`,
 			type: "embed",
 			width: 640,
 			height: 512,
@@ -57,10 +57,10 @@ const getMedia = (data: GqlPostNonDeleted, devvitData?: DevvitPostFragmentFragme
 		baseMedia.mediaMetadata ??= {};
 
 		for (const it of galleryImages) {
-			baseMedia.mediaMetadata[it.media.id] = convertSingleGqlMediaAsset(it.media);
+			baseMedia.mediaMetadata[it.media.id] = convertSingleGqlMediaAsset(it.media, true);
 			mappedItems.push({
 				adEvents: it.adEvents ? mapAdEvents(it.adEvents) : [],
-				caption: it.caption ?? undefined,
+				caption: it.caption || undefined,
 				callToAction: it.callToAction,
 				displayAddress: it.displayAddress,
 				id: Number(it.id),
@@ -87,6 +87,7 @@ const getMedia = (data: GqlPostNonDeleted, devvitData?: DevvitPostFragmentFragme
 					type: "image",
 					content: still.source.url,
 					resolutions: convertGqlResolutions(still),
+					altText: still.altText
 				};
 			};
 			break;
@@ -99,8 +100,8 @@ const getMedia = (data: GqlPostNonDeleted, devvitData?: DevvitPostFragmentFragme
 					...baseMedia,
 					...str.dimensions,
 					type: "video",
-					hlsUrl: str.hlsUrl,
-					dashUrl: str.dashUrl,
+					hlsUrl: str.hlsUrl.replace('cf.v', 'v'),
+					dashUrl: str.dashUrl.replace('cf.v', 'v'),
 					isGif: str.isGif,
 					scrubberThumbSource: str.scrubberMediaUrl,
 					posterUrl: media.still?.source.url as string,
@@ -225,8 +226,37 @@ function getSource(post: GqlPostNonDeleted) {
 
 
 export function processGqlPost(post: GqlPost, subId?: string | null, devvit?: any): Post {
-	if (post.__typename === "DeletedSubredditPost" || post.__typename === "UnavailablePost") {
+	if (post.__typename === "UnavailablePost") {
 		throw new Error(`Unexpected '${post.__typename}' node`);
+	}
+
+	if (post.__typename === "DeletedSubredditPost") {
+		return {
+			author: '[deleted]',
+			authorId: null,
+			belongsTo: {
+				type: post.subreddit ? 'subreddit' : 'profile',
+				id: post.subreddit?.id,
+			},
+			created: Date.parse(post.createdAt),
+			events: [],
+			flair: [],
+			id: post.id,
+			isScoreHidden: true,
+			numComments: post.commentCount,
+			postId: post.id,
+			permalink: `https://www.reddit.com/${post.subreddit?.prefixedName}/comments/${post.id.slice(3)}/deleted_by_user`,
+			removedByCategory: "deleted",
+			score: 0,
+			thumbnail: {
+				url: 'default',
+				width: 0,
+				height: 0
+			},
+			title: post.title,
+			upvoteRatio: 1,
+			voteState: 0,
+		}
 	}
 
 	const author = post.authorInfo?.__typename === "Redditor" ? post.authorInfo : null;
@@ -281,11 +311,13 @@ export function processGqlPost(post: GqlPost, subId?: string | null, devvit?: an
 				url: post.media.still.source.url,
 				...post.media.still.source.dimensions
 			} : null,
-		removedByCategory: post.removedByCategory,
+		removedByCategory: (post.removedByCategory?.toLowerCase() as Lowercase<RemovedByCategory>),
 		saved: post.isSaved,
 		score: post.score,
 		source: getSource(post),
-		suggestedSort: post.suggestedCommentSort?.toLowerCase() as CommentSort | undefined,
+		suggestedSort: post.suggestedCommentSort === "BLANK"
+			? undefined
+			: post.suggestedCommentSort?.toLowerCase() as CommentSort | undefined,
 		thumbnail: post.thumbnail
 			? { url: post.thumbnail.url, ...post.thumbnail.dimensions }
 			: { url: 'default', width: 0, height: 0 },

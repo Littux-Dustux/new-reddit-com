@@ -43,7 +43,7 @@ export function addGqlCommentToState(
 				authorIsBlocked: author?.isBlocked,
 				bodyMD: node.content.markdown,
 				created: Date.parse(node.createdAt) / 1000,
-				collapsed: node.isInitiallyCollapsed,
+				collapsed: clientConfig.disableAutoCollapseComments ? false : node.isInitiallyCollapsed,
 				collapsedBecauseCrowdControl: node.moderationInfo?.isAutoCollapsedFromCrowdControl,
 				collapsedReasonCode: node.initiallyCollapsedReason,
 				depth: tree.depth,
@@ -51,7 +51,7 @@ export function addGqlCommentToState(
 				deletedBy: node.removedByCategory === "DELETED" ? 'user' : null,
 				editedAt: node.editedAt ? Date.parse(node.editedAt) / 1000 : null,
 				id: node.id,
-				isAdmin: node.removedByCategory === "REDDIT",
+				isAdmin: node.distinguishedAs === "ADMIN",
 				isAuthorCakeday: author?.isCakeDayNow,
 				isAuthorPremium: author?.isPremiumAvatarTreatment,
 				isGildable: node.isGildable,
@@ -64,7 +64,7 @@ export function addGqlCommentToState(
 				isStickied: node.isStickied,
 				media: {
 					// @ts-ignore
-					mediaMetadata: convertGqlMediaAssets(node.content.richtextMedia),
+					mediaMetadata: convertGqlMediaAssets(node.content.richtextMedia, false),
 					richtextContent: JSON.parse(node.content.richtext),
 					rteMode: node.content.typeHint.toLowerCase(),
 					type: "rtjson"
@@ -89,7 +89,7 @@ export function addGqlCommentToState(
 				author: "[deleted]",
 				authorId: null,
 				bodyMD: "[deleted]",
-				collapsed: node.isInitiallyCollapsed,
+				collapsed: clientConfig.disableAutoCollapseComments ? false : node.isInitiallyCollapsed,
 				created: Date.parse(node.createdAt) / 1000,
 				deletedBy: node.removedByCategory === "DELETED"
 					? 'user'

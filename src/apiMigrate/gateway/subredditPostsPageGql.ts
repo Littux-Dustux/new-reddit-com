@@ -48,7 +48,8 @@ export async function subredditPostsPageGql(subredditOrSubreddits: string, param
 		pageSize: params.after // speed up initial load
 			? params.layout === "card" ? 25 : 40
 			: params.layout === "card" ? 7 : 14,
-		includeSubredditInPosts: false
+		includeSubredditInPosts: false,
+		includeStillMediaAltText: true
 	};
 
 

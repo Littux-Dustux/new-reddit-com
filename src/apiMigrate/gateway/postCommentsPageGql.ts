@@ -18,7 +18,6 @@ const logger = getLogger('postCommentsGql');
 const fetchedPostIds = new Set<string>();
 
 async function fetchPost(id: string): Promise<PostsByIdsQuery_postsInfoByIds> {
-	fetchedPostIds.add(id);
 	const data = await gqlFetch<PostsByIdsQuery, PostsByIdsQueryVariables>(
 		'PostsByIds', '0e471495bcba33554b6c540b3cf1cae23dd5432a8b741dddc7fd6717dc2520a7',
 		{
@@ -32,6 +31,8 @@ async function fetchPost(id: string): Promise<PostsByIdsQuery_postsInfoByIds> {
 			includeIsAuthorBlocked: true,
 			includePostContentPostHint: false,
 			includePostContentThumbnailEnabled: false,
+			includeDeletedPosts: true,
+			includeStillMediaAltText: true,
 		}
 	);
 	const post = data.postsInfoByIds[0] as PostsByIdsQuery_postsInfoByIds | null;
@@ -44,6 +45,7 @@ async function fetchPost(id: string): Promise<PostsByIdsQuery_postsInfoByIds> {
 
 		throw new RedditAPIError(451, post.unavailableTitle as string);
 	};
+	fetchedPostIds.add(id);
 	return post;
 }
 

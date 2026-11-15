@@ -24,11 +24,14 @@ export function fixSvcGqlPost(node: any) {
 		if (media.still) convertShredditMediaRes(media.still);
 		if (media.animated) media.animated = {
 			mp4_source: media.animated.variant
-		};
+		}
 		if (media.obfuscated) {
 			media.obfuscatedStill = media.obfuscated;
 			delete media.obfuscated;
 			convertShredditMediaRes(media.obfuscatedStill);
+		}
+		if (media.streaming) {
+			media.streaming.hlsUrl = media.streaming.url.replace('cf.v', 'v');
 		}
 	}
 	if (node.gallery?.items) {

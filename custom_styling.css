@@ -8,9 +8,17 @@
 ._3m20hIKOhTTeMgPnfMbVNN > div { /* Images in comments */
     height: unset !important;
 }
+._3Oa0THmZ3f5iZXAQ0hBJ0k {
+    container-type: inline-size;
+}
 ._2_tDEnGMLxpM6uOa2kaDB3.vgwLfcw0MneE2ejmdh_l9 {
     max-width: unset !important;
-    max-height: 240px !important;
+    max-height: 300px !important;
+}
+@container (max-width: 600px) {
+    ._3Oa0THmZ3f5iZXAQ0hBJ0k ._2_tDEnGMLxpM6uOa2kaDB3.vgwLfcw0MneE2ejmdh_l9 {
+        min-height: 240px !important;
+    }
 }
 
 .RichTextJSON-root {

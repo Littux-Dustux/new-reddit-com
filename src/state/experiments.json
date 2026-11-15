@@ -1724,13 +1724,13 @@
 	"d2x_remove_hide_post_overflowmenu": {
 		"id": 0,
 		"name": "d2x_remove_hide_post_overflowmenu",
-		"variant": "enabled",
+		"variant": "control_1",
 		"version": "1"
 	},
 	"d2x_remove_hide_post_overflowmenu_v2": {
 		"id": 8649,
 		"name": "d2x_remove_hide_post_overflowmenu_v2",
-		"variant": "enabled",
+		"variant": "control_1",
 		"version": "3"
 	},
 	"d2x_reputation_new_tag": {

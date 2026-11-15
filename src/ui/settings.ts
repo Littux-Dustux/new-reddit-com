@@ -2,6 +2,8 @@ export interface ReturnNewRedditPrefs {
 	// UI
 	forceLightMode: boolean;
 	commentMaxDepth: number;
+	forcePostImgWidth: MediaQuality;
+	disableAutoCollapseComments: boolean;
 
 	// API
 	useGraphQL: {
@@ -34,16 +36,28 @@ export enum CurationPostsMode {
 	Unchanged = 2,
 }
 
-
+export enum MediaQuality {
+	Small = 0,
+	Medium = 1,
+	Large = 2,
+	XLarge = 3,
+	XXLarge = 4,
+	XXXLarge = 5,
+	Source = 6,
+	SourceNoWebP = 7,
+	Default = 8
+}
 
 export const clientConfig: ReturnNewRedditPrefs = {
 	commentMaxDepth: 10,
 	commentVideoDownloads: true,
 	curationArcticComments: true,
 	curationPosts: CurationPostsMode.RedditSearch,
+	disableAutoCollapseComments: true,
 	experimentsOverride: {},
 	fetchDevvitPostInfo: true,
 	forceLightMode: false,
+	forcePostImgWidth: MediaQuality.Default,
 	giphyTimeout: 10e3,
 	gqlFedTimeout: 30e3,
 	mp4Gifs: true,

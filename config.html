@@ -228,8 +228,26 @@
 					<input id="forceLightMode" type="checkbox" />
 				</div>
 				<div class="setting">
+					<label for="forcePostImgWidth">Force post feed image resolution</label>
+					<select id="forcePostImgWidth">
+						<option value="0">small (108px)</option>
+						<option value="1">medium (216px)</option>
+						<option value="2">large (320px)</option>
+						<option value="3">xlarge (640px)</option>
+						<option value="4">xxlarge (960px)</option>
+						<option value="5">xxxlarge (1080px)</option>
+						<option value="6">source (WebP)</option>
+						<option value="7">source (original uncompressed)</option>
+						<option value="8">Default (depends on screen resolution)</option>
+					</select>
+				</div>
+				<div class="setting">
 					<label for="commentMaxDepth">Max comments depth (GQL)</label>
 					<input id="commentMaxDepth" type="number" min="1" step="1" />
+				</div>
+				<div class="setting">
+					<label for="disableAutoCollapseComments">Disable comments auto-collapse (GQL)</label>
+					<input id="disableAutoCollapseComments" type="checkbox" />
 				</div>
 			</fieldset>
 
@@ -308,19 +326,19 @@
 				<button id="add-experiment" type="button">Add experiment</button>
 				<div class="setting">
 					<label for="gqlFedTimeout">gql-fed API timeout ms</label>
-					<input id="gqlFedTimeout" type="number" min="0" step="1" />
+					<input id="gqlFedTimeout" type="number" min="0" step="1000" />
 				</div>
 				<div class="setting">
 					<label for="shredditGqlTimeout">shreddit gql API timeout ms</label>
-					<input id="shredditGqlTimeout" type="number" min="0" step="1" />
+					<input id="shredditGqlTimeout" type="number" min="0" step="1000" />
 				</div>
 				<div class="setting">
 					<label for="restTimeout">rest API timeout ms</label>
-					<input id="restTimeout" type="number" min="0" step="1" />
+					<input id="restTimeout" type="number" min="0" step="1000" />
 				</div>
 				<div class="setting">
 					<label for="giphyTimeout">GIPHY API timeout ms</label>
-					<input id="giphyTimeout" type="number" min="0" step="1" />
+					<input id="giphyTimeout" type="number" min="0" step="1000" />
 				</div>
 			</fieldset>
 		</form>
@@ -345,8 +363,10 @@
 				commentVideoDownloads: true,
 				curationArcticComments: true,
 				curationPosts: 1, // 0 = Arctic shift, 1 = Reddit Search, 2 = Unchanged
+				disableAutoCollapseComments: true,
 				experimentsOverride: {},
 				fetchDevvitPostInfo: true,
+				forcePostImgWidth: 8, // 8 = Default,
 				forceLightMode: false,
 				giphyTimeout: 10000,
 				gqlFedTimeout: 30000,
