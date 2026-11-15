@@ -404,6 +404,7 @@
 		.original-image-toolbar {
 			gap: 6px;
 			padding: 8px 4px;
+			font-size: 16px;
 		}
 
 		.original-image-toolbar button {
@@ -414,6 +415,37 @@
 		.original-image-viewport {
 			padding: 8px;
 		}
+	}
+
+	.logLine {
+		font-family: monospace;
+		font-size: 16px;
+		font-weight: bold;
+		padding: 4px;
+		animation: logLine-in 60ms ease-out both;
+	}
+
+	@keyframes logLine-in {
+		from {
+			opacity: 0;
+			transform: translateY(8px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.logLine {
+			animation: none;
+		}
+	}
+
+	#logger-container {
+		height: 100%;
+		overflow-y: scroll;
+		padding: 0.5em;
 	}
 	</style>
 
@@ -460,6 +492,7 @@
 <body>
 	<script>__perfMark("app_html_start")</script>
 	<div id="2x-container"></div>
+	<div id="logger-container"></div>
 	<script>__perfMark("ads_dot_js_fetch_start")</script>
 	<script>
 		var e = document.createElement('div');

@@ -36,6 +36,16 @@ function log({ level = "log", msg, func }: { level: LogLevel; msg: string; func:
 		"",
 		...args
 	);
+	if (!window.clientLoaded) {
+		const logDiv = document.getElementById("logger-container") as HTMLDivElement;
+		const logLine = document.createElement("div");
+		logLine.className = 'logLine';
+		logLine.textContent = `[${func}] ${level}: ${msg}`;
+		logLine.style.backgroundColor = logBGColorMap[level];
+		logLine.style.color = logColorMap[level];
+		logDiv.appendChild(logLine);
+		document.documentElement.scrollTop = document.documentElement.scrollHeight;
+	}
 }
 
 

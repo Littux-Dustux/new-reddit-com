@@ -79,6 +79,7 @@ async function main() {
 			clearInterval(timer);
 			window.clientLoaded = true;
 			markClientLoaded(true);
+			document.getElementById("logger-container")?.remove();
 
 			checkForUpdates();
 
