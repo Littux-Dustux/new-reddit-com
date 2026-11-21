@@ -1,16 +1,12 @@
-import type { CommentForestTreesFragmentFragment, GetDevvitPostDataQuery, GetModSubredditFeedPostElementsQuery, PdsBasicPostInfoFragmentFragment, PostCommentsQuery_postInfoById, PostsByIdsQuery_postsInfoByIds, SubredditFeedElementsQuery } from "../../../../api/types/gql";
+import type { CommentForestTreesFragmentFragment, GetModSubredditFeedPostElementsQuery, PostsByIdsQuery_postsInfoByIds, SubredditFeedElementsQuery } from "../../../../api/types/gql";
 import { getState } from "../../../../main";
+import { flushAndLogFilterHits } from "../../../../features/filterReddit/filterLog";
 import type { Post } from "../../types/post";
-import type { SubredditListingStateBase, PostListingPageState, CommentListingPageState, CommentsPageState, CommentTreeState } from "../../types/state";
-import { fixR2CommentsMedia } from "../../utils";
-import { addCommentTreeToState } from "../comments";
-import { addPostToState } from "../posts";
+import type { SubredditListingStateBase, PostListingPageState, CommentListingPageState, CommentsPageState } from "../../types/state";
 import { addR2SubredditToState } from "../subreddit";
 import { addGqlCommentForestToState } from "./comment";
 import { addGqlPostToState } from "./posts";
 import { processModPermissionsGql } from "./subreddit";
-
-const validPostTypenames = new Set(["SubredditPost", "ProfilePost", "AdPost"]);
 
 export function postsListingGql(
 	data: SubredditFeedElementsQuery['postFeed'] | GetModSubredditFeedPostElementsQuery['postFeed'],
@@ -63,24 +59,25 @@ export function postsListingGql(
 
 	if (data.__typename === "Subreddit") {
 		state.subredditPermissions = processModPermissionsGql(data);
-
 		for (const { node } of data.elements.edges) {
-			if (node && node.__typename !== "DeletedSubredditPost" && validPostTypenames.has(node.__typename)) {
+			if (node && (node.__typename === "SubredditPost" || node.__typename === "ProfilePost" || node.__typename === "AdPost")) {
 				state.postIds.push(node.id);
 				if (node.isStickied) state.pinned.push(node.id);
-				addGqlPostToState(node, data.id, state);
+				addGqlPostToState(node, data.id, state, 'sub');
 			}
 		};
+
 	} else if (data.__typename === "AdHocMultireddit") {
 		for (const { node } of data.posts.edges) {
-			if (node && validPostTypenames.has(node.__typename)) {
+			if (node && (node.__typename === "SubredditPost" || node.__typename === "ProfilePost" || node.__typename === "AdPost")) {
 				state.postIds.push(node.id);
 				if (node.isStickied) state.pinned.push(node.id);
-				addGqlPostToState(node, null, state);
+				addGqlPostToState(node, null, state, 'sub');
 			}
 		};
 	}
 
+	flushAndLogFilterHits();
 	return state;
 }
 
@@ -120,7 +117,7 @@ export function makePostCommentsStateGql(
 
 	addR2SubredditToState(state, subredditInfo, userFlairsV2, postFlairsV2);
 
-	if (post) addGqlPostToState(post, subredditInfo?.name, state);
+	if (post) addGqlPostToState(post, subredditInfo?.name, state, null);
 	else state.posts[postId] = getState().posts.models[postId] as Post;
 
 	addGqlCommentForestToState(state.posts[postId] as Post, commentForest.trees, state, 0, appliedSort);

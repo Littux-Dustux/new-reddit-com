@@ -1,4 +1,4 @@
-import { clientConfig, MediaQuality } from "../../../ui/settings";
+import { clientConfig, MediaQuality } from "../../../features/settings";
 import { getOriginalUncompressedUrl } from "../../gateway/mappers/gql/common";
 
 
@@ -21,15 +21,15 @@ const preferredQualityIndex = ({
 	[MediaQuality.XXXLarge]: 1,
 	[MediaQuality.Source]: 0,
 	[MediaQuality.SourceNoWebP]: 0,
-} as Record<MediaQuality, number>)[clientConfig.forcePostImgWidth];
+} as Record<MediaQuality, number>)[clientConfig.ui.forcePostImgWidth];
 
 
 export function convertShredditMediaRes(media: Record<string, any>, prefix = '') {
 	if (preferredQualityIndex !== undefined) {
 		media[prefix + 'source'] = media.preview;
-		if (clientConfig.forcePostImgWidth === MediaQuality.SourceNoWebP) {
+		if (clientConfig.ui.forcePostImgWidth === MediaQuality.SourceNoWebP) {
 			levels.forEach(([orig]) => delete media[orig]);
-		} else if (clientConfig.forcePostImgWidth === MediaQuality.Source) {
+		} else if (clientConfig.ui.forcePostImgWidth === MediaQuality.Source) {
 			media[prefix + 'xlarge'] = media.preview;
 			if (media.__typename === "ImageAsset") {
 				media.url = media.preview.url;

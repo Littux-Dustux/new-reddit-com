@@ -1,10 +1,10 @@
 import type { Comment } from '../apiMigrate/gateway/types/comment';
 import type { Post } from '../apiMigrate/gateway/types/post';
 import type { Subreddit, SubredditAboutInfo } from '../apiMigrate/gateway/types/subreddit';
-import { clientConfig } from '../ui/settings';
+import { clientConfig } from '../features/settings';
 import { addIdentityToState, addPrefsV1ToState } from './addIdentity';
 import addUserRels from './addUserRels';
-import experiments from './experiments.json';
+import experiments from './experiments';
 
 export const state = {
 	pages: {
@@ -313,7 +313,7 @@ export const state = {
 	},
 	emailVerificationTooltip: { isShowing: false },
 	emojis: { api: { list: { pending: {} } }, models: {} },
-	experimentOverrides: clientConfig.experimentsOverride,
+	experimentOverrides: {},
 	externalAccount: {
 		api: {
 			connect: { error: {}, pending: {} },
@@ -618,7 +618,7 @@ export const state = {
 	profilePostsPage: {},
 	profiles: {
 		about: {},
-		models: {},
+		models: {} as Record<string, Subreddit>,
 		moderated: { api: { pending: {} }, models: {}, pageInfo: {} },
 		multireddits: { api: { pending: {} }, pageInfo: {} },
 		pinnedPosts: { data: {}, initialData: {}, pending: {} },
@@ -781,7 +781,10 @@ export const state = {
 		chatSettings: { invitePolicy: "Everyone" },
 		drafts: null,
 		experiments: {
-			byName: experiments,
+			byName: {
+				...experiments,
+				...clientConfig.debug.experimentsOverride,
+			},
 			localPersisted: {},
 		},
 		isCustomizeFlyoutShowing: false,
@@ -859,7 +862,7 @@ export const state = {
 			liveBarRecommendationsEnabled: false,
 			loginOtpEnabled: false,
 			markMessagesRead: false,
-			nightmode: !clientConfig.forceLightMode,
+			nightmode: !clientConfig.ui.forceLightMode,
 			openPostInNewTab: false,
 			over18: true,
 			quarantineOptIn: false,

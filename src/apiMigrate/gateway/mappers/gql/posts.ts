@@ -1,22 +1,25 @@
-import type { PostsByIdsQuery_postsInfoByIds as GqlPost, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_AdPost, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_AdPost_crosspostRoot_CrosspostRoot_post_Post_poll_PostPoll as GqlPoll, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_ProfilePost, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_SubredditPost, DevvitPostFragmentFragment, GetDevvitPostDataQuery, RemovedByCategory } from "../../../../api/types/gql"
+import type { PostsByIdsQuery_postsInfoByIds as GqlPost, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_AdPost, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_AdPost_crosspostRoot_CrosspostRoot_post_Post_poll_PostPoll as GqlPoll, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_ProfilePost, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_SubredditPost, DevvitPostFragmentFragment, RemovedByCategory } from "../../../../api/types/gql"
 import { getLogger } from "../../../../logging";
 import { getState } from "../../../../main";
+import { checkGqlPostFiltered } from "../../../../features/filterReddit/checkPost";
+import type { SubredditFilterVars } from "../../../../features/filterReddit/checkSubreddit";
+import type { PostPage } from "../../../../features/filterReddit/types";
 import type { CommentSort } from "../../types/common";
 import type { PostFlair } from "../../types/flair";
 import type { Media, MediaGallery, MediaRichtext, MediaText, PollData, Post } from "../../types/post";
 import type { StateBase } from "../../types/state";
-import { getAuthorFlairFromR2Thing, processSubredditPostFlair, processSubredditPostFlairGql, processSubredditUserFlair, processSubredditUserFlairGql } from "../flair";
+import type { Subreddit } from "../../types/subreddit";
+import { processSubredditPostFlairGql, processSubredditUserFlairGql } from "../flair";
 import { convertDevvitDataToIFrame } from "../posts";
-import { processSubredditAboutInfo, processSubreddit } from "../subreddit";
 import { mapAdEvents } from "./ads";
 import { processAwards } from "./award";
-import { convertGqlMediaAssets, convertGqlResolutions, convertSingleGqlMediaAsset, getLargestImage } from "./common";
+import { convertGqlMediaAssets, convertGqlResolutions, convertSingleGqlMediaAsset } from "./common";
 import { getAuthorFlairFromGqlThing } from "./flair";
 import { mapModerationInfoCommon } from "./moderationInfo";
 import { processSubredditAboutInfoGql, processSubredditGql } from "./subreddit";
 
 const logger = getLogger('mapPostGql');
-type GqlPostNonDeleted = SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_AdPost | SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_ProfilePost | SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_SubredditPost;
+export type GqlPostNonDeleted = SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_AdPost | SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_ProfilePost | SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_SubredditPost;
 
 const vq = {
 	low: 360,
@@ -43,7 +46,7 @@ const getMedia = (data: GqlPostNonDeleted, devvitData?: DevvitPostFragmentFragme
 	if (devvitData?.__typename === "DevvitPost") {
 		return {
 			...baseMedia,
-			content: `devvit:${location.hostname}/embed.html?${encodeURIComponent(convertDevvitDataToIFrame(devvitData).outerHTML)}`,
+			content: `devvit:${location.origin}/embed.html?${encodeURIComponent(convertDevvitDataToIFrame(devvitData).outerHTML)}`,
 			type: "embed",
 			width: 640,
 			height: 512,
@@ -108,11 +111,11 @@ const getMedia = (data: GqlPostNonDeleted, devvitData?: DevvitPostFragmentFragme
 					packagedMedia: {
 						playbackMp4s: {
 							duration: 0,
-							permutations: media.packagedMedia.muxedMp4s ? Object.entries(media.packagedMedia.muxedMp4s)
+							permutations: pkg?.muxedMp4s ? Object.entries(pkg.muxedMp4s)
 								.filter(([k, v]) => v && k !== "recommended")
 								.map(([k, v]) => ({
 									source: {
-										url: v.url,
+										url: v?.url,
 										videoCodec: 'H264',
 										dimensions: {
 											width: 1080,
@@ -155,6 +158,7 @@ const getMedia = (data: GqlPostNonDeleted, devvitData?: DevvitPostFragmentFragme
 
 	if (data.isSelfPost) {
 		baseMedia.type = "rtjson";
+		baseMedia.richtextContent ??= { document: [] };
 		return baseMedia;
 	};
 
@@ -194,16 +198,14 @@ const getFlair = (post: GqlPostNonDeleted): PostFlair[] => {
 	return flairIndicators;
 };
 
-const processGqlPoll = (poll: GqlPoll): PollData => {
-	return {
-		options: poll.options,
-		resolvedOptionId: poll.resolvedOptionId,
-		totalVoteCount: poll.totalVoteCount,
-		userSelection: poll.selectedOptionId,
-		voteUpdatesRemained: null,
-		votingEndTimestamp: Date.parse(poll.votingEndsAt),
-	}
-};
+const processGqlPoll = (poll: GqlPoll): PollData => ({
+	options: poll.options,
+	resolvedOptionId: poll.resolvedOptionId,
+	totalVoteCount: poll.totalVoteCount ?? poll.options.reduce((acc, opt) => acc + opt.voteCount, 0),
+	userSelection: poll.selectedOptionId,
+	voteUpdatesRemained: null,
+	votingEndTimestamp: Date.parse(poll.votingEndsAt),
+});
 
 // Based on new reddit's own code
 const redditMediaDomains = /i\.redd\.it|v\.redd\.it|i\.reddituploads\.com|preview\.redd\.it|cf\.preview\.redd\.it/;
@@ -225,7 +227,8 @@ function getSource(post: GqlPostNonDeleted) {
 }
 
 
-export function processGqlPost(post: GqlPost, subId?: string | null, devvit?: any): Post {
+export function processGqlPost(post: GqlPost, devvit?: any, currPage?: PostPage, subVars?: SubredditFilterVars & { id: string | null }
+): Post {
 	if (post.__typename === "UnavailablePost") {
 		throw new Error(`Unexpected '${post.__typename}' node`);
 	}
@@ -261,6 +264,7 @@ export function processGqlPost(post: GqlPost, subId?: string | null, devvit?: an
 
 	const author = post.authorInfo?.__typename === "Redditor" ? post.authorInfo : null;
 	const subreddit = post.__typename === "SubredditPost" ? post.subreddit : post.profile;
+	const isFiltered = checkGqlPostFiltered(post, subVars, currPage);
 
 	return {
 		...processAwards(post.awardings ?? []),
@@ -270,7 +274,7 @@ export function processGqlPost(post: GqlPost, subId?: string | null, devvit?: an
 		authorIsBlocked: (post as any).isAuthorBlocked,
 		belongsTo: {
 			type: post.__typename === "SubredditPost" ? 'subreddit' : 'profile',
-			id: subreddit?.id ?? subId ?? ''
+			id: subreddit?.id ?? subVars?.id ?? ''
 		},
 		contestMode: post.isContestMode,
 		created: Date.parse(post.createdAt),
@@ -286,7 +290,7 @@ export function processGqlPost(post: GqlPost, subId?: string | null, devvit?: an
 			eventEnd: Date.parse(post.postEventInfo.endsAt) / 1000,
 		} : undefined,
 		flair: getFlair(post),
-		hidden: post.isHidden,
+		hidden: isFiltered || post.isHidden,
 		id: post.id,
 		isArchived: post.isArchived,
 		isAuthorCakeday: author?.isCakeDayNow,
@@ -324,7 +328,7 @@ export function processGqlPost(post: GqlPost, subId?: string | null, devvit?: an
 		// @ts-ignore
 		title: post.title ?? post.postTitle,
 		upvoteRatio: post.upvoteRatio,
-		viewCount: post.viewCount,
+		viewCount: (post as any).postStats?.viewCountTotal ?? 0,
 		voteState: post.voteState === "NONE" ? 0 : post.voteState === "UP" ? 1 : -1,
 		...(post.__typename === "AdPost"
 			? {
@@ -345,14 +349,11 @@ export function processGqlPost(post: GqlPost, subId?: string | null, devvit?: an
 }
 
 
-export function addGqlPostToState(post: GqlPostNonDeleted, subId: string | null, state: StateBase) {
-	// @ts-ignore
-	state.posts[post.id] = processGqlPost(post, subId, post.devvit);
-
+export function addGqlPostToState(post: GqlPostNonDeleted, subId: string | null, state: StateBase, currPage: PostPage) {
 	const crossPost = post.crosspostRoot?.post;
 	if (crossPost) {
 		// @ts-ignore
-		addGqlPostToState(crossPost, null, state);
+		addGqlPostToState(crossPost, null, state, currPage);
 	}
 
 	const appState = getState();
@@ -362,55 +363,71 @@ export function addGqlPostToState(post: GqlPostNonDeleted, subId: string | null,
 	if (post.authorInfo?.name)
 		(state.authorFlair[subId] as any)[post.authorInfo.name] = getAuthorFlairFromGqlThing(post.authorFlair);
 
-	if (appState.subreddits.models[subId]) return state;
+	if (!appState.subreddits.models[subId]) {
+		if (sub) {
+			if (!appState.postFlair[subId])
+				state.postFlair[subId] ??= processSubredditPostFlairGql(sub);
+			if (!appState.features.userFlair[subId])
+				state.userFlair[subId] ??= processSubredditUserFlairGql(sub);
+			state.subredditAboutInfo[subId] ??= processSubredditAboutInfoGql(sub);
 
-	if (sub) {
-		if (!appState.postFlair[subId])
-			state.postFlair[subId] ??= processSubredditPostFlairGql(sub);
-		if (!appState.features.userFlair[subId])
-			state.userFlair[subId] ??= processSubredditUserFlairGql(sub);
-		state.subredditAboutInfo[subId] ??= processSubredditAboutInfoGql(sub);
+			if (post.__typename === "SubredditPost") {
+				state.subreddits[subId] ??= processSubredditGql(post.subreddit);
+			} else {
+				state.profiles[subId] ??= processSubredditGql(post.profile);
+			}
 
-		if (post.__typename === "SubredditPost") {
-			state.subreddits[subId] ??= processSubredditGql(post.subreddit);
-		} else {
-			state.profiles[subId] ??= processSubredditGql(post.profile);
+		} else if (!state.subreddits[subId]) {
+			//logger.err(`Missing subreddit data for ${subId}!`);
+			if (!appState.subreddits.models[subId])
+				// @ts-ignore
+				state.subreddits[subId] ??= {
+					displayText: 'r/',
+					id: subId,
+					name: '',
+					icon: {
+						width: 256,
+						height: 256,
+						url: "",
+					},
+					isQuarantined: false,
+					subscribers: NaN,
+					type: 'public',
+					url: '/r//'
+				};
+			if (!appState.postFlair[subId])
+				state.postFlair[subId] ??= {
+					displaySettings: {
+						isEnabled: true,
+						position: "right"
+					}
+				};
+			if (!appState.features.userFlair[subId])
+				state.userFlair[subId] ??= {
+					displaySettings: {
+						isEnabled: true,
+						isUserEnabled: false,
+						position: "right"
+					}
+				};
 		}
-
-	} else if (!state.subreddits[subId]) {
-		//logger.err(`Missing subreddit data for ${subId}!`);
-		if (!appState.subreddits.models[subId])
-			// @ts-ignore
-			state.subreddits[subId] ??= {
-				displayText: 'r/',
-				id: subId,
-				name: '',
-				icon: {
-					width: 256,
-					height: 256,
-					url: "",
-				},
-				isQuarantined: false,
-				subscribers: NaN,
-				type: 'public',
-				url: '/r//'
-			};
-		if (!appState.postFlair[subId])
-			state.postFlair[subId] ??= {
-				displaySettings: {
-					isEnabled: true,
-					position: "right"
-				}
-			};
-		if (!appState.features.userFlair[subId])
-			state.userFlair[subId] ??= {
-				displaySettings: {
-					isEnabled: true,
-					isUserEnabled: false,
-					position: "right"
-				}
-			};
 	}
+
+	const abt = state.subredditAboutInfo[subId] ?? appState.subreddits.about[subId];
+	const s = (
+		state.subreddits[subId] ?? appState.subreddits.models[subId]
+		?? state.profiles[subId] ?? appState.profiles.models[subId]
+	) as Subreddit;
+	const subVars: SubredditFilterVars & { id: string | null } = {
+		id: subId,
+		name: s.name,
+		description: abt?.publicDescription,
+		isNsfw: s.isNSFW
+	}
+
+	// @ts-ignore
+	state.posts[post.id] = processGqlPost(post, post.devvit, currPage, subVars);
+
 	return state;
 }
 

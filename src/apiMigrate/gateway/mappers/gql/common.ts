@@ -1,6 +1,6 @@
 import type { MediaAssetR2 } from "../../types/common";
 import type { MediaSourceFragmentFragment, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_AdPost_crosspostRoot_CrosspostRoot_post_Post_content_Content_richtextMedia as RichtextMedia, PostCommentsQuery_postInfoById_PostInfo_commentForest_CommentForest_trees_CommentTree_node_Comment_content_Content_richtextMedia_AnimatedImageAsset as anim } from "../../../../api/types/gql";
-import { MediaQuality, clientConfig } from "../../../../ui/settings";
+import { MediaQuality, clientConfig } from "../../../../features/settings";
 
 export const convertSingleGqlMediaAsset = (asset: RichtextMedia, isPost: boolean): MediaAssetR2 => {
 	switch (asset.__typename) {
@@ -100,7 +100,7 @@ const resPreferenceIndex = ({
 	[MediaQuality.XXXLarge]: 1,
 	[MediaQuality.Source]: 0,
 	[MediaQuality.SourceNoWebP]: 0,
-} as Record<MediaQuality, number>)[clientConfig.forcePostImgWidth];
+} as Record<MediaQuality, number>)[clientConfig.ui.forcePostImgWidth];
 
 
 export function convertGqlResolutions(source: Record<string, any>, prefix: string = '') {
@@ -108,7 +108,7 @@ export function convertGqlResolutions(source: Record<string, any>, prefix: strin
 		const preferred = getLargestImage(source, prefix, resPreferenceIndex);
 		if (preferred) {
 			return [{
-				url: clientConfig.forcePostImgWidth === MediaQuality.SourceNoWebP
+				url: clientConfig.ui.forcePostImgWidth === MediaQuality.SourceNoWebP
 					? getOriginalUncompressedUrl(preferred.url)
 					: preferred.url,
 				...preferred.dimensions
@@ -134,7 +134,7 @@ function convertGqlMediaAssetRes(source: Record<string, any>, prefix: string = '
 		const preferred = getLargestImage(source, prefix, resPreferenceIndex);
 		if (preferred) {
 			return [{
-				u: clientConfig.forcePostImgWidth === MediaQuality.SourceNoWebP
+				u: clientConfig.ui.forcePostImgWidth === MediaQuality.SourceNoWebP
 					? getOriginalUncompressedUrl(preferred.url)
 					: preferred.url,
 				x: preferred.dimensions.width,

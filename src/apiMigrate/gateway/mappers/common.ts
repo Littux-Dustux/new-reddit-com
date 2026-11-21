@@ -6,8 +6,8 @@ export const getVoteStateNum = (likes: boolean | null) => (likes === null ? 0 : 
 export const getVideoMediaMetadataGql = (data: any): VideoAssetR2 => ({
 	e: "RedditVideo",
 	status: (data.status as string).toLowerCase() as "valid",
-	dashUrl: data.dashUrl,
-	hlsUrl: data.hlsUrl,
+	dashUrl: data.dashUrl.replace('cf.v', 'v'),
+	hlsUrl: data.hlsUrl.replace('cf.v', 'v'),
 	id: data.id,
 	x: data.width,
 	y: data.height,

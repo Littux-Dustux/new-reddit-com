@@ -12,18 +12,18 @@ import { APIError, convertFullnameToNum, upsertUserSubredditPref } from "../../a
 import type { Subreddit } from "./types/subreddit";
 import { subredditPostsPageGql } from "./subredditPostsPageGql";
 import { subredditPostsPage } from "./subredditPostsPage";
-import { clientConfig, CurationPostsMode } from "../../ui/settings";
+import { clientConfig, CurationPostsMode } from "../../features/settings";
 import { moreCommentsResponseGql, postCommentsResponseGql } from "./postCommentsPageGql";
 
 
 const logger = getLogger("gatewayAPI");
 const emptyResponse = { jsonResponse: "{}", status: 501 };
 
-const subredditPostsPageHandler = clientConfig.useGraphQL.subredditPage
+const subredditPostsPageHandler = clientConfig.api.useGraphQL.subredditPage
 	? subredditPostsPageGql : subredditPostsPage;
-const postCommentsHandler = clientConfig.useGraphQL.postComments
+const postCommentsHandler = clientConfig.api.useGraphQL.postComments
 	? postCommentsResponseGql : postCommentsResponse;
-const moreCommentsHandler = clientConfig.useGraphQL.postComments
+const moreCommentsHandler = clientConfig.api.useGraphQL.postComments
 	? moreCommentsResponseGql : moreCommentsResponse
 
 
@@ -76,17 +76,17 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 						blockedByUserNames.has(onTarget.toLowerCase()),
 					)
 				case "comments":
-					return clientConfig.curationArcticComments && await shouldUseArcticShiftHistory(onTarget.toLowerCase())
+					return clientConfig.api.curationArcticComments && await shouldUseArcticShiftHistory(onTarget.toLowerCase())
 						? params.sort === "top"
 							? arcticShiftListing(onTarget, false, params.after, true)
 							: arcticShiftListing(onTarget, false, params.after)
 						: genericListingR2(
 							`/user/${onTarget}/comments.json`,
-							{ ...params, limit: '100' }
+							{ ...params, limit: '100' },
 						)
 				case "posts":
-					return clientConfig.curationPosts !== CurationPostsMode.Unchanged && await shouldUseArcticShiftHistory(onTarget.toLowerCase())
-						? (clientConfig.curationPosts === CurationPostsMode.ArcticShift
+					return clientConfig.api.curationPosts !== CurationPostsMode.Unchanged && await shouldUseArcticShiftHistory(onTarget.toLowerCase())
+						? (clientConfig.api.curationPosts === CurationPostsMode.ArcticShift
 							? arcticShiftListing(onTarget, true, params.after)
 							: genericListingR2('/search.json', {
 								q: `author:(${onTarget})`,
@@ -94,8 +94,8 @@ export const gatewayMigratorInterceptor: InterceptorHandler = async ({ url: targ
 								t: params.t || "all",
 								include_over_18: params.allow_over18 ?? '0',
 								...params
-							})
-						) : genericListingR2(`/user/${onTarget}/submitted.json`, params)
+							}, undefined, false, 'user')
+						) : genericListingR2(`/user/${onTarget}/submitted.json`, params, undefined, false, 'user')
 				case "about":
 					return {
 						jsonResponse: JSON.stringify(

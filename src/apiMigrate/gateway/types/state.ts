@@ -21,6 +21,7 @@ export interface FlatListingStateBase extends StateBase {
 	dist: number;
 	pinned: string[];
 	token: string | null;
+	geoFilter?: string;
 }
 
 export interface SubredditListingStateBase extends StateBase {

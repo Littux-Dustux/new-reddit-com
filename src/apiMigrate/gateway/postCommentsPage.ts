@@ -5,7 +5,7 @@ import { RedditAPIError } from "../../api/restErr";
 import type { GetDevvitPostDataQuery } from "../../api/types/gql";
 import { getLogger } from "../../logging";
 import { getState } from "../../main";
-import { clientConfig } from "../../ui/settings";
+import { clientConfig } from "../../features/settings";
 import { errToStr } from "../../utils";
 import { moreComments, postAndCommentsListing, postComments } from "./mappers/listing";
 import { type CommentsPageState } from "./types/state";
@@ -47,7 +47,7 @@ export async function postCommentsResponse(postID: string, commentID: string | u
 
 		let postWithDevvit: Promise<GetDevvitPostDataQuery> | undefined = undefined;
 
-		if (clientConfig.fetchDevvitPostInfo && (
+		if (clientConfig.api.fetchDevvitPostInfo && (
 			!postFromState || postFromState.crosspostParentId || postFromState.thumbnail.url === "self" || postFromState.thumbnail.url === "default"
 		)) {
 			if (postFromState) {

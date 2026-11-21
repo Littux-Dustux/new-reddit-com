@@ -2,7 +2,7 @@ import { GQL_URL } from "../constants";
 import { getLogger } from "../logging/logger";
 import { multiErrorToast } from "../logging/toast";
 import { isLoggedIn } from "../state";
-import { clientConfig } from "../ui/settings";
+import { clientConfig } from "../features/settings";
 import { errToStr } from "../utils";
 import { getCache, setCache } from "./caching";
 import { getRedditRequestHeaders, parseResponseAndStoreAuth } from "./helpers";
@@ -27,12 +27,11 @@ export async function gqlFetch<T = any, V = any>(
 	const payload = JSON.stringify(variables);
 	const cacheKey = operationName + "~" + payload;
 
-	// If caching is enabled, check if this request is already in flight
-	if (options.cache) {
-		if (inFlightRequests.has(cacheKey)) {
-			return inFlightRequests.get(cacheKey)!;
-		}
+	if (inFlightRequests.has(cacheKey)) {
+		return inFlightRequests.get(cacheKey)!;
+	}
 
+	if (options.cache) {
 		const data = getCache(cacheKey, options.maxCacheAge);
 		if (data) {
 			if (typeof data === "string") {
@@ -69,7 +68,7 @@ export async function gqlFetch<T = any, V = any>(
 						},
 					}),
 					anonymous: true,
-					timeout: clientConfig.gqlFedTimeout,
+					timeout: clientConfig.debug.gqlFedTimeout,
 				});
 				break;
 			} catch(e: any) {
@@ -114,11 +113,8 @@ export async function gqlFetch<T = any, V = any>(
 		return data.data;
 	})();
 
-	// If caching is enabled, track this fetch to deduplicate concurrent identical requests
-	if (options.cache) {
-		inFlightRequests.set(cacheKey, fetchPromise);
-		fetchPromise.finally(() => inFlightRequests.delete(cacheKey));
-	}
+	inFlightRequests.set(cacheKey, fetchPromise);
+	fetchPromise.finally(() => inFlightRequests.delete(cacheKey));
 
 	return fetchPromise;
 };

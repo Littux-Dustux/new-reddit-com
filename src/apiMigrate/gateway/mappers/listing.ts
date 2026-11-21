@@ -1,15 +1,17 @@
 import { addPostToState } from "./posts";
 import { addR2SubredditToState } from "./subreddit";
-import { addGqlSubredditToState } from "./gql/subreddit";
 import { addCommentToState, addCommentTreeToState, type CommentPosition } from "./comments";
 import { fixR2CommentsMedia } from "../utils";
 import type { SubredditListingStateBase, PostListingPageState, CommentListingPageState, CommentsPageState, ConversationsPageState } from "../types/state";
 import type { GetDevvitPostDataQuery } from "../../../api/types/gql";
 import { truncText } from "../../../utils";
+import type { PostPage } from "../../../features/filterReddit/types";
+import { flushAndLogFilterHits } from "../../../features/filterReddit/filterLog";
 
 export async function postAndCommentsListing(
 	things: Record<string, any>[],
 	afterToken: string | null,
+	currPage?: PostPage,
 	{ subredditInfo, structuredStyles, preferences, userFlairsV2, postFlairsV2 }: {
 		subredditInfo: any,
 		structuredStyles: any,
@@ -19,7 +21,8 @@ export async function postAndCommentsListing(
 	} = {
 		subredditInfo: null,
 		structuredStyles: null,
-	}
+	},
+	geoFilter?: string
 ) {
 	const state: SubredditListingStateBase & PostListingPageState & CommentListingPageState = {
 		account: null,
@@ -28,6 +31,7 @@ export async function postAndCommentsListing(
 		comments: {},
 		dist: things.length,
 		features: {},
+		geoFilter,
 		pinned: [],
 		postFlair: {},
 		postIds: [],
@@ -48,14 +52,16 @@ export async function postAndCommentsListing(
 	for (const { kind, data } of things) {
 		if (kind === "t3") {
 			state.postIds.push(data.name);
-			if (data.pinned) state.pinned.push(postAndCommentsListing.name);
-			addPostToState(data, state);
+			if (data.pinned) state.pinned.push(data.name);
+			addPostToState(data, state, currPage);
 
 		} else if (kind === "t1") {
 			state.commentIds.push(data.name);
 			addCommentToState(data, state);
 		}
 	};
+
+	flushAndLogFilterHits();
 
 	if (state.commentIds.length) {
 		await fixR2CommentsMedia(state.comments);
@@ -100,7 +106,7 @@ export async function postComments(
 	};
 
 	addR2SubredditToState(state, subredditInfo, userFlairsV2, postFlairsV2);
-	addPostToState(post, state, postWithDevvit);
+	addPostToState(post, state, undefined, postWithDevvit);
 	addCommentTreeToState(commentsChildren, post.name, state);
 
 	if (shouldFixR2Comments) await fixR2CommentsMedia(state.comments);
@@ -154,7 +160,7 @@ export async function conversationsListing(things: any[], afterToken: string) {
 		state.postIds.push(post.name);
 		if (post.pinned) state.pinned.push(post.name);
 
-		addPostToState(post, state);
+		addPostToState(post, state, 'user');
 		const postChildren = post.children?.data.children;
 		if (!postChildren) continue;
 

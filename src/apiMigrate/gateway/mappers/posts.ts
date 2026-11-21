@@ -6,7 +6,11 @@ import { antiGifFuckGifs, getVoteStateNum } from "./common";
 import { getAuthorFlairFromR2Thing, processSubredditPostFlair, processSubredditUserFlair } from "./flair";
 import type { StateBase } from "../types/state.ts";
 import { processSubredditAboutInfo, processSubreddit } from "./subreddit";
-import { clientConfig } from "../../../ui/settings";
+import { clientConfig } from "../../../features/settings";
+import type { Subreddit } from "../types/subreddit";
+import type { SubredditFilterVars } from "../../../features/filterReddit/checkSubreddit";
+import { checkR2PostFiltered } from "../../../features/filterReddit/checkPost";
+import type { PostPage } from "../../../features/filterReddit/types";
 
 
 const getFlair = (data: any): PostFlair[] => {
@@ -87,7 +91,7 @@ const getMedia = (data: any, devvitData?: DevvitPostFragmentFragment): Media | n
 					isDeleted: it.is_deleted,
 				})),
 			},
-			mediaMetadata: clientConfig.mp4Gifs
+			mediaMetadata: clientConfig.enhancements.mp4Gifs
 				? antiGifFuckGifs(data.media_metadata)
 				: data.media_metadata,
 		}
@@ -199,9 +203,10 @@ const normalizeR2Poll = (data: any) => ({
 	resolvedOptionId: data.resolved_option_id,
 });
 
-export const processPost = (data: any, devvitData?: DevvitPostFragmentFragment): Post => {
+export const processPost = (data: any, subVars: SubredditFilterVars, currPage: PostPage, devvitData?: DevvitPostFragmentFragment): Post => {
 	const postFromState: Post | undefined = getState().posts.models[data.name];
 	const crossPostId = data.cross_post_parent_id || data.crosspost_parent_list?.[0]?.name;
+	const postFiltered = checkR2PostFiltered(data, subVars, currPage);
 
 	return ({
 		approvedAtUTC: data.approved_at_utc,
@@ -231,7 +236,7 @@ export const processPost = (data: any, devvitData?: DevvitPostFragmentFragment):
 		editedAt: data.edited,
 		events: data.events || [],
 		flair: getFlair(data),
-		hidden: data.hidden,
+		hidden: postFiltered || data.hidden,
 		id: data.name,
 		ignoreReports: data.ignore_reports,
 		impressionId: data.impression_id ? String(data.impression_id) : null,
@@ -298,31 +303,40 @@ export const processPost = (data: any, devvitData?: DevvitPostFragmentFragment):
 		upvoteRatio: data.upvote_ratio,
 		userReports: data.user_reports,
 		userReportsDismissed: data.user_reports_dismissed,
-		viewCount: data.view_count,
+		viewCount: 0,
 		voteState: getVoteStateNum(data.likes),
 	});
 }
 
 
-export function addPostToState(post: any, state: StateBase, postWithDevvit?: GetDevvitPostDataQuery['postInfoById']) {
-	// @ts-ignore
-	state.posts[post.name] = processPost(post, postWithDevvit?.devvit);
-
+export function addPostToState(post: any, state: StateBase, currPage: PostPage, postWithDevvit?: GetDevvitPostDataQuery['postInfoById']) {
 	const appState = getState();
 	const subId = post.subreddit_id;
+	let sub: SubredditFilterVars;
+
 	state.authorFlair[subId] ??= {};
 	state.authorFlair[subId][post.author] = getAuthorFlairFromR2Thing(post);
 
 	if (post.sr_detail) {
 		state.subredditAboutInfo[subId] ??= processSubredditAboutInfo(post.sr_detail);
 		state.subreddits[subId] ??= processSubreddit(post.sr_detail);
+
+		const ab = state.subredditAboutInfo[subId];
+		const s = state.subreddits[subId];
+
+		sub = {
+			name: s.name,
+			description: ab.publicDescription,
+			isNsfw: s.isNSFW,
+		};
+
 		if (!appState.postFlair[subId])
 			state.postFlair[subId] ??= processSubredditPostFlair(post.sr_detail);
 		if (!appState.features.userFlair[subId])
 			state.userFlair[subId] ??= processSubredditUserFlair(post.sr_detail);
 
 	} else {
-		if (!appState.subreddits.models[subId])
+		if (!appState.subreddits.models[subId]) {
 			// @ts-ignore
 			state.subreddits[subId] ??= {
 				displayText: post.subreddit_name_prefixed,
@@ -338,6 +352,25 @@ export function addPostToState(post: any, state: StateBase, postWithDevvit?: Get
 				type: post.subreddit_type,
 				url: `/r/${post.subreddit}/`
 			};
+
+			const s = state.subreddits[subId] as Subreddit;
+			const ab = state.subredditAboutInfo[subId];
+			sub = {
+				name: s.name,
+				description: ab?.publicDescription,
+				isNsfw: s.isNSFW,
+			}
+
+		} else {
+			const s = appState.subreddits.models[subId];
+			const ab = appState.subreddits.about[subId];
+			sub = {
+				name: s.name,
+				description: ab?.publicDescription,
+				isNsfw: s.isNSFW,
+			};
+		}
+
 		if (!appState.postFlair[subId])
 			state.postFlair[subId] ??= {
 				displaySettings: {
@@ -355,10 +388,13 @@ export function addPostToState(post: any, state: StateBase, postWithDevvit?: Get
 			};
 	}
 
+	// @ts-ignore
+	state.posts[post.name] = processPost(post, sub, currPage, postWithDevvit?.devvit);
+
 	const crossPost = post.crosspost_parent_list?.[0];
 	if (crossPost) {
 		// @ts-ignore
-		addPostToState(crossPost, state, postWithDevvit?.crosspostRoot?.postInfo);
+		addPostToState(crossPost, state, currPage, postWithDevvit?.crosspostRoot?.postInfo);
 	}
 	return state;
 }

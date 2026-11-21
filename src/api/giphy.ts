@@ -1,6 +1,6 @@
 import type { AnimatedImageAssetR2 } from "../apiMigrate/gateway/types/common";
 import { getLogger } from "../logging";
-import { clientConfig } from "../ui/settings";
+import { clientConfig } from "../features/settings";
 import { chunkIterable } from "../utils";
 
 type GiphyGif = {
@@ -48,7 +48,7 @@ export async function getGIPHYGifsByIds(ids: Iterable<string>): Promise<Record<s
 			headers: {
 				Accept: "application/json"
 			},
-			signal: AbortSignal.timeout(clientConfig.giphyTimeout),
+			signal: AbortSignal.timeout(clientConfig.debug.giphyTimeout),
 		}));
 	}
 

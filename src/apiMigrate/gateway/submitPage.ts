@@ -61,8 +61,8 @@ export async function duplicates(postId: string, params: Record<string, string>)
 			children.push(post);
 		};
 
-		const state = await postAndCommentsListing(children, after);
-		addPostToState(post.data, state);
+		const state = await postAndCommentsListing(children, after, 'sub');
+		addPostToState(post.data, state, undefined);
 
 		return {
 			jsonResponse: JSON.stringify(state),

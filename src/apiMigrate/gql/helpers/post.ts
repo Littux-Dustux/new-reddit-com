@@ -1,23 +1,49 @@
 import { gqlFetch } from "../../../api/gql";
+import { checkGqlPostFiltered } from "../../../features/filterReddit/checkPost";
+import type { SubredditFilterVars } from "../../../features/filterReddit/checkSubreddit";
+import { flushAndLogFilterHits } from "../../../features/filterReddit/filterLog";
+import type { PostPage } from "../../../features/filterReddit/types";
 import { fixAwardings } from "./award";
 import { fixFlair } from "./flair";
 import { convertShredditMediaRes } from "./media";
 
-export function fixGqlPost(node: any, flattenRecs: boolean = false) {
+const validPostTypenames = new Set(['SubredditPost', 'ProfilePost', 'AdPost']);
+
+export function fixGqlPost(node: any, currPage: PostPage = null, flattenRecs: boolean = false) {
 	if (flattenRecs && node.__typename === "PostRecommendation") node = node.postInfo;
+	if (!validPostTypenames.has(node.__typename)) return node;
+
 	if (node.crosspostRoot?.post) {
-		node.crosspostRoot.postInfo = fixGqlPost(node.crosspostRoot.post);
+		node.crosspostRoot.postInfo = fixGqlPost(node.crosspostRoot.post, currPage, false);
 		delete node.crosspostRoot.post;
 	}
 	if (node.awardings) fixAwardings(node.awardings);
 	if (node.flair?.template) fixFlair(node.flair);
 	if (node.authorFlair?.template) fixFlair(node.authorFlair);
+	if (node.media?.streaming) {
+		const s = node.media.streaming;
+		s.hlsUrl = s.hlsUrl.replace('cf.v', 'v');
+		s.dashUrl = s.dashUrl.replace('cf.v', 'v');
+	}
+
+	const sub = node.__typename === "Subreddit" ? node.subreddit : node.profile;
+	const subVars: SubredditFilterVars = {
+		name: sub?.name ?? '',
+		description: sub?.publicDescriptionText,
+		isNsfw: sub?.isNsfw,
+	}
+	const isFiltered = checkGqlPostFiltered(node, subVars, currPage);
+	if (isFiltered) {
+		node.isHidden = true;
+	}
 	return node;
 }
 
-export function fixSvcGqlPost(node: any) {
-	if (node.postInfo) node = node.postInfo; 
-	if (node.crosspostRoot?.postInfo) fixSvcGqlPost(node.crosspostRoot.postInfo);
+
+export function fixSvcGqlPost(node: any, currPage: PostPage) {
+	if (node.postInfo) node = node.postInfo;
+	if (!validPostTypenames.has(node.__typename)) return node;
+	if (node.crosspostRoot?.postInfo) fixSvcGqlPost(node.crosspostRoot.postInfo, currPage);
 
 	if (node.media) {
 		const media = node.media;
@@ -37,15 +63,32 @@ export function fixSvcGqlPost(node: any) {
 	if (node.gallery?.items) {
 		node.gallery.items.forEach((it: any) => convertShredditMediaRes(it.media))
 	}
+
+	const sub = node.__typename === "Subreddit" ? node.subreddit : node.profile;
+	if (sub) {
+		sub.path = `/${sub.prefixedName}`;
+	}
+	const subVars: SubredditFilterVars = {
+		name: sub?.name ?? '',
+		description: sub?.publicDescriptionText,
+		isNsfw: sub?.isNsfw,
+	}
+	const isFiltered = checkGqlPostFiltered(node, subVars, currPage);
+	if (isFiltered) {
+		node.isHidden = true;
+	}
 	return node;
 }
 
-export function fixGqlListing(connection: any, fn = fixGqlPost, ...params: any[]) {
+
+export function fixGqlListing(connection: any, currPage: PostPage, fn = fixGqlPost, ...params: any[]) {
 	for (const { node } of connection.edges) {
-		fn(node, ...params);
+		if (node) fn(node, currPage, ...params);
 	}
+	flushAndLogFilterHits();
 	return connection;
 }
+
 
 export async function handlePostFeedAndOtherDiscussions({ postId, includeOtherDiscussions, includePostFeed, ...rest }: any) {
 	const outputData: Record<string, any> = {};

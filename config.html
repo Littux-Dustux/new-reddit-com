@@ -1,570 +1,1598 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>new.reddit.com client options</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="color-scheme" content="light dark">
+	<title>new.reddit configuration</title>
 	<style>
+
 		:root {
 			color-scheme: light dark;
-			font:
-				14px/1.5 system-ui,
-				-apple-system,
-				BlinkMacSystemFont,
-				"Segoe UI",
-				sans-serif;
-			--page: #f6f7f8;
+			font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+			font-synthesis: none;
+			text-rendering: optimizeLegibility;
+			--page: #f5f6f8;
 			--surface: #fff;
-			--text: #202124;
-			--muted: #666;
-			--border: #dadce0;
-			--soft-border: #f0f0f0;
-			--control-border: #c8cdd2;
-			--control-bg: #fff;
-			--accent: #356ac3;
-			--success: #47734a;
-			--error: #b3261e;
-			color: var(--text);
-			background: var(--page);
+			--surface-muted: #f0f1f3;
+			--text: #202127;
+			--muted: #656873;
+			--border: #dedfe3;
+			--accent: #ff4500;
+			--accent-hover: #ff5b35;
+			--focus: #0079d3;
+			--success: #16835d;
+			--error: #c62828;
+			--shadow: 0 12px 32px rgb(22 26 35 / 8%);
 		}
+
 		@media (prefers-color-scheme: dark) {
 			:root {
-				--page: #111315;
-				--surface: #1b1e21;
-				--text: #e5e7eb;
-				--muted: #a1a1aa;
-				--border: #3a3f45;
-				--soft-border: #2b3035;
-				--control-border: #50565e;
-				--control-bg: #24282d;
-				--accent: #79a9fa;
-				--success: #91c99a;
-				--error: #ff8a80;
+				--page: #0e1113;
+				--surface: #181c1f;
+				--surface-muted: #22272b;
+				--text: #e7e9ea;
+				--muted: #9da3a8;
+				--border: #343a40;
+				--accent: #ff4500;
+				--accent-hover: #ff5b35;
+				--focus: #529cff;
+				--success: #5dc99a;
+				--error: #ff7373;
+				--shadow: 0 12px 32px rgb(0 0 0 / 28%);
 			}
 		}
-		* {
-			box-sizing: border-box;
-		}
+
+		* { box-sizing: border-box; }
+
 		body {
+			min-width: 320px;
 			margin: 0;
-			padding: 28px 16px 48px;
+			background: var(--page);
+			color: var(--text);
+			line-height: 1.5;
 		}
-		main {
-			width: min(720px, 100%);
+
+		button, input, select, textarea { font: inherit; }
+		button, select, input[type="checkbox"] { cursor: pointer; }
+
+		.shell {
+			width: min(100% - 32px, 1280px);
 			margin: 0 auto;
+			padding: 48px 4px 64px 4px;
 		}
-		h1 {
-			margin: 0 0 6px;
-			font-size: 22px;
-			line-height: 1.25;
+
+		.topline {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 16px;
+			margin-bottom: 28px;
 		}
-		.subtitle {
-			margin: 0 0 22px;
+
+		.brand {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			color: inherit;
+			text-decoration: none;
+		}
+
+		.brand-name { font-size: 24px; font-weight: 750; letter-spacing: -.02em; }
+
+		.version {
+			padding: 5px 10px;
+			border: 1px solid var(--border);
+			border-radius: 999px;
+			color: var(--muted);
+			font-size: 12px;
+			white-space: nowrap;
+		}
+
+		header h1 {
+			margin: 0;
+			font-size: clamp(28px, 5vw, 40px);
+			letter-spacing: -.045em;
+			line-height: 1.15;
+		}
+
+		header p {
+			max-width: 640px;
+			margin: 12px 0 30px;
 			color: var(--muted);
 		}
-		fieldset {
+
+		.layout {
+			display: grid;
+			grid-template-columns: 220px minmax(0, 1fr);
+			align-items: start;
+			gap: 24px;
+		}
+
+		nav {
+			position: sticky;
+			top: 20px;
+			display: grid;
+			gap: 5px;
+			padding: 8px;
+			border: 1px solid var(--border);
+			border-radius: 14px;
+			background: var(--surface);
+		}
+
+		.nav-item {
+			display: flex;
+			align-items: center;
+			gap: 11px;
+			width: 100%;
+			padding: 11px 12px;
+			border: 0;
+			border-radius: 9px;
+			background: transparent;
+			color: var(--muted);
+			text-align: left;
+			font-weight: 650;
+		}
+
+		.nav-item:hover { background: var(--surface-muted); color: var(--text); }
+		.nav-item[aria-current="page"] { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
+		.nav-icon { width: 20px; text-align: center; font-size: 17px; }
+
+		main { min-width: 0; }
+
+		.panel {
+			padding: clamp(20px, 4vw, 32px);
+			border: 1px solid var(--border);
+			border-radius: 16px;
+			background: var(--surface);
+			box-shadow: var(--shadow);
+		}
+
+		.panel[hidden] { display: none; }
+		.panel h2 { margin: 0; font-size: 23px; letter-spacing: -.025em; }
+		.panel-intro { color: var(--muted); font-size: 14px; }
+
+		.field-list { display: grid; }
+
+		.field {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(180px, 280px);
+			align-items: center;
+			gap: 20px;
+			padding: 18px 0;
+			border-top: 1px solid var(--border);
+		}
+
+		.field:first-child { border-top: 0; }
+		.field-copy { min-width: 0; }
+		.field-label { display: block; font-size: 16px; font-weight: 680; }
+		.field-description { display: block; margin-top: 4px; color: var(--muted); font-size: 14px; }
+		.control { width: 100%; min-width: 0; }
+
+		input[type="number"], select, textarea {
+			width: 100%;
+			padding: 9px 11px;
+			border: 1px solid var(--border);
+			border-radius: 8px;
+			background: var(--page);
+			color: var(--text);
+		}
+
+		input[type="number"]:focus, select:focus, textarea:focus, button:focus-visible, a:focus-visible {
+			outline: 2px solid var(--focus);
+			outline-offset: 2px;
+		}
+
+		.switch {
+			display: flex;
+			justify-content: flex-end;
+		}
+
+		.switch input {
+			width: 42px;
+			height: 24px;
+			margin: 0;
+			accent-color: var(--accent);
+		}
+
+		.field-json {
+			grid-template-columns: 1fr;
+			align-items: start;
+			gap: 10px;
+		}
+
+		.field-editor {
+			grid-template-columns: 1fr;
+			align-items: start;
+			gap: 12px;
+		}
+
+		textarea {
+			min-height: 190px;
+			resize: vertical;
+			font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+			font-size: 12px;
+			line-height: 1.55;
+			tab-size: 2;
+		}
+
+		.field-error { min-height: 18px; color: var(--error); font-size: 12px; }
+
+		.editor-stack { display: grid; gap: 12px; }
+		.editor-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+		.editor-toolbar select { width: auto; min-width: 130px; }
+		.editor-help { color: var(--muted); font-size: 12px; }
+		.editor-rows { display: grid; gap: 8px; }
+		.editor-row {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+			align-items: center;
+			gap: 8px;
+		}
+		.editor-row input, .condition-group input, .condition-group textarea, .post-filter-card input[type="text"], .post-filter-card textarea {
+			width: 100%;
 			min-width: 0;
-			margin: 0 0 14px;
-			padding: 16px;
+			padding: 9px 11px;
+			border: 1px solid var(--border);
+			border-radius: 8px;
+			background: var(--page);
+			color: var(--text);
+		}
+		.editor-row input, .condition-group input, .post-filter-card input[type="text"] { min-height: 40px; }
+		.editor-row input:focus, .condition-group input:focus, .condition-group textarea:focus,
+		.post-filter-card input[type="text"]:focus, .post-filter-card textarea:focus {
+			outline: 2px solid var(--focus);
+			outline-offset: 2px;
+		}
+		.condition-editor { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+		.condition-group { display: grid; gap: 5px; }
+		.condition-group > span { color: var(--muted); font-size: 12px; font-weight: 650; }
+		.condition-group textarea { min-height: 72px; resize: vertical; }
+		.filter-subsection { display: grid; gap: 12px; }
+		.filter-subsection + .filter-subsection { margin-top: 24px; padding-top: 22px; border-top: 2px solid var(--border); }
+		.filter-subsection-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+		.filter-subsection-heading h3 { margin: 0; font-size: 16px; }
+		.post-filter-list { display: grid; gap: 6px; }
+		.post-filter-row {
+			display: grid;
+			grid-template-columns: 24px minmax(0, 1fr) auto;
+			align-items: center;
+			gap: 12px;
+			min-height: 58px;
+			padding: 8px 10px;
 			border: 1px solid var(--border);
 			border-radius: 10px;
 			background: var(--surface);
 		}
-		legend {
-			padding: 0 7px;
-			font-size: 15px;
-			font-weight: 650;
+		.post-filter-enabled {
+			width: 18px;
+			height: 18px;
+			margin: 0;
+			accent-color: var(--accent);
 		}
-		.setting {
+		.post-filter-summary { display: grid; min-width: 0; gap: 2px; }
+		.post-filter-summary strong { overflow: hidden; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+		.post-filter-summary a { overflow: hidden; color: var(--muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+		.post-filter-summary a:hover { color: var(--focus); }
+		.post-filter-actions { display: flex; align-items: center; gap: 6px; }
+		.post-filter-actions .button { min-height: 34px; padding: 5px 11px; font-size: 12px; }
+		.post-filter-editor { display: grid; gap: 14px; padding: 2px; }
+		.dialog-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 18px; }
+		.dialog-actions-group { display: flex; flex-wrap: wrap; gap: 8px; }
+		.dialog-message { min-height: 20px; margin: 10px 0 0 !important; color: var(--error) !important; font-size: 13px; }
+		.dialog-textarea { min-height: 220px; width: 100%; }
+		.dialog-file { display: block; margin: 12px 0; }
+		.dialog-mode { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
+		.dialog-mode[hidden] { display: none; }
+		.dialog-mode select { width: auto; }
+		.post-filter-card textarea { min-height: 76px; resize: vertical; }
+		.post-filter-card textarea.keywords { min-height: 96px; }
+		.editor-inline { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+		.editor-inline label { display: inline-flex; align-items: center; gap: 7px; color: var(--text); font-size: 13px; }
+		.editor-inline input[type="checkbox"] { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); }
+		.surface-fieldset { display: grid; gap: 8px; min-width: 0; margin: 0; padding: 10px 12px; border: 1px solid var(--border); border-radius: 9px; }
+		.surface-fieldset legend { padding: 0 4px; font-size: 13px; font-weight: 650; }
+		.editor-subtitle { margin: 0; font-size: 13px; }
+		.subreddit-condition { display: grid; gap: 9px; }
+		.empty-state { padding: 16px; border: 1px dashed var(--border); border-radius: 10px; color: var(--muted); font-size: 13px; text-align: center; }
+
+		.actions {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			gap: 18px;
-			min-height: 38px;
-			padding: 5px 0;
-		}
-		.setting + .setting {
-			border-top: 1px solid var(--soft-border);
-		}
-		.setting label,
-		.setting .setting-label {
-			flex: 1;
-		}
-		.hint {
-			display: block;
-			color: var(--muted);
-			font-size: 12px;
-		}
-		input[type="checkbox"] {
-			width: 16px;
-			height: 16px;
-			accent-color: var(--accent);
-			flex: 0 0 auto;
-		}
-		input[type="number"],
-		select {
-			width: 170px;
-			max-width: 48%;
-			padding: 7px 9px;
-			border: 1px solid var(--control-border);
-			border-radius: 6px;
-			background: var(--control-bg);
-			color: var(--text);
-			font: inherit;
-		}
-		.checklist {
-			margin: 4px 0 8px 14px;
-			padding-left: 12px;
-			border-left: 2px solid var(--border);
-		}
-		.checklist .setting {
-			border: 0;
-		}
-		.experiment-list {
-			display: grid;
-			gap: 8px;
-			margin: 8px 0 10px;
-		}
-		.experiment-row {
-			display: grid;
-			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
-			gap: 8px;
-		}
-		.experiment-row input {
-			width: 100%;
-			min-width: 0;
-			padding: 7px 9px;
-			border: 1px solid var(--control-border);
-			border-radius: 6px;
-			background: var(--control-bg);
-			color: var(--text);
-			font: inherit;
-		}
-		.experiment-row button {
-			min-width: 36px;
-			padding: 5px 10px;
-		}
-		.subsection-label {
-			display: block;
-			margin-top: 10px;
-			font-weight: 600;
-		}
-		.actions {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
-			gap: 9px;
+			gap: 16px;
 			margin-top: 18px;
 		}
-		button,
-		.file-label {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			min-height: 36px;
-			padding: 7px 13px;
-			border: 1px solid var(--control-border);
-			border-radius: 7px;
-			background: var(--control-bg);
+
+		.actions-right { display: flex; align-items: center; gap: 12px; }
+		.status { min-height: 20px; color: var(--muted); font-size: 13px; }
+		.status[data-state="success"] { color: var(--success); }
+		.status[data-state="error"] { color: var(--error); }
+
+		.button {
+			min-height: 40px;
+			padding: 8px 15px;
+			border: 1px solid var(--border);
+			border-radius: 999px;
+			background: var(--surface);
 			color: var(--text);
-			font: inherit;
-			cursor: pointer;
+			font-weight: 700;
 		}
-		button.primary {
-			color: #fff;
-			background: #356ac3;
-			border-color: #356ac3;
+
+		.button:hover { background: var(--surface-muted); }
+		.button-primary { border-color: var(--accent); background: var(--accent); color: #fff; }
+		.button-primary:hover { border-color: var(--accent-hover); background: var(--accent-hover); }
+
+		dialog {
+			width: min(460px, calc(100% - 32px));
+			padding: 28px;
+			border: 1px solid var(--border);
+			border-radius: 16px;
+			background: var(--surface);
+			color: var(--text);
+			box-shadow: var(--shadow);
 		}
-		button:hover,
-		.file-label:hover {
-			filter: brightness(0.97);
+
+		#filter-edit-dialog { width: min(760px, calc(100% - 32px)); max-height: calc(100vh - 32px); overflow-y: auto; }
+		#filter-import-dialog, #filter-export-dialog { width: min(600px, calc(100% - 32px)); }
+		dialog::backdrop { background: rgb(0 0 0 / 64%); backdrop-filter: blur(3px); }
+		dialog h2 { margin: 0 0 10px; font-size: 22px; }
+		dialog p { margin: 0 0 22px; color: var(--muted); }
+		dialog .button { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+
+		@media (max-width: 700px) {
+			.shell { padding-top: 26px; }
+			.layout { grid-template-columns: 1fr; gap: 14px; }
+			nav { position: static; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; padding: 5px; }
+			.nav-item { justify-content: center; min-height: 48px; padding: 7px 4px; }
+			.nav-icon { display: none; }
+			.field { grid-template-columns: minmax(0, 1fr) minmax(130px, 42%); gap: 12px; }
+			.field-json { grid-template-columns: 1fr; }
+			.field-editor { grid-template-columns: 1fr; }
 		}
-		#import-file {
-			display: none;
-		}
-		#status {
-			margin-left: auto;
-			color: #47734a;
-			font-size: 12px;
-		}
-		@media (max-width: 480px) {
-			body {
-				padding: 20px 12px 36px;
-			}
-			fieldset {
-				padding: 12px;
-			}
-			.setting {
-				gap: 10px;
-			}
-			input[type="number"],
-			select {
-				width: 145px;
-			}
-			.experiment-row {
-				grid-template-columns: 1fr 1fr auto;
-				gap: 6px;
-			}
-			.experiment-row input {
-				width: 100%;
-			}
-			#status {
-				width: 100%;
-				margin-left: 0;
-			}
+
+		@media (max-width: 420px) {
+			.shell { width: min(100% - 20px, 1000px); }
+			.nav-item { font-size: 12px; }
+			.field:not(.field-json) { grid-template-columns: 1fr auto; }
+			.field:not(.field-json) .control { width: min(150px, 42vw); }
+			.field:not(.field-json) .switch { width: auto; }
+			.editor-row { grid-template-columns: minmax(0, 1fr) auto; }
+			.editor-row input:nth-child(2) { grid-column: 1; }
+			.condition-editor { grid-template-columns: 1fr; }
+			.actions { align-items: flex-start; flex-direction: column; }
+			.actions-right { width: 100%; justify-content: flex-end; }
 		}
 	</style>
 </head>
 <body>
-	<main>
-		<h1>new.reddit.com client options</h1>
-		<p class="subtitle">Settings are saved automatically in this browser.</p>
-
-		<form id="config-form">
-			<fieldset>
-				<legend>UI</legend>
-				<div class="setting">
-					<label for="forceLightMode">Default to light mode</label>
-					<input id="forceLightMode" type="checkbox" />
-				</div>
-				<div class="setting">
-					<label for="forcePostImgWidth">Force post feed image resolution</label>
-					<select id="forcePostImgWidth">
-						<option value="0">small (108px)</option>
-						<option value="1">medium (216px)</option>
-						<option value="2">large (320px)</option>
-						<option value="3">xlarge (640px)</option>
-						<option value="4">xxlarge (960px)</option>
-						<option value="5">xxxlarge (1080px)</option>
-						<option value="6">source (WebP)</option>
-						<option value="7">source (original uncompressed)</option>
-						<option value="8">Default (depends on screen resolution)</option>
-					</select>
-				</div>
-				<div class="setting">
-					<label for="commentMaxDepth">Max comments depth (GQL)</label>
-					<input id="commentMaxDepth" type="number" min="1" step="1" />
-				</div>
-				<div class="setting">
-					<label for="disableAutoCollapseComments">Disable comments auto-collapse (GQL)</label>
-					<input id="disableAutoCollapseComments" type="checkbox" />
-				</div>
-			</fieldset>
-
-			<fieldset>
-				<legend>API</legend>
-				<div class="setting">
-					<span class="setting-label">Use GraphQL for:</span>
-				</div>
-				<div class="checklist">
-					<div class="setting">
-						<label for="graphql-subredditPage">Subreddit page</label>
-						<input id="graphql-subredditPage" type="checkbox" data-graphql-key="subredditPage" />
-					</div>
-					<div class="setting">
-						<label for="graphql-postComments">Post comments</label>
-						<input id="graphql-postComments" type="checkbox" data-graphql-key="postComments" />
-					</div>
-				</div>
-				<div class="setting">
-					<label for="curationArcticComments">If profile curation is active, use arctic-shift for comments</label>
-					<input id="curationArcticComments" type="checkbox" />
-				</div>
-				<div class="setting">
-					<label for="curationPosts">If profile curation is active, use for posts</label>
-					<select id="curationPosts">
-						<option value="0">Arctic shift</option>
-						<option value="1">Reddit Search</option>
-						<option value="2">Unchanged</option>
-					</select>
-				</div>
-				<div class="setting">
-					<label for="fetchDevvitPostInfo">Fetch Devvit post info</label>
-					<input id="fetchDevvitPostInfo" type="checkbox" />
-				</div>
-			</fieldset>
-
-			<fieldset>
-				<legend>Enhancements</legend>
-				<div class="setting">
-					<label for="mp4Gifs">Use mp4 for GIFs in galleries</label>
-					<input id="mp4Gifs" type="checkbox" />
-				</div>
-				<div class="setting">
-					<label for="commentVideoDownloads">Inject download links for videos in comments</label>
-					<input id="commentVideoDownloads" type="checkbox" />
-				</div>
-				<div class="setting">
-					<label for="saveScrollPosition">Save scroll position for pages</label>
-					<input id="saveScrollPosition" type="checkbox" />
-				</div>
-				<div class="setting">
-					<label for="spaNavigation">Try to open links without refreshing (SPA navigation)</label>
-					<input id="spaNavigation" type="checkbox" />
-				</div>
-				<div class="setting">
-					<label for="revealBlockedComments">Reveal comments from people that blocked you (otherwise showing as [unavailable])</label>
-					<input id="revealBlockedComments" type="checkbox" />
-				</div>
-			</fieldset>
-
-			<fieldset>
-				<legend>Debug</legend>
-				<div class="setting"><span class="setting-label">Enable toast messages for:</span></div>
-				<div class="checklist">
-					<div class="setting">
-						<label for="toast-debug">debug</label><input id="toast-debug" type="checkbox" data-toast-key="debug" />
-					</div>
-					<div class="setting"><label for="toast-info">info</label><input id="toast-info" type="checkbox" data-toast-key="info" /></div>
-					<div class="setting"><label for="toast-log">log</label><input id="toast-log" type="checkbox" data-toast-key="log" /></div>
-					<div class="setting"><label for="toast-warn">warn</label><input id="toast-warn" type="checkbox" data-toast-key="warn" /></div>
-					<div class="setting"><label for="toast-err">err</label><input id="toast-err" type="checkbox" data-toast-key="err" /></div>
-				</div>
-				<span class="subsection-label">Experiments override</span>
-				<span class="hint">Add experiment name-value pairs. Leave a row's name empty to ignore it.</span>
-				<div id="experiments-list" class="experiment-list"></div>
-				<button id="add-experiment" type="button">Add experiment</button>
-				<div class="setting">
-					<label for="gqlFedTimeout">gql-fed API timeout ms</label>
-					<input id="gqlFedTimeout" type="number" min="0" step="1000" />
-				</div>
-				<div class="setting">
-					<label for="shredditGqlTimeout">shreddit gql API timeout ms</label>
-					<input id="shredditGqlTimeout" type="number" min="0" step="1000" />
-				</div>
-				<div class="setting">
-					<label for="restTimeout">rest API timeout ms</label>
-					<input id="restTimeout" type="number" min="0" step="1000" />
-				</div>
-				<div class="setting">
-					<label for="giphyTimeout">GIPHY API timeout ms</label>
-					<input id="giphyTimeout" type="number" min="0" step="1000" />
-				</div>
-			</fieldset>
-		</form>
-
-		<div class="actions">
-			<button class="primary" id="export-btn" type="button">Export JSON</button>
-			<label class="file-label" for="import-file">Load JSON</label>
-			<input id="import-file" type="file" accept="application/json,.json" />
-			<button id="reset-btn" type="button">Reset defaults</button>
-			<span id="status" role="status" aria-live="polite"></span>
+	<div class="shell">
+		<div class="topline">
+			<a class="brand" href="/">
+				<span class="brand-name">Go to home</span><br>
+			</a>
+			<span class="version" id="config-version"></span>
 		</div>
-	</main>
+
+		<header>
+			<h1>Configuration</h1>
+			<p>Adjust how new.reddit works in your browser. Changes are saved locally on this device.</p>
+		</header>
+
+		<div class="layout">
+			<nav aria-label="Configuration sections" id="section-nav"></nav>
+			<main>
+				<form id="config-form" novalidate>
+					<div id="section-panels"></div>
+					<div class="actions">
+						<div class="status" id="save-status" role="status" aria-live="polite"></div>
+						<div class="actions-right">
+							<button class="button" type="button" id="reset-button">Reset defaults</button>
+							<button class="button button-primary" type="submit">Save changes</button>
+						</div>
+					</div>
+				</form>
+			</main>
+		</div>
+	</div>
+
+	<dialog id="migration-dialog" aria-labelledby="migration-title">
+		<h2 id="migration-title">Configuration update needed</h2>
+		<p id="migration-message"></p>
+		<a class="button button-primary" href="/">Visit the home page</a>
+	</dialog>
+
+	<dialog id="filter-edit-dialog" aria-labelledby="filter-edit-title">
+		<h2 id="filter-edit-title">Edit post filter</h2>
+		<div id="filter-edit-content" class="post-filter-editor"></div>
+		<p class="dialog-message" id="filter-edit-message" role="status" aria-live="polite"></p>
+		<div class="dialog-actions">
+			<div class="dialog-actions-group">
+				<button class="button" type="button" data-edit-action="export">Export</button>
+				<button class="button" type="button" data-edit-action="replace">Load</button>
+			</div>
+			<div class="dialog-actions-group">
+				<button class="button" type="button" data-edit-action="cancel">Cancel</button>
+				<button class="button button-primary" type="button" data-edit-action="save">Save rule</button>
+			</div>
+		</div>
+	</dialog>
+
+	<dialog id="filter-import-dialog" aria-labelledby="filter-import-title">
+		<h2 id="filter-import-title">Import filters</h2>
+		<p id="filter-import-description">Load a JSON file or paste a JSON array of post filters.</p>
+		<label class="dialog-file">Choose JSON file
+			<input id="filter-import-file" type="file" accept=".json,application/json">
+		</label>
+		<label for="filter-import-json">JSON</label>
+		<textarea id="filter-import-json" class="dialog-textarea" spellcheck="false" placeholder='[{"enabled":true,"title":"..."}]'></textarea>
+		<label class="dialog-mode" id="filter-import-mode-wrap">Import behavior
+			<select id="filter-import-mode">
+				<option value="prepend">Prepend (skip duplicates)</option>
+				<option value="replace">Replace all filters</option>
+			</select>
+		</label>
+		<p class="dialog-message" id="filter-import-message" role="status" aria-live="polite"></p>
+		<div class="dialog-actions">
+			<span></span>
+			<div class="dialog-actions-group">
+				<button class="button" type="button" data-import-action="cancel">Cancel</button>
+				<button class="button button-primary" type="button" data-import-action="apply">Import</button>
+			</div>
+		</div>
+	</dialog>
+
+	<dialog id="filter-export-dialog" aria-labelledby="filter-export-title">
+		<h2 id="filter-export-title">Export filters</h2>
+		<p>Copy this JSON or save it as a file.</p>
+		<textarea id="filter-export-json" class="dialog-textarea" readonly spellcheck="false"></textarea>
+		<p class="dialog-message" id="filter-export-message" role="status" aria-live="polite"></p>
+		<div class="dialog-actions">
+			<div class="dialog-actions-group">
+				<button class="button" type="button" data-export-action="copy">Copy JSON</button>
+				<button class="button" type="button" data-export-action="save">Save as file</button>
+			</div>
+			<button class="button button-primary" type="button" data-export-action="close">Close</button>
+		</div>
+	</dialog>
 
 	<script>
 		(() => {
-			"use strict";
-
 			const STORAGE_KEY = "ReturnNewRedditPrefs";
-
+			const CONFIG_VERSION = 2;
 			const DEFAULTS = {
-				commentMaxDepth: 10,
-				commentVideoDownloads: true,
-				curationArcticComments: true,
-				curationPosts: 1, // 0 = Arctic shift, 1 = Reddit Search, 2 = Unchanged
-				disableAutoCollapseComments: true,
-				experimentsOverride: {},
-				fetchDevvitPostInfo: true,
-				forcePostImgWidth: 8, // 8 = Default,
-				forceLightMode: false,
-				giphyTimeout: 10000,
-				gqlFedTimeout: 30000,
-				mp4Gifs: true,
-				restTimeout: 35000,
-				revealBlockedComments: true,
-				saveScrollPosition: true,
-				shredditGqlTimeout: 30000,
-				spaNavigation: false,
-				toastMessages: { debug: false, info: false, log: false, warn: true, err: true },
-				useGraphQL: {
-					subredditPage: false,
-					postComments: true,
+				version: CONFIG_VERSION,
+				ui: {
+					forceLightMode: false,
+					commentMaxDepth: 10,
+					forcePostImgWidth: 8,
+					disableAutoCollapseComments: true
 				},
+				filter: {
+					fullyHideFilteredPosts: true,
+					showToastOnFilter: false,
+					subreddits: [],
+					posts: []
+				},
+				api: {
+					useGraphQL: { subredditPage: false, postComments: true },
+					curationArcticComments: true,
+					curationPosts: 1,
+					fetchDevvitPostInfo: true
+				},
+				enhancements: {
+					mp4Gifs: true,
+					commentVideoDownloads: true,
+					saveScrollPosition: false,
+					spaNavigation: true,
+					revealBlockedComments: true
+				},
+				debug: {
+					experimentsOverride: {},
+					toastMessages: { debug: false, info: false, log: false, warn: true, err: true },
+					gqlFedTimeout: 30000,
+					shredditGqlTimeout: 30000,
+					restTimeout: 35000,
+					giphyTimeout: 10000
+				}
 			};
 
-			const form = document.getElementById("config-form");
-			const status = document.getElementById("status");
-			let statusTimer;
+			const sections = [
+				{
+					id: "ui", title: "UI", icon: "🖵",
+					fields: [
+						{ path: "ui.forceLightMode", label: "Force light mode", type: "boolean" },
+						{ path: "ui.commentMaxDepth", label: "Maximum comment depth (GQL)", description: "Maximum number of nested comment levels to load.", type: "number", min: 0, step: 1 },
+						{ path: "ui.forcePostImgWidth", label: "Post image quality (GQL)", description: "Choose the maximum image size for posts.", type: "select", options: [[0, "Small"], [1, "Medium"], [2, "Large"], [3, "Extra large"], [4, "2× extra large"], [5, "3× extra large"], [6, "Source"], [7, "Source (no WebP)"], [8, "Default"]] },
+						{ path: "ui.disableAutoCollapseComments", label: "Disable automatic comment collapsing (GQL)", description: "Keep comments expanded unless you collapse them yourself.", type: "boolean" }
+					]
+				},
+				{
+					id: "filters", title: "Filters", icon: "⌕",
+					description: "Configure subreddit and post keyword filter rules, or import and export either filter list.",
+					fields: [
+						{ path: "filter", type: "filters" }
+					]
+				},
+				{
+					id: "api", title: "API", icon: "🖧",
+					description: "Choose which data sources and API behavior the client uses.",
+					fields: [
+						{ path: "api.useGraphQL.subredditPage", label: "Use GraphQL for subreddit pages", type: "boolean" },
+						{ path: "api.useGraphQL.postComments", label: "Use GraphQL for post comments", type: "boolean" },
+						{ path: "api.curationArcticComments", label: "Bypass profile curation for comments", description: "Use Arctic Shift comment history where available.", type: "boolean" },
+						{ path: "api.curationPosts", label: "Post profile curation bypass method", type: "select", options: [[0, "Arctic Shift"], [1, "Reddit Search"], [2, "Unchanged"]] },
+						{ path: "api.fetchDevvitPostInfo", label: "Fetch Devvit post information", type: "boolean" }
+					]
+				},
+				{
+					id: "enhancements", title: "Enhancements", icon: "✦",
+					description: "Enable additional quality-of-life features.",
+					fields: [
+						{ path: "enhancements.mp4Gifs", label: "Use MP4 for GIF posts", type: "boolean" },
+						{ path: "enhancements.commentVideoDownloads", label: "Show comment video download links", type: "boolean" },
+						{ path: "enhancements.saveScrollPosition", label: "Save scroll position for path", type: "boolean" },
+						{ path: "enhancements.spaNavigation", label: "Enable SPA navigation", description: "Navigate between pages without a full reload.", type: "boolean" },
+						{ path: "enhancements.revealBlockedComments", label: "Reveal blocked comments", type: "boolean" }
+					]
+				},
+				{
+					id: "debug", title: "Debug", icon: "?",
+					description: "Tune diagnostic messages, experiment overrides, and request timeouts.",
+					fields: [
+						{ path: "debug.experimentsOverride", label: "Experiment overrides", description: "Set experiment names and the variant strings to force.", type: "experiments" },
+						{ path: "debug.toastMessages.debug", label: "Debug toast messages", type: "boolean" },
+						{ path: "debug.toastMessages.info", label: "Info toast messages", type: "boolean" },
+						{ path: "debug.toastMessages.log", label: "Log toast messages", type: "boolean" },
+						{ path: "debug.toastMessages.warn", label: "Warning toast messages", type: "boolean" },
+						{ path: "debug.toastMessages.err", label: "Error toast messages", type: "boolean" },
+						{ path: "debug.gqlFedTimeout", label: "gql-fed timeout (ms)", type: "number", min: 1, step: 1000 },
+						{ path: "debug.shredditGqlTimeout", label: "/svc/shreddit/graphql timeout (ms)", type: "number", min: 1, step: 1000 },
+						{ path: "debug.restTimeout", label: "r2 API timeout (ms)", type: "number", min: 1, step: 1000 },
+						{ path: "debug.giphyTimeout", label: "Giphy API timeout (ms)", type: "number", min: 1, step: 1000 }
+					]
+				}
+			];
 
 			const clone = value => JSON.parse(JSON.stringify(value));
+			const rulePageOptions = [
+				["home", "Home"],
+				["sub", "Subreddit"],
+				["user", "User"],
+				["saved", "Saved"],
+				["all", "All"],
+				["popular", "Popular"],
+				["search", "Search"],
+				["privatePages", "Private pages"],
+				["null", "Other / unknown"]
+			];
+			const defaultRulePages = ["home", "sub", "user", "all", "popular", "search"];
+			const postFilterSurfaces = [
+				["title", "Title"],
+				["body", "Body"],
+				["galleryCaption", "Gallery captions"],
+				["postFlair", "Post flair"],
+				["userFlair", "User flair"]
+			];
+			const getPath = (object, path) => path.split(".").reduce((value, key) => value?.[key], object);
+			const setPath = (object, path, value) => {
+				const keys = path.split(".");
+				const last = keys.pop();
+				const target = keys.reduce((current, key) => current[key], object);
+				target[last] = value;
+			};
+			const mergeDefaults = (defaults, saved) => {
+				if (!saved || typeof saved !== "object" || Array.isArray(saved)) return clone(defaults);
+				const merged = clone(defaults);
+				for (const [key, value] of Object.entries(saved)) {
+					if (value && typeof value === "object" && !Array.isArray(value) &&
+							merged[key] && typeof merged[key] === "object" && !Array.isArray(merged[key])) {
+						merged[key] = mergeDefaults(merged[key], value);
+					} else if (Object.prototype.hasOwnProperty.call(merged, key)) {
+						merged[key] = value;
+					}
+				}
+				return merged;
+			};
 
-			function readConfig() {
+			let config = clone(DEFAULTS);
+			const nav = document.getElementById("section-nav");
+			const panels = document.getElementById("section-panels");
+			const form = document.getElementById("config-form");
+			const status = document.getElementById("save-status");
+			const migrationDialog = document.getElementById("migration-dialog");
+			const filterEditDialog = document.getElementById("filter-edit-dialog");
+			const filterImportDialog = document.getElementById("filter-import-dialog");
+			const filterExportDialog = document.getElementById("filter-export-dialog");
+			let migrationRequired = false;
+			let hasUnsavedChanges = false;
+			let hasPendingDialogChanges = false;
+			let filterEditor;
+			let experimentsEditor;
+			let editingRuleIndex = -1;
+			let editingRuleKind = "posts";
+			let importTargetIndex = null;
+			let importCollection = "posts";
+			let exportPayload = [];
+
+			function element(tag, className, text) {
+				const node = document.createElement(tag);
+				if (className) node.className = className;
+				if (text !== undefined) node.textContent = text;
+				return node;
+			}
+
+			function button(text, action, className = "button") {
+				const node = element("button", className, text);
+				node.type = "button";
+				node.dataset.action = action;
+				return node;
+			}
+
+			function getCookie(name) {
+				const cookie = document.cookie.split("; ").find(item => item.startsWith(`${name}=`));
+				if (!cookie) return "";
 				try {
-					const raw = localStorage.getItem(STORAGE_KEY);
-					if (!raw) return clone(DEFAULTS);
-					const saved = JSON.parse(raw);
-					if (!saved || typeof saved !== "object" || Array.isArray(saved)) return clone(DEFAULTS);
-					return {
-						...clone(DEFAULTS),
-						...saved,
-						useGraphQL: { ...DEFAULTS.useGraphQL, ...(saved.useGraphQL || {}) },
-						toastMessages: { ...DEFAULTS.toastMessages, ...(saved.toastMessages || {}) },
-						experimentsOverride: { ...(saved.experimentsOverride || {}) },
-					};
-				} catch (error) {
-					console.warn("Could not load ReturnNewRedditPrefs:", error);
-					return clone(DEFAULTS);
+					return decodeURIComponent(cookie.slice(name.length + 1));
+				} catch {
+					return cookie.slice(name.length + 1);
 				}
 			}
 
-			function collectConfig() {
-				const config = {};
-				for (const el of form.querySelectorAll("input, select")) {
-					if (el.dataset.graphqlKey || el.dataset.toastKey || el.dataset.experimentField) continue;
-					if (el.type === "checkbox") config[el.id] = el.checked;
-					else if (el.type === "number") config[el.id] = el.value === "" ? 0 : Number(el.value);
-					else config[el.id] = Number(el.value);
+			function conditionEditor(condition, kind, className = "condition-editor") {
+				const editor = element("div", className);
+				if (kind === "post") {
+					const enabledLabel = element("label", "editor-inline");
+					const enabled = element("input");
+					enabled.type = "checkbox";
+					enabled.checked = condition?.enabled !== false;
+					enabled.dataset.conditionEnabled = "";
+					enabledLabel.append(enabled, document.createTextNode("Enable subreddit condition"));
+					editor.append(enabledLabel);
 				}
-				config.useGraphQL = {};
-				form.querySelectorAll("[data-graphql-key]").forEach(el => {
-					config.useGraphQL[el.dataset.graphqlKey] = el.checked;
-				});
-				config.toastMessages = {};
-				form.querySelectorAll("[data-toast-key]").forEach(el => {
-					config.toastMessages[el.dataset.toastKey] = el.checked;
-				});
-				config.experimentsOverride = {};
-				form.querySelectorAll(".experiment-row").forEach(row => {
-					const key = row.querySelector('[data-experiment-field="key"]').value.trim();
-					const value = row.querySelector('[data-experiment-field="value"]').value;
-					if (key) config.experimentsOverride[key] = value;
-				});
-				return config;
+				const fields = kind === "standalone"
+					? [
+						["nameRegex", "Name regexes (one per line)"],
+						["nameExact", "Exact names"],
+						["nameIncludes", "Name includes"],
+						["descRegex", "Description regexes (one per line)"],
+						["descKeywords", "Description keywords"]
+					]
+					: [
+						["nameRegex", "Name regexes (one per line)"],
+						["nameExact", "Exact names"],
+						["nameIncludes", "Name includes"],
+						["descRegex", "Description regexes (one per line)"],
+						["descKeywords", "Description keywords"]
+					];
+				for (const [key, labelText] of fields) {
+					const group = element("label", "condition-group");
+					group.append(element("span", "", labelText));
+					const isList = key === "nameRegex" || key === "descRegex" || key.endsWith("Exact") || key.endsWith("Includes") || key === "descKeywords";
+					const control = element(isList ? "textarea" : "input");
+					if (!isList) control.type = "text";
+					else control.placeholder = key === "nameRegex" || key === "descRegex" ? "One regular expression per line" : "One value per line";
+					control.dataset.conditionKey = key;
+					const value = condition?.[key];
+					control.value = isList ? (Array.isArray(value) ? value.join("\n") : "") : (typeof value === "string" ? value : "");
+					group.append(control);
+					editor.append(group);
+				}
+				if (kind === "post") {
+					const nsfwLabel = element("label", "condition-group");
+					nsfwLabel.append(element("span", "", "NSFW Condition"));
+					const nsfw = element("select");
+					nsfw.dataset.conditionNsfw = "";
+					for (const [value, label] of [["", "Any"], ["true", "NSFW"], ["false", "Not NSFW"]]) {
+						const option = element("option", "", label);
+						option.value = value;
+						nsfw.append(option);
+					}
+					nsfw.value = typeof condition?.nsfw === "boolean" ? String(condition.nsfw) : "";
+					nsfwLabel.append(nsfw);
+					editor.append(nsfwLabel);
+				}
+				return editor;
 			}
 
-			function applyConfig(config) {
-				for (const el of form.querySelectorAll("input, select")) {
-					if (el.dataset.experimentField) continue;
-					if (el.dataset.graphqlKey) {
-						el.checked = Boolean(config.useGraphQL?.[el.dataset.graphqlKey]);
-					} else if (el.dataset.toastKey) {
-						el.checked = Boolean(config.toastMessages?.[el.dataset.toastKey]);
-					} else if (el.type === "checkbox") {
-						el.checked = Boolean(config[el.id]);
-					} else if (el.type === "number") {
-						const value = Number(config[el.id]);
-						el.value = Number.isFinite(value) && value >= 0 ? String(value) : String(DEFAULTS[el.id]);
+			function readCondition(editor) {
+				const condition = {};
+				const enabled = editor.querySelector("[data-condition-enabled]");
+				const nsfw = editor.querySelector("[data-condition-nsfw]");
+				if (nsfw?.value) condition.nsfw = nsfw.value === "true";
+				editor.querySelectorAll("[data-condition-key]").forEach(control => {
+					const key = control.dataset.conditionKey;
+					if (key === "nameRegex" || key === "descRegex") {
+						const values = control.value.split("\n").map(value => value.trim()).filter(Boolean);
+						if (values.length) condition[key] = values;
+					} else if (key.endsWith("Regex")) {
+						if (control.value.trim()) condition[key] = control.value.trim();
 					} else {
-						el.value = String(config[el.id] ?? DEFAULTS[el.id]);
+						const values = control.value.split("\n").map(value => value.trim()).filter(Boolean);
+						if (values.length) condition[key] = values;
 					}
-				}
-				renderExperiments(config.experimentsOverride || {});
-			}
-
-			function addExperimentRow(key = "", value = "") {
-				const row = document.createElement("div");
-				row.className = "experiment-row";
-
-				const keyInput = document.createElement("input");
-				keyInput.type = "text";
-				keyInput.placeholder = "Experiment name";
-				keyInput.setAttribute("aria-label", "Experiment name");
-				keyInput.dataset.experimentField = "key";
-				keyInput.value = key;
-
-				const valueInput = document.createElement("input");
-				valueInput.type = "text";
-				valueInput.placeholder = "Value";
-				valueInput.setAttribute("aria-label", "Experiment value");
-				valueInput.dataset.experimentField = "value";
-				valueInput.value = value;
-
-				const removeButton = document.createElement("button");
-				removeButton.type = "button";
-				removeButton.textContent = "Remove";
-				removeButton.setAttribute("aria-label", "Remove experiment override");
-				removeButton.addEventListener("click", () => {
-					row.remove();
-					save();
 				});
-
-				row.append(keyInput, valueInput, removeButton);
-				document.getElementById("experiments-list").append(row);
+				if (enabled && Object.keys(condition).length) condition.enabled = enabled.checked;
+				return Object.keys(condition).length ? condition : null;
 			}
 
-			function renderExperiments(experiments) {
-				const list = document.getElementById("experiments-list");
-				list.replaceChildren();
-				const entries = Object.entries(experiments || {});
-				entries.forEach(([key, value]) => addExperimentRow(key, String(value)));
-				if (entries.length === 0) addExperimentRow();
-			}
-
-			function showStatus(message, isError = false) {
-				status.textContent = message;
-				status.style.color = isError ? "var(--error)" : "var(--success)";
-				clearTimeout(statusTimer);
-				statusTimer = setTimeout(() => {
-					status.textContent = "";
-				}, 3000);
-			}
-
-			function save() {
-				try {
-					localStorage.setItem(STORAGE_KEY, JSON.stringify(collectConfig()));
-					showStatus("Saved");
-				} catch (error) {
-					showStatus("Could not save settings", true);
-					console.error(error);
+			function renderExperimentsEditor() {
+				experimentsEditor.replaceChildren();
+				const rows = element("div", "editor-rows");
+				for (const [name, value] of Object.entries(config.debug.experimentsOverride ?? {})) {
+					rows.append(createExperimentRow(name, value));
 				}
+				experimentsEditor.append(rows, button("Add override", "add-override"));
+				experimentsEditor.append(element("div", "field-error"));
 			}
 
-			form.addEventListener("change", save);
-			form.addEventListener("input", event => {
-				if (event.target.matches('input[type="number"], [data-experiment-field]')) save();
-			});
+			function createExperimentRow(name = "", value = "") {
+				const row = element("div", "editor-row");
+				const nameInput = element("input");
+				nameInput.type = "text";
+				nameInput.placeholder = "Experiment name";
+				nameInput.setAttribute("aria-label", "Experiment name");
+				nameInput.dataset.overrideName = "";
+				nameInput.value = name;
+				const valueInput = element("input");
+				valueInput.type = "text";
+				valueInput.placeholder = "Variant";
+				valueInput.setAttribute("aria-label", `Variant for ${name || "experiment"}`);
+				valueInput.dataset.overrideValue = "";
+				valueInput.value = value;
+				row.append(nameInput, valueInput, button("Remove", "remove-override"));
+				return row;
+			}
 
-			document.getElementById("add-experiment").addEventListener("click", () => {
-				addExperimentRow();
-				const rows = document.querySelectorAll(".experiment-row");
-				rows[rows.length - 1]?.querySelector('[data-experiment-field="key"]')?.focus();
-			});
+			function readExperimentsEditor() {
+				const values = {};
+				const seen = new Set();
+				for (const row of experimentsEditor.querySelectorAll(".editor-row")) {
+					const name = row.querySelector("[data-override-name]").value.trim();
+					const value = row.querySelector("[data-override-value]").value;
+					if (!name && !value) continue;
+					if (!name) return { error: "Every experiment override needs a name." };
+					if (seen.has(name)) return { error: `The experiment “${name}” appears more than once.` };
+					seen.add(name);
+					values[name] = value;
+				}
+				return { values };
+			}
 
-			document.getElementById("export-btn").addEventListener("click", () => {
-				const json = JSON.stringify(collectConfig(), null, 2);
-				const blob = new Blob([json], { type: "application/json" });
-				const url = URL.createObjectURL(blob);
-				const link = document.createElement("a");
-				link.href = url;
-				link.download = "new-reddit-client-options.json";
-				link.click();
-				URL.revokeObjectURL(url);
-				showStatus("Config exported");
-			});
+			function syncExperimentsConfig() {
+				const values = {};
+				experimentsEditor.querySelectorAll(".editor-row").forEach(row => {
+					const name = row.querySelector("[data-override-name]").value.trim();
+					if (name) values[name] = row.querySelector("[data-override-value]").value;
+				});
+				config.debug.experimentsOverride = values;
+			}
 
-			document.getElementById("import-file").addEventListener("change", async event => {
-				const file = event.target.files?.[0];
-				if (!file) return;
-				try {
-					const parsed = JSON.parse(await file.text());
-					if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-						throw new Error("The JSON root must be an object.");
+			function createRuleEditor(rule, kind) {
+				const card = element("div", "post-filter-editor post-filter-card");
+				card.dataset.ruleKind = kind;
+				card.dataset.author = rule.author ?? "";
+				const flags = element("div", "editor-inline");
+				const enabledLabel = element("label");
+				const enabled = element("input");
+				enabled.type = "checkbox";
+				enabled.checked = Boolean(rule.enabled);
+				enabled.dataset.ruleField = "enabled";
+				enabledLabel.append(enabled, document.createTextNode("Enabled"));
+				flags.append(enabledLabel);
+
+				const titleLabel = element("label", "condition-group");
+				titleLabel.append(element("span", "", "Rule title"));
+				const title = element("input");
+				title.type = "text";
+				title.dataset.ruleField = "title";
+				title.value = rule.title ?? "";
+				titleLabel.append(title);
+
+				const author = element("div", "editor-help", `Author: u/${rule.author || "(no reddit_username cookie)"}`);
+				const pages = element("fieldset", "surface-fieldset");
+				pages.append(element("legend", "", "Apply on pages"));
+				const pageChoices = element("div", "editor-inline");
+				for (const [value, labelText] of rulePageOptions) {
+					const label = element("label");
+					const checkbox = element("input");
+					checkbox.type = "checkbox";
+					checkbox.value = value;
+					checkbox.dataset.pageOption = "";
+					checkbox.checked = rule.page.includes(value === "null" ? null : value);
+					label.append(checkbox, document.createTextNode(labelText));
+					pageChoices.append(label);
+				}
+				pages.append(pageChoices);
+				const nsfwLabel = element("label", "condition-group");
+				nsfwLabel.append(element("span", "", "NSFW Condition"));
+				const nsfw = element("select");
+				nsfw.dataset.ruleField = "nsfw";
+				for (const [value, label] of [["", "Any"], ["true", "NSFW"], ["false", "Not NSFW"]]) {
+					const option = element("option", "", label);
+					option.value = value;
+					nsfw.append(option);
+				}
+				nsfw.value = typeof rule.nsfw === "boolean" ? String(rule.nsfw) : "";
+				nsfwLabel.append(nsfw);
+				card.append(flags, titleLabel, author, pages, nsfwLabel);
+
+				if (kind === "posts") {
+					const regexLabel = element("label");
+					const isRegex = element("input");
+					isRegex.type = "checkbox";
+					isRegex.checked = Boolean(rule.isRegex);
+					isRegex.dataset.ruleField = "isRegex";
+					regexLabel.append(isRegex, document.createTextNode("Keywords are regular expressions"));
+					const invertLabel = element("label");
+					const invert = element("input");
+					invert.type = "checkbox";
+					invert.checked = Boolean(rule.invertSubreddit);
+					invert.dataset.ruleField = "invertSubreddit";
+					invertLabel.append(invert, document.createTextNode("Invert subreddit condition"));
+					flags.append(regexLabel, invertLabel);
+
+					const keywordsLabel = element("label", "condition-group");
+					keywordsLabel.append(element("span", "", "Keywords (one per line)"));
+					const keywords = element("textarea", "keywords");
+					keywords.dataset.ruleField = "keywords";
+					keywords.value = Array.isArray(rule.keywords) ? rule.keywords.join("\n") : "";
+					keywordsLabel.append(keywords);
+					card.append(keywordsLabel);
+
+					const surfaces = element("fieldset", "surface-fieldset");
+					surfaces.append(element("legend", "", "Match keywords in"));
+					const choices = element("div", "editor-inline");
+					for (const [value, labelText] of postFilterSurfaces) {
+						const label = element("label");
+						const checkbox = element("input");
+						checkbox.type = "checkbox";
+						checkbox.value = value;
+						checkbox.dataset.surfaceOption = "";
+						checkbox.checked = rule.surface.includes(value);
+						label.append(checkbox, document.createTextNode(labelText));
+						choices.append(label);
 					}
-					const merged = {
-						...clone(DEFAULTS),
-						...parsed,
-						useGraphQL: { ...DEFAULTS.useGraphQL, ...(parsed.useGraphQL || {}) },
-						toastMessages: { ...DEFAULTS.toastMessages, ...(parsed.toastMessages || {}) },
-						experimentsOverride: { ...(parsed.experimentsOverride || {}) },
-					};
-					applyConfig(merged);
-					save();
-					showStatus("Config loaded");
-				} catch (error) {
-					showStatus("Invalid config JSON: " + error.message, true);
-				} finally {
-					event.target.value = "";
+					surfaces.append(choices);
+					const condition = element("div", "subreddit-condition");
+					condition.append(element("h3", "editor-subtitle", "Subreddit condition (optional)"));
+					condition.append(conditionEditor(rule.subreddit, "post"));
+					card.append(surfaces, condition);
+				} else {
+					card.append(conditionEditor(rule, "standalone", "condition-editor standalone-condition"));
+				}
+				return card;
+			}
+
+			function createRuleRow(rule, index, kind) {
+				const row = element("div", "post-filter-row");
+				row.dataset.ruleIndex = index;
+				row.dataset.ruleKind = kind;
+				const enabled = element("input", "post-filter-enabled");
+				enabled.type = "checkbox";
+				enabled.checked = Boolean(rule.enabled);
+				enabled.setAttribute("aria-label", `Enable ${rule.title || "untitled filter"}`);
+				enabled.dataset.ruleAction = "toggle";
+				const summary = element("div", "post-filter-summary");
+				summary.append(element("strong", "", rule.title || "Untitled filter"));
+				if (rule.author) {
+					const author = element("a", "", `by u/${rule.author}`);
+					author.href = `/user/${encodeURIComponent(rule.author)}`;
+					author.target = "_blank";
+					author.rel = "noopener noreferrer";
+					summary.append(author);
+				} else {
+					summary.append(element("span", "", "by (unknown author)"));
+				}
+				const actions = element("div", "post-filter-actions");
+				const edit = button("Edit", `edit-${kind}`);
+				edit.dataset.ruleAction = "edit";
+				const remove = button("Delete", `delete-${kind}`);
+				remove.dataset.ruleAction = "delete";
+				actions.append(edit, remove);
+				row.append(enabled, summary, actions);
+				return row;
+			}
+
+			function renderFilterEditor() {
+				const filters = config.filter;
+				filterEditor.replaceChildren();
+				const filterOptions = element("div", "editor-inline");
+				for (const [key, labelText] of [
+					["fullyHideFilteredPosts", "Fully hide filtered posts"],
+					["showToastOnFilter", "Show a toast when posts are filtered"]
+				]) {
+					const label = element("label");
+					const checkbox = element("input");
+					checkbox.type = "checkbox";
+					checkbox.checked = Boolean(filters[key]);
+					checkbox.dataset.filterOption = key;
+					label.append(checkbox, document.createTextNode(labelText));
+					filterOptions.append(label);
+				}
+				filterEditor.append(filterOptions);
+				for (const [kind, title, rules] of [
+					["subreddits", "Subreddit filters", filters.subreddits],
+					["posts", "Post filters", filters.posts]
+				]) {
+					const section = element("section", "filter-subsection");
+					const heading = element("div", "filter-subsection-heading");
+					heading.append(element("h3", "", title));
+					const toolbar = element("div", "editor-toolbar");
+					toolbar.append(button("Import", `import-${kind}`), button("Export", `export-${kind}`));
+					heading.append(toolbar);
+					section.append(heading);
+					section.append(element("div", "editor-help", "Enable rules with the checkbox. Edit a rule to change its options and export it."));
+					const list = element("div", "post-filter-list");
+					if (!rules.length) list.append(element("div", "empty-state", `No ${kind === "posts" ? "post" : "subreddit"} filters yet.`));
+					rules.forEach((rule, index) => list.append(createRuleRow(rule, index, kind)));
+					section.append(list, button(`Add ${kind === "posts" ? "post" : "subreddit"} filter`, `add-${kind}`));
+					filterEditor.append(section);
+				}
+				filterEditor.append(element("div", "field-error"));
+			}
+
+			function captureFilterEditor() {
+				const filters = clone(config.filter);
+				for (const option of filterEditor.querySelectorAll("[data-filter-option]")) {
+					filters[option.dataset.filterOption] = option.checked;
+				}
+				for (const row of filterEditor.querySelectorAll(".post-filter-row")) {
+					const kind = row.dataset.ruleKind;
+					const index = Number(row.dataset.ruleIndex);
+					filters[kind][index].enabled = row.querySelector("[data-rule-action='toggle']").checked;
+				}
+				return filters;
+			}
+
+			function captureRuleEditor(editor, kind, validate = false) {
+				const getField = key => editor.querySelector(`[data-rule-field="${key}"]`);
+				const title = getField("title").value.trim();
+				const standaloneCondition = kind === "subreddits"
+					? readCondition(editor.querySelector(".standalone-condition"))
+					: null;
+				const postConditionEditor = kind === "posts" ? editor.querySelector(".condition-editor") : null;
+				const subreddit = postConditionEditor ? readCondition(postConditionEditor) : null;
+				const page = [...editor.querySelectorAll("[data-page-option]:checked")].map(control =>
+					control.value === "null" ? null : control.value);
+				if (validate && !title) {
+					document.getElementById("filter-edit-message").textContent = "Every filter needs a rule title.";
+					getField("title").focus();
+					return null;
+				}
+				if (validate && !page.length) {
+					document.getElementById("filter-edit-message").textContent = "Select at least one page for this filter.";
+					editor.querySelector("[data-page-option]")?.focus();
+					return null;
+				}
+				if (validate) {
+					for (const regexControl of editor.querySelectorAll('[data-condition-key$="Regex"]')) {
+						const expressions = ["nameRegex", "descRegex"].includes(regexControl.dataset.conditionKey)
+							? regexControl.value.split("\n").map(value => value.trim()).filter(Boolean)
+							: [regexControl.value.trim()].filter(Boolean);
+						for (const expression of expressions) {
+							try {
+								new RegExp(expression);
+							} catch {
+								document.getElementById("filter-edit-message").textContent = `“${expression}” is not a valid regular expression.`;
+								regexControl.focus();
+								return null;
+							}
+						}
+					}
+					if (kind === "posts" && getField("isRegex").checked) {
+						for (const keyword of getField("keywords").value.split("\n").map(value => value.trim()).filter(Boolean)) {
+							try {
+								new RegExp(keyword);
+							} catch {
+								document.getElementById("filter-edit-message").textContent = `“${keyword}” is not a valid keyword regular expression.`;
+								getField("keywords").focus();
+								return null;
+							}
+						}
+					}
+				}
+				const base = {
+					enabled: getField("enabled").checked,
+					title,
+					author: editor.dataset.author,
+					page,
+					nsfw: getField("nsfw").value === "" ? undefined : getField("nsfw").value === "true"
+				};
+				if (kind === "subreddits") return { ...base, ...(standaloneCondition ?? {}) };
+				return {
+					...base,
+					keywords: getField("keywords").value.split("\n").map(value => value.trim()).filter(Boolean),
+					isRegex: getField("isRegex").checked,
+					surface: [...editor.querySelectorAll("[data-surface-option]:checked")].map(control => control.value),
+					subreddit,
+					invertSubreddit: getField("invertSubreddit").checked
+				};
+			}
+
+			function validateImportedRules(value, kind) {
+				if (!Array.isArray(value)) throw new Error("Choose a JSON array of filters.");
+				const pages = [...rulePageOptions.map(([value]) => value === "null" ? null : value)];
+				const surfaces = postFilterSurfaces.map(([value]) => value);
+				const conditionFields = ["nameRegex", "nameExact", "nameIncludes", "descRegex", "descKeywords"];
+				return value.map((rule, index) => {
+					if (!rule || typeof rule !== "object" || Array.isArray(rule) ||
+							typeof rule.enabled !== "boolean" ||
+							typeof rule.title !== "string" ||
+							typeof rule.author !== "string" ||
+							!Array.isArray(rule.page) || !rule.page.length || !rule.page.every(page => pages.includes(page)) ||
+							(rule.nsfw !== undefined && typeof rule.nsfw !== "boolean")) {
+						throw new Error(`${kind === "posts" ? "Post" : "Subreddit"} filter ${index + 1} has invalid base fields.`);
+					}
+					if (kind === "posts") {
+						if (!Array.isArray(rule.keywords) || !rule.keywords.every(keyword => typeof keyword === "string") ||
+								typeof rule.isRegex !== "boolean" ||
+								!Array.isArray(rule.surface) || !rule.surface.every(surface => surfaces.includes(surface)) ||
+								(rule.invertSubreddit !== undefined && typeof rule.invertSubreddit !== "boolean") ||
+								!(rule.subreddit === null || (rule.subreddit && typeof rule.subreddit === "object" && !Array.isArray(rule.subreddit)))) {
+							throw new Error(`Post filter ${index + 1} does not match the PostFilter shape.`);
+						}
+						if (rule.subreddit && (
+								typeof rule.subreddit.enabled !== "boolean" ||
+								(rule.subreddit.nsfw !== undefined && typeof rule.subreddit.nsfw !== "boolean") ||
+								Object.entries(rule.subreddit).some(([key, fieldValue]) =>
+									!["enabled", "nsfw", ...conditionFields].includes(key) ||
+									(conditionFields.includes(key) && (key === "nameRegex" || key === "descRegex"
+										? !Array.isArray(fieldValue) || !fieldValue.every(item => typeof item === "string")
+										: key.endsWith("Regex") ? typeof fieldValue !== "string" : !Array.isArray(fieldValue) || !fieldValue.every(item => typeof item === "string")))))) {
+							throw new Error(`Post filter ${index + 1} has an invalid subreddit condition.`);
+						}
+					} else {
+						const allowed = new Set(["enabled", "title", "author", "page", "nsfw", ...conditionFields]);
+						if (Object.keys(rule).some(key => !allowed.has(key)) ||
+								typeof rule.enabled !== "boolean" ||
+								Object.entries(rule).some(([key, fieldValue]) =>
+									conditionFields.includes(key) &&
+									(key === "nameRegex" || key === "descRegex"
+										? !Array.isArray(fieldValue) || !fieldValue.every(item => typeof item === "string")
+										: key.endsWith("Regex") ? typeof fieldValue !== "string" : !Array.isArray(fieldValue) || !fieldValue.every(item => typeof item === "string")))) {
+							throw new Error(`Subreddit filter ${index + 1} has invalid matching conditions.`);
+						}
+					}
+					for (const field of conditionFields.filter(key => key.endsWith("Regex"))) {
+						const regex = kind === "posts" ? rule.subreddit?.[field] : rule[field];
+						for (const expression of Array.isArray(regex) ? regex : [regex].filter(Boolean)) {
+							try {
+								new RegExp(expression);
+							} catch {
+								throw new Error(`${kind === "posts" ? "Post" : "Subreddit"} filter ${index + 1} has an invalid regular expression.`);
+							}
+						}
+					}
+					return rule;
+				});
+			}
+
+			function validateImportedRule(value, kind) {
+				if (!value || typeof value !== "object" || Array.isArray(value)) {
+					throw new Error("For a single rule, provide one filter JSON object (not an array).");
+				}
+				return validateImportedRules([value], kind)[0];
+			}
+
+			function filterDuplicateKey(rule) {
+				return JSON.stringify([rule.author, rule.title]);
+			}
+
+			function openRuleEditor(kind, index, draft = null) {
+				editingRuleIndex = index;
+				editingRuleKind = kind;
+				const filter = draft ?? config.filter[kind][index];
+				const label = kind === "posts" ? "post" : "subreddit";
+				document.getElementById("filter-edit-title").textContent = index < 0 ? `New ${label} filter` : `Edit ${label} filter`;
+				document.getElementById("filter-edit-message").textContent = "";
+				document.getElementById("filter-edit-content").replaceChildren(createRuleEditor(filter, kind));
+				if (!filterEditDialog.open) filterEditDialog.showModal();
+			}
+
+			function openFilterImport(kind, targetIndex = null) {
+				importTargetIndex = targetIndex;
+				const isSingleRule = targetIndex !== null;
+				importCollection = kind;
+				const label = kind === "posts" ? "post" : "subreddit";
+				document.getElementById("filter-import-title").textContent = isSingleRule ? `Replace this ${label} filter` : `Import ${label} filters`;
+				document.getElementById("filter-import-description").textContent = isSingleRule
+					? `Import one ${label} filter JSON object to replace only the rule currently being edited. The rest of the list will not change.`
+					: `Load a JSON file or paste a JSON array of ${label} filters. Choose whether to prepend them or replace the entire ${label} filter list.`;
+				document.getElementById("filter-import-json").value = "";
+				document.getElementById("filter-import-json").placeholder = isSingleRule
+					? '{"enabled":true,"title":"...","author":"...","page":["home"]}'
+					: '[{"enabled":true,"title":"...","author":"...","page":["home"]}]';
+				document.getElementById("filter-import-file").value = "";
+				document.getElementById("filter-import-message").textContent = "";
+				document.getElementById("filter-import-mode-wrap").hidden = targetIndex !== null;
+				document.getElementById("filter-import-mode").value = "prepend";
+				filterImportDialog.showModal();
+			}
+
+			function openFilterExport(filters, filename, kind = "posts", singleRule = false) {
+				exportPayload = singleRule ? filters[0] : filters;
+				const label = kind === "posts" ? "post" : "subreddit";
+				document.getElementById("filter-export-title").textContent = singleRule ? `Export ${label} filter` : `Export ${label} filters`;
+				document.getElementById("filter-export-json").value = JSON.stringify(exportPayload, null, 2);
+				document.getElementById("filter-export-message").textContent = "";
+				filterExportDialog.dataset.filename = filename;
+				filterExportDialog.showModal();
+			}
+
+			function saveFilterExport() {
+				const file = new Blob([JSON.stringify(exportPayload, null, 2)], { type: "application/json" });
+				const url = URL.createObjectURL(file);
+				const link = element("a");
+				link.href = url;
+				link.download = filterExportDialog.dataset.filename;
+				document.body.append(link);
+				link.click();
+				link.remove();
+				setTimeout(() => URL.revokeObjectURL(url), 1000);
+			}
+
+			function importRules(imported, kind, targetIndex) {
+				const current = captureFilterEditor();
+				if (!current) throw new Error("Could not read the current filter settings.");
+				const rules = current[kind];
+				if (targetIndex !== null) {
+					if (imported.length !== 1) throw new Error("Replace a single rule using exactly one filter object.");
+					if (targetIndex === -1) {
+						rules.push(imported[0]);
+						targetIndex = rules.length - 1;
+					} else {
+						rules[targetIndex] = imported[0];
+					}
+				} else if (document.getElementById("filter-import-mode").value === "replace") {
+					current[kind] = imported;
+				} else {
+					const seen = new Set(rules.map(filterDuplicateKey));
+					const uniqueImports = [];
+					for (const post of imported) {
+						const key = filterDuplicateKey(post);
+						if (seen.has(key)) continue;
+						seen.add(key);
+						uniqueImports.push(post);
+					}
+					current[kind] = [...uniqueImports, ...rules];
+				}
+				config.filter = current;
+				renderFilterEditor();
+				return targetIndex;
+			}
+
+			function createField(field) {
+				const wrapper = document.createElement("div");
+				wrapper.className = `field${field.type === "json" ? " field-json" : ""}${field.type === "filters" || field.type === "experiments" ? " field-editor" : ""}`;
+				const copy = document.createElement("div");
+				copy.className = "field-copy";
+				const customEditor = field.type === "filters" || field.type === "experiments";
+				const label = document.createElement(customEditor ? "div" : "label");
+				label.className = "field-label";
+				label.textContent = field.label;
+				if (!customEditor) label.htmlFor = `field-${field.path.replaceAll(".", "-")}`;
+				copy.append(label);
+				if (field.description) {
+					const description = document.createElement("span");
+					description.className = "field-description";
+					description.textContent = field.description;
+					copy.append(description);
+				}
+				wrapper.append(copy);
+
+				const controlWrap = document.createElement("div");
+				if (field.type === "filters" || field.type === "experiments") {
+					controlWrap.className = "editor-stack";
+					controlWrap.id = `field-${field.path.replaceAll(".", "-")}`;
+					if (field.type === "filters") {
+						filterEditor = controlWrap;
+						filterEditor.dataset.editorPath = field.path;
+						renderFilterEditor();
+					} else {
+						experimentsEditor = controlWrap;
+						experimentsEditor.dataset.editorPath = field.path;
+						renderExperimentsEditor();
+					}
+					wrapper.append(controlWrap);
+					return wrapper;
+				}
+				controlWrap.className = field.type === "boolean" ? "control switch" : "control";
+				let control;
+				if (field.type === "boolean") {
+					control = document.createElement("input");
+					control.type = "checkbox";
+					control.setAttribute("role", "switch");
+				} else if (field.type === "select") {
+					control = document.createElement("select");
+					for (const [value, text] of field.options) {
+						const option = document.createElement("option");
+						option.value = value;
+						option.textContent = text;
+						control.append(option);
+					}
+				} else if (field.type === "json") {
+					control = document.createElement("textarea");
+					control.spellcheck = false;
+					control.setAttribute("aria-label", field.label);
+				} else {
+					control = document.createElement("input");
+					control.type = "number";
+					if (field.min !== undefined) control.min = field.min;
+					if (field.step !== undefined) control.step = field.step;
+				}
+
+				control.id = `field-${field.path.replaceAll(".", "-")}`;
+				control.dataset.path = field.path;
+				control.classList.add("setting-control");
+				controlWrap.append(control);
+				wrapper.append(controlWrap);
+				if (field.type === "json") {
+					const error = document.createElement("div");
+					error.className = "field-error";
+					error.dataset.errorFor = field.path;
+					error.setAttribute("aria-live", "polite");
+					wrapper.append(error);
+				}
+				return wrapper;
+			}
+
+			for (const [index, section] of sections.entries()) {
+				const tab = document.createElement("button");
+				tab.type = "button";
+				tab.className = "nav-item";
+				tab.dataset.section = section.id;
+				tab.setAttribute("aria-controls", `panel-${section.id}`);
+				tab.setAttribute("aria-current", index === 0 ? "page" : "false");
+				tab.innerHTML = `<span class="nav-icon" aria-hidden="true">${section.icon}</span><span>${section.title}</span>`;
+				nav.append(tab);
+
+				const panel = document.createElement("section");
+				panel.className = "panel";
+				panel.id = `panel-${section.id}`;
+				panel.setAttribute("aria-labelledby", `heading-${section.id}`);
+				panel.hidden = index !== 0;
+				const heading = document.createElement("h2");
+				heading.id = `heading-${section.id}`;
+				heading.textContent = section.title;
+				const intro = document.createElement("p");
+				intro.className = "panel-intro";
+				intro.textContent = section.description;
+				const fieldList = document.createElement("div");
+				fieldList.className = "field-list";
+				for (const field of section.fields) fieldList.append(createField(field));
+				panel.append(heading, intro, fieldList);
+				panels.append(panel);
+			}
+
+			function render() {
+				document.querySelectorAll(".setting-control").forEach(control => {
+					const field = sections.flatMap(section => section.fields).find(item => item.path === control.dataset.path);
+					const value = getPath(config, field.path);
+					if (field.type === "boolean") control.checked = Boolean(value);
+					else if (field.type === "json") control.value = JSON.stringify(value, null, 2);
+					else control.value = String(value);
+				});
+				if (filterEditor) renderFilterEditor();
+				if (experimentsEditor) renderExperimentsEditor();
+			}
+
+			function setStatus(message, state = "") {
+				status.textContent = message;
+				status.dataset.state = state;
+			}
+
+			function markUnsavedChanges() {
+				hasUnsavedChanges = true;
+			}
+
+			function markPendingDialogChanges() {
+				hasPendingDialogChanges = true;
+			}
+
+			function focusControl(control) {
+				const panel = control.closest(".panel");
+				activateSection(panel.id.replace("panel-", ""), true);
+				control.focus();
+			}
+
+			function activateSection(sectionId, updateHash = false) {
+				const section = sections.find(item => item.id === sectionId);
+				const selectedId = section ? section.id : sections[0].id;
+				document.querySelectorAll(".nav-item").forEach(item => {
+					item.setAttribute("aria-current", item.dataset.section === selectedId ? "page" : "false");
+				});
+				document.querySelectorAll(".panel").forEach(panel => {
+					panel.hidden = panel.id !== `panel-${selectedId}`;
+				});
+				if (updateHash && location.hash !== `#${selectedId}`) {
+					location.hash = selectedId;
+				}
+			}
+
+			function readForm() {
+				const updated = clone(config);
+				for (const field of sections.flatMap(section => section.fields)) {
+					if (field.type === "filters") {
+						const value = captureFilterEditor(true);
+						if (!value) return null;
+						setPath(updated, field.path, value);
+						continue;
+					}
+					if (field.type === "experiments") {
+						const result = readExperimentsEditor();
+						experimentsEditor.querySelector(".field-error").textContent = result.error ?? "";
+						if (result.error) {
+							setStatus(result.error, "error");
+							focusControl(experimentsEditor.querySelector("[data-override-name]") ?? experimentsEditor.querySelector("button"));
+							return null;
+						}
+						setPath(updated, field.path, result.values);
+						continue;
+					}
+					const control = document.querySelector(`.setting-control[data-path="${field.path}"]`);
+					let value;
+					if (field.type === "boolean") {
+						value = control.checked;
+					} else if (field.type === "json") {
+						try {
+							value = JSON.parse(control.value);
+						} catch {
+							document.querySelector(`[data-error-for="${field.path}"]`).textContent = "Enter valid JSON before saving.";
+							control.setAttribute("aria-invalid", "true");
+							focusControl(control);
+							return null;
+						}
+						if (!value || typeof value !== "object" || (field.path === "debug.experimentsOverride" && Array.isArray(value))) {
+							document.querySelector(`[data-error-for="${field.path}"]`).textContent =
+								field.path === "debug.experimentsOverride" ? "Experiment overrides must be a JSON object." : "Filters must be a JSON object.";
+							control.setAttribute("aria-invalid", "true");
+							focusControl(control);
+							return null;
+						}
+						document.querySelector(`[data-error-for="${field.path}"]`).textContent = "";
+						control.removeAttribute("aria-invalid");
+					} else if (field.type === "number") {
+						value = Number(control.value);
+						if (!Number.isFinite(value) || value < Number(field.min)) {
+							setStatus(`${field.label} must be ${field.min === 1 ? "at least 1" : "a non-negative number"}.`, "error");
+							focusControl(control);
+							return null;
+						}
+						if (field.step === 1 && !Number.isInteger(value)) {
+							setStatus(`${field.label} must be a whole number.`, "error");
+							focusControl(control);
+							return null;
+						}
+					} else {
+						value = Number(control.value);
+					}
+					setPath(updated, field.path, value);
+				}
+				updated.version = CONFIG_VERSION;
+				return updated;
+			}
+
+			nav.addEventListener("click", event => {
+				const tab = event.target.closest("button[data-section]");
+				if (!tab) return;
+				activateSection(tab.dataset.section, true);
+			});
+			window.addEventListener("hashchange", () => {
+				activateSection(decodeURIComponent(location.hash.slice(1)));
+			});
+			activateSection(decodeURIComponent(location.hash.slice(1)) || sections[0].id, !location.hash);
+
+			window.addEventListener("beforeunload", event => {
+				if (!hasUnsavedChanges && !hasPendingDialogChanges) return;
+				event.preventDefault();
+				event.returnValue = "";
+			});
+			form.addEventListener("input", markUnsavedChanges);
+			form.addEventListener("change", markUnsavedChanges);
+			filterEditDialog.addEventListener("input", markPendingDialogChanges);
+			filterEditDialog.addEventListener("change", markPendingDialogChanges);
+			filterEditDialog.addEventListener("close", () => { hasPendingDialogChanges = false; });
+			filterImportDialog.addEventListener("input", markPendingDialogChanges);
+			filterImportDialog.addEventListener("change", markPendingDialogChanges);
+			filterImportDialog.addEventListener("close", () => { hasPendingDialogChanges = false; });
+
+			experimentsEditor.addEventListener("input", () => {
+				syncExperimentsConfig();
+				experimentsEditor.querySelector(".field-error").textContent = "";
+			});
+			experimentsEditor.addEventListener("click", event => {
+				const action = event.target.closest("[data-action]")?.dataset.action;
+				if (action === "add-override") {
+					const row = createExperimentRow();
+					experimentsEditor.querySelector(".editor-rows").append(row);
+					row.querySelector("[data-override-name]").focus();
+				} else if (action === "remove-override") {
+					event.target.closest(".editor-row").remove();
+					syncExperimentsConfig();
 				}
 			});
 
-			document.getElementById("reset-btn").addEventListener("click", () => {
-				applyConfig(clone(DEFAULTS));
-				save();
-				showStatus("Defaults restored");
+			filterEditor.addEventListener("input", () => {
+				const value = captureFilterEditor();
+				if (value) config.filter = value;
+			});
+			filterEditor.addEventListener("change", event => {
+				const value = captureFilterEditor();
+				if (value) config.filter = value;
+			});
+			filterEditor.addEventListener("click", event => {
+				const action = event.target.closest("[data-action]")?.dataset.action;
+				const addKind = action?.slice("add-".length);
+				const importKind = action?.slice("import-".length);
+				const exportKind = action?.slice("export-".length);
+				if (action === "add-posts" || action === "add-subreddits") {
+					const kind = addKind;
+					const current = captureFilterEditor();
+					if (!current) return;
+					config.filter = current;
+					markUnsavedChanges();
+					openRuleEditor(kind, -1, {
+						enabled: true,
+						title: "",
+						author: getCookie("reddit_username"),
+						page: [...defaultRulePages],
+						...(kind === "posts" ? {
+							keywords: [],
+							isRegex: false,
+							surface: postFilterSurfaces.map(([value]) => value),
+							subreddit: null,
+							invertSubreddit: false
+						} : {})
+					});
+				} else if (action === "edit-posts" || action === "edit-subreddits") {
+					const row = event.target.closest(".post-filter-row");
+					openRuleEditor(row.dataset.ruleKind, Number(row.dataset.ruleIndex));
+				} else if (action === "delete-posts" || action === "delete-subreddits") {
+					const current = captureFilterEditor();
+					if (!current) return;
+					const row = event.target.closest(".post-filter-row");
+					current[row.dataset.ruleKind].splice(Number(row.dataset.ruleIndex), 1);
+					config.filter = current;
+					markUnsavedChanges();
+					renderFilterEditor();
+				} else if (action === "import-posts" || action === "import-subreddits") {
+					openFilterImport(importKind);
+				} else if (action === "export-posts" || action === "export-subreddits") {
+					const kind = exportKind;
+					const current = captureFilterEditor();
+					if (!current) return;
+					config.filter = current;
+					openFilterExport(current[kind], `new-reddit-${kind}-filters.json`, kind);
+				}
 			});
 
-			applyConfig(readConfig());
+			filterEditDialog.addEventListener("click", event => {
+				const action = event.target.closest("[data-edit-action]")?.dataset.editAction;
+				if (action === "cancel") {
+					filterEditDialog.close();
+				} else if (action === "save") {
+					const editor = document.querySelector("#filter-edit-content .post-filter-editor");
+					const updated = captureRuleEditor(editor, editingRuleKind, true);
+					if (!updated) return;
+					if (editingRuleIndex < 0) config.filter[editingRuleKind].push(updated);
+					else config.filter[editingRuleKind][editingRuleIndex] = updated;
+					markUnsavedChanges();
+					renderFilterEditor();
+					filterEditDialog.close();
+				} else if (action === "export") {
+					const editor = document.querySelector("#filter-edit-content .post-filter-editor");
+					const current = captureRuleEditor(editor, editingRuleKind, true);
+					if (!current) return;
+					openFilterExport([current], `new-reddit-${editingRuleKind}-filter.json`, editingRuleKind, true);
+				} else if (action === "replace") {
+					openFilterImport(editingRuleKind, editingRuleIndex);
+				}
+			});
+
+			filterImportDialog.addEventListener("change", async event => {
+				if (event.target.id !== "filter-import-file" || !event.target.files.length) return;
+				try {
+					document.getElementById("filter-import-json").value = await event.target.files[0].text();
+					document.getElementById("filter-import-message").textContent = "File loaded. Review the JSON and choose Import.";
+				} catch (error) {
+					document.getElementById("filter-import-message").textContent = `Could not read the file: ${error.message}`;
+				}
+			});
+			filterImportDialog.addEventListener("click", event => {
+				const action = event.target.closest("[data-import-action]")?.dataset.importAction;
+				if (action === "cancel") {
+					filterImportDialog.close();
+					importTargetIndex = null;
+				} else if (action === "apply") {
+					try {
+						const targetIndex = importTargetIndex;
+						const parsed = JSON.parse(document.getElementById("filter-import-json").value);
+						const imported = targetIndex === null
+							? validateImportedRules(parsed, importCollection)
+							: [validateImportedRule(parsed, importCollection)];
+						const replacedIndex = importRules(imported, importCollection, targetIndex);
+						markUnsavedChanges();
+						filterImportDialog.close();
+						if (targetIndex !== null) openRuleEditor(importCollection, replacedIndex);
+						importTargetIndex = null;
+						const label = importCollection === "posts" ? "post" : "subreddit";
+						setStatus(`Imported ${imported.length} ${label} filter${imported.length === 1 ? "" : "s"}. Save changes to apply them.`, "success");
+					} catch (error) {
+						document.getElementById("filter-import-message").textContent = `Could not import filters: ${error.message}`;
+					}
+				}
+			});
+
+			filterExportDialog.addEventListener("click", async event => {
+				const action = event.target.closest("[data-export-action]")?.dataset.exportAction;
+				const message = document.getElementById("filter-export-message");
+				if (action === "close") {
+					filterExportDialog.close();
+				} else if (action === "save") {
+					saveFilterExport();
+					message.textContent = "JSON file saved.";
+				} else if (action === "copy") {
+					const textarea = document.getElementById("filter-export-json");
+					try {
+						await navigator.clipboard.writeText(textarea.value);
+					} catch {
+						textarea.select();
+						if (!document.execCommand("copy")) {
+							message.textContent = "Could not copy JSON. Select the text and copy it manually.";
+							return;
+						}
+					}
+					message.textContent = "JSON copied to clipboard.";
+				}
+			});
+
+			form.addEventListener("submit", event => {
+				event.preventDefault();
+				if (migrationRequired) return;
+				const updated = readForm();
+				if (!updated) return;
+				try {
+					localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+					config = updated;
+					hasUnsavedChanges = false;
+					setStatus("Changes saved on this device.", "success");
+				} catch (error) {
+					setStatus(`Could not save configuration: ${error.message}`, "error");
+				}
+			});
+
+			document.getElementById("reset-button").addEventListener("click", () => {
+				if (migrationRequired) return;
+				config = clone(DEFAULTS);
+				markUnsavedChanges();
+				render();
+				setStatus("Defaults loaded. Save changes to apply them.", "");
+			});
+
+			document.getElementById("config-version").textContent = `Config version: v${CONFIG_VERSION}`;
+			migrationDialog.addEventListener("cancel", event => event.preventDefault());
+			try {
+				const storedConfig = localStorage.getItem(STORAGE_KEY);
+				if (storedConfig) {
+					const parsed = JSON.parse(storedConfig);
+					if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+						throw new Error("Stored configuration is not an object.");
+					}
+					if (parsed.version !== CONFIG_VERSION) {
+						migrationRequired = true;
+						document.getElementById("migration-message").textContent =
+							`Your saved configuration is version ${parsed.version ?? "unknown"}, while this client expects version ${CONFIG_VERSION}. Visit the home page to migrate it automatically before editing settings.`;
+						form.querySelectorAll("button, input, select, textarea").forEach(control => { control.disabled = true; });
+						migrationDialog.showModal();
+					} else {
+						config = mergeDefaults(DEFAULTS, parsed);
+					}
+				}
+			} catch (error) {
+				setStatus(`Could not read saved configuration: ${error.message}. Defaults are shown; save to replace it.`, "error");
+			}
+			render();
 		})();
 	</script>
 </body>

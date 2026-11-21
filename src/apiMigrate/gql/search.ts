@@ -1,6 +1,8 @@
 import { gqlFetch } from "../../api/gql";
 import type { SearchPosts2024Query } from "../../api/types/gql";
 import { getLogger } from "../../logging";
+import { flushAndLogFilterHits } from "../../features/filterReddit/filterLog";
+import { fixGqlPost } from "./helpers/post";
 
 const logger = getLogger("gql:search");
 
@@ -22,11 +24,13 @@ export async function processGeneralSearch({ includePosts, postsAfter, includeCo
 			gqlFetch<SearchPosts2024Query>("SearchPosts", "8610e33521c90caa8d12576800c18b708ce0d19df3dfac8e2aad55d9860e4bf9",
 				{ pageSize: 25, afterCursor: postsAfter, ...vars },
 			).then((data) => {
-				for (const { node: { flair } } of data.search.general.posts.edges as any) {
-					if (flair && !flair.richtext && flair.type === "richtext") {
-						flair.type = "text";
+				for (const { node } of data.search.general.posts.edges as any) {
+					if (node.flair && !node.flair.richtext && node.flair.type === "richtext") {
+						node.flair.type = "text";
 					}
+					fixGqlPost(node, 'search')
 				};
+				flushAndLogFilterHits();
 				return data;
 			}),
 		);

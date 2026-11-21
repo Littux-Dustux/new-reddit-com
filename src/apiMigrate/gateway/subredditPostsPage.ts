@@ -62,9 +62,13 @@ export async function subredditPostsPage(subredditOrSubreddits: string, params: 
 		}
 
 		return {
-			jsonResponse: JSON.stringify(
-				await postAndCommentsListing(listing.data.children, listing.data.after, subredditPageExtra)
-			),
+			jsonResponse: JSON.stringify(await postAndCommentsListing(
+				listing.data.children,
+				listing.data.after,
+				(subredditOrSubreddits === "all" || subredditOrSubreddits === "popular") ? subredditOrSubreddits : 'sub',
+				subredditPageExtra,
+				listing.data.geo_filter,
+			)),
 			status: 200
 		}
 

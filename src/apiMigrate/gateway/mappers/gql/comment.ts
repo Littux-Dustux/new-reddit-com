@@ -1,6 +1,6 @@
 import type { CommentForestTreesFragmentFragment, PdsBasicPostInfoFragmentFragment, PostCommentsQuery_postInfoById } from "../../../../api/types/gql";
 import { getState } from "../../../../main";
-import { clientConfig } from "../../../../ui/settings";
+import { clientConfig } from "../../../../features/settings";
 import type { Comment } from "../../types/comment";
 import type { Post } from "../../types/post";
 import type { CommentsPageState, CommentTreeState } from "../../types/state";
@@ -20,7 +20,8 @@ export function addGqlCommentToState(
 		subredditId: string,
 		postAuthorId: string | null | undefined,
 		maxDepth: number
-	}
+	},
+	deletedCommentId?: string
 ): CommentPosition {
 	const node = tree.node ?? tree.more;
 	if (!node) {
@@ -43,7 +44,7 @@ export function addGqlCommentToState(
 				authorIsBlocked: author?.isBlocked,
 				bodyMD: node.content.markdown,
 				created: Date.parse(node.createdAt) / 1000,
-				collapsed: clientConfig.disableAutoCollapseComments ? false : node.isInitiallyCollapsed,
+				collapsed: clientConfig.ui.disableAutoCollapseComments ? false : node.isInitiallyCollapsed,
 				collapsedBecauseCrowdControl: node.moderationInfo?.isAutoCollapsedFromCrowdControl,
 				collapsedReasonCode: node.initiallyCollapsedReason,
 				depth: tree.depth,
@@ -83,14 +84,15 @@ export function addGqlCommentToState(
 
 		case "DeletedComment":
 			// Stupid Reddit decided to leave it out
-			const id = `t1_${node.createdAt}`;
+			const created = Date.parse(node.createdAt);
+			const id = deletedCommentId ?? `t1_ts_${created}`;
 			state.comments[id] = {
 				...(node.moderationInfo && mapModerationInfoCommon(node.moderationInfo)),
 				author: "[deleted]",
 				authorId: null,
 				bodyMD: "[deleted]",
-				collapsed: clientConfig.disableAutoCollapseComments ? false : node.isInitiallyCollapsed,
-				created: Date.parse(node.createdAt) / 1000,
+				collapsed: clientConfig.ui.disableAutoCollapseComments ? false : node.isInitiallyCollapsed,
+				created: created / 1000,
 				deletedBy: node.removedByCategory === "DELETED"
 					? 'user'
 					: node.removedByCategory === "MODERATOR"
@@ -98,7 +100,6 @@ export function addGqlCommentToState(
 						: null,
 				depth: tree.depth,
 				id,
-				isAdmin: node.removedByCategory === "REDDIT",
 				isDeleted: true,
 				isScoreHidden: true,
 				media: {
@@ -169,21 +170,30 @@ export function addGqlCommentForestToState(
 		subredditId: post.belongsTo.id,
 		postAuthorId: post.authorId,
 		appliedSort,
-		maxDepth: clientConfig.commentMaxDepth - currentDepth,
+		maxDepth: clientConfig.ui.commentMaxDepth - currentDepth,
 	}
 	const subredditId = additionalInfo.subredditId;
 	state.authorFlair[subredditId] ??= { '[deleted]': null };
 
 
-	for (const tree of commentTrees) {
-		const comment = tree.node?.__typename === "Comment" ? tree.node : null;
-		if (comment && (comment.authorFlair || comment.authorCommunityBadge))
-			state.authorFlair[subredditId][comment.authorInfo.name] ??= getAuthorFlairFromGqlThing(
-				comment.authorFlair, comment.authorCommunityBadge
-			);
+	for (let i = 0; i < commentTrees.length; i++) {
+		const tree = commentTrees[i] as CommentForestTreesFragmentFragment['trees'][number];
+		const nextTree = commentTrees[i+1];
+		let deletedCommentId;
+
+		if (tree.node) {
+			if (tree.node.__typename === "Comment") {
+				const comment = tree.node;
+				if (comment.authorFlair || comment.authorCommunityBadge)
+					state.authorFlair[subredditId][comment.authorInfo.name] ??= getAuthorFlairFromGqlThing(
+						comment.authorFlair, comment.authorCommunityBadge
+					);
+			} else if (nextTree?.more)
+				deletedCommentId = nextTree.parentId;
+		}
 
 		tree.depth += currentDepth;
-		order.push(addGqlCommentToState(state, tree, additionalInfo));
+		order.push(addGqlCommentToState(state, tree, additionalInfo, deletedCommentId));
 	}
 
 	for (let i = 0; i < order.length; i++) {

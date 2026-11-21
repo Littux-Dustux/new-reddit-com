@@ -1,4 +1,6 @@
-{
+import { clientConfig } from "../features/settings";
+
+export default {
 	"abuse_validate_comment_text_edited_rollout": {
 		"id": 11201,
 		"name": "abuse_validate_comment_text_edited_rollout",
@@ -1730,7 +1732,7 @@
 	"d2x_remove_hide_post_overflowmenu_v2": {
 		"id": 8649,
 		"name": "d2x_remove_hide_post_overflowmenu_v2",
-		"variant": "control_1",
+		"variant": clientConfig.filter.fullyHideFilteredPosts ? 'control_1' : 'enabled',
 		"version": "3"
 	},
 	"d2x_reputation_new_tag": {

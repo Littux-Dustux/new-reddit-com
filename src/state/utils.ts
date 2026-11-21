@@ -1,6 +1,3 @@
-import { gqlFetch } from "../api/gql";
-import { getLogger, showToast, ToastType } from "../logging";
-
 type StateLoid = { loid: string, loidCreated: string, version: number, blob: string };
 
 export const getLoidState = (loidString?: string) => {

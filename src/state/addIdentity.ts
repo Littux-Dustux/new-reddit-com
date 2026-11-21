@@ -347,6 +347,7 @@ export async function addIdentityToState(state: State) {
 
 	const id = identity.id;
 	document.cookie = `reddit_user_id=${convertFullnameToNum(id)}; path=/; SameSite=Lax; Expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+	document.cookie = `reddit_username=${identity.redditor?.name}; path=/; SameSite=Lax; Expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
 
 	const redditor = identity.redditor;
 

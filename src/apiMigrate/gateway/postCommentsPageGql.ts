@@ -12,7 +12,7 @@ import { fetchSubredditPageExtra } from "./utils";
 import type { PostCommentsQuery, CommentSort, PostCommentsQueryVariables, PostsByIdsQuery, PostsByIdsQuery_postsInfoByIds, PostsByIdsQueryVariables, CommentForestTreesFragmentFragment, GetCommentByIdWithChildrenQuery, GetCommentByIdWithChildrenQueryVariables } from "../../api/types/gql";
 import type { Post } from "./types/post";
 import type { CommentsPageState } from "./types/state";
-import { clientConfig } from "../../ui/settings";
+import { clientConfig } from "../../features/settings";
 
 const logger = getLogger('postCommentsGql');
 const fetchedPostIds = new Set<string>();
@@ -33,6 +33,7 @@ async function fetchPost(id: string): Promise<PostsByIdsQuery_postsInfoByIds> {
 			includePostContentThumbnailEnabled: false,
 			includeDeletedPosts: true,
 			includeStillMediaAltText: true,
+			includePostStats: true
 		}
 	);
 	const post = data.postsInfoByIds[0] as PostsByIdsQuery_postsInfoByIds | null;
@@ -79,7 +80,7 @@ export async function postCommentsResponseGql(postId: string, focusedCommentId: 
 		const isPreload = params.truncate === '25' || !subredditName;
 		const gqlVars = {
 			sortType: (params.sort?.toUpperCase() as CommentSort) ?? undefined,
-			maxDepth: clientConfig.commentMaxDepth,
+			maxDepth: clientConfig.ui.commentMaxDepth,
 			count: userPrefs?.num_comments ?? 100,
 			includeIsGildable: true,
 			includeVideoPlaybackInComments: true,
@@ -102,8 +103,8 @@ export async function postCommentsResponseGql(postId: string, focusedCommentId: 
 				const commentFromState = getState().features.comments.models[focusedCommentId];
 				if (
 					commentFromState &&
-					clientConfig.commentMaxDepth > 4 &&
-					commentFromState.depth < (clientConfig.commentMaxDepth-4)
+					clientConfig.ui.commentMaxDepth > 4 &&
+					commentFromState.depth < (clientConfig.ui.commentMaxDepth-4)
 				) {
 					gqlVars.numParents = 4;
 					gqlVars.maxDepth = 10;
@@ -173,7 +174,7 @@ export const moreCommentsResponseGql = async (postId: string, payload: string) =
 				id: postId,
 				after: cursor,
 				sortType: sortType as CommentSort || undefined,
-				maxDepth: clientConfig.commentMaxDepth - depth,
+				maxDepth: clientConfig.ui.commentMaxDepth - depth,
 				count: userPrefs?.num_comments ?? 100,
 				includeIsGildable: true,
 				includeVideoPlaybackInComments: true,

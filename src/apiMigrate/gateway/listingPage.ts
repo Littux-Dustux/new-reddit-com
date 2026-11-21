@@ -1,6 +1,7 @@
 import { getREST } from "../../api/rest";
 import { RedditAPIError } from "../../api/restErr";
 import { getLogger, showToast, ToastType } from "../../logging";
+import type { PostPage } from "../../features/filterReddit/types";
 import { errToStr } from "../../utils";
 import { conversationsListing, postAndCommentsListing } from "./mappers/listing";
 
@@ -11,6 +12,7 @@ export async function genericListingR2(
 	params: Record<string, string>,
 	fn: typeof postAndCommentsListing | typeof conversationsListing = postAndCommentsListing,
 	anonymousAuth: boolean = false,
+	currPage: PostPage = null,
 ) {
 	try {
 		params.raw_json = '1';
@@ -30,7 +32,7 @@ export async function genericListingR2(
 		const { data } = await getREST(url, { anonymous: anonymousAuth, cookieAuth: true });
 		return {
 			jsonResponse: JSON.stringify(
-				await fn(data.children, data.after)
+				await fn(data.children, data.after, currPage)
 			),
 			status: 200,
 		}

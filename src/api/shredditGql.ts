@@ -1,7 +1,7 @@
 import { SHREDDIT_GQL_URL } from "../constants";
 import { getLogger } from "../logging";
 import { multiErrorToast } from "../logging/toast";
-import { clientConfig } from "../ui/settings";
+import { clientConfig } from "../features/settings";
 import { RedditAPIError } from "./restErr";
 
 const logger = getLogger("api:gql-shreddit");
@@ -26,7 +26,7 @@ export default async function svcGqlFetch(operation: string, variables: any, opt
 			csrf_token: window.csrfToken,
 		}),
 		anonymous: false,
-		timeout: clientConfig.shredditGqlTimeout,
+		timeout: clientConfig.debug.shredditGqlTimeout,
 	});
 
 	if (resp.status === 200) {

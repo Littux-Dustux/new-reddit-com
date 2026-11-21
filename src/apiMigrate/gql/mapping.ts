@@ -586,7 +586,7 @@ export const gqlFedMap: GqlFedMapping = {
 		}),
 		mapResp: ({ feed }) => ({
 			home: {
-				elements: fixGqlListing(feed.elements, fixSvcGqlPost)
+				elements: fixGqlListing(feed.elements, 'home', fixSvcGqlPost)
 			}
 		})
 /*
@@ -852,7 +852,7 @@ export const gqlFedMap: GqlFedMapping = {
 			]);
 
 			const responseMultireddit: Record<string, any> = {
-				elements: fixGqlListing(postFeed.posts)
+				elements: fixGqlListing(postFeed.posts, 'sub')
 			};
 
 			if (includeSources && multireddit.__typename === "Multireddit") {
@@ -950,7 +950,7 @@ export const gqlFedMap: GqlFedMapping = {
 		}),
 		mapResp: ({ feed }) => ({
 			popular: {
-				elements: fixGqlListing(feed.elements, fixSvcGqlPost)
+				elements: fixGqlListing(feed.elements, 'popular', fixSvcGqlPost)
 			}
 		})
 	},
@@ -971,7 +971,7 @@ export const gqlFedMap: GqlFedMapping = {
 	ProfileDownvoted: {
 		operationName: "DownvotedPosts",
 		sha256Hash: "bef6215672dd62181aa6290cf13205f01ae35aa1bc8a684cd41dddebcb922bc6",
-		mapResp: ({ identity }) => ({ identity: { downvotedPosts: fixGqlListing(identity.downvotedPosts) } })
+		mapResp: ({ identity }) => ({ identity: { downvotedPosts: fixGqlListing(identity.downvotedPosts, 'privatePages') } })
 	},
 	ProductOffers: {
 		operationName: "GlobalProductOffers",
@@ -1001,21 +1001,21 @@ export const gqlFedMap: GqlFedMapping = {
 	ProfileHidden: {
 		operationName: "HiddenPosts",
 		sha256Hash: "dd50be43da2e469e529cb4c63c1d0f3c2f54c12d5e8f65a809b90ebaff0aa8e9",
-		mapResp: ({ identity }) => ({ identity: { hiddenPosts: fixGqlListing(identity.hiddenPosts) } })
+		mapResp: ({ identity }) => ({ identity: { hiddenPosts: fixGqlListing(identity.hiddenPosts, 'privatePages') } })
 	},
 	ProfileHistoryPosts: {
 		operationName: "PostsByIds",
 		sha256Hash: "eb435514e5e7cbe599e34adb2d827d36832852dde767b74d96d917b812253124",
 		mapVars: ({ recentPostIds }) => ({ ids: recentPostIds }),
 		mapResp: ({ postsInfoByIds }) => ({
-			postsInfoByIds: postsInfoByIds.map(fixGqlPost),
+			postsInfoByIds: postsInfoByIds.map((p: any) => fixGqlPost(p)),
 			identity: { redditor: null }
 		})
 	},
 	ProfileSaved: {
 		operationName: "SavedPostsDynamicQuery",
 		useShredditGqlProxy: true,
-		mapResp: ({ saved }) => ({ identity: { saved }})
+		mapResp: ({ saved }) => ({ identity: { saved: fixGqlListing(saved, 'saved', fixSvcGqlPost) }})
 	},
 	ProfileTrophies: {
 		//operationName: "ProfileTrophies",
@@ -1043,7 +1043,7 @@ export const gqlFedMap: GqlFedMapping = {
 	ProfileUpvoted: {
 		operationName: "UpvotedPosts",
 		sha256Hash: "2576b683a14896be80b6b3b0465a55b7a94ada8f062564d2bdc1e38975bb5837",
-		mapResp: ({ identity }) => ({ identity: { upvotedPosts: fixGqlListing(identity.upvotedPosts) } })
+		mapResp: ({ identity }) => ({ identity: { upvotedPosts: fixGqlListing(identity.upvotedPosts, 'privatePages') } })
 	},
 	ProxyAuthor: {
 		operationName: "ProxyAuthor", // iOS app
