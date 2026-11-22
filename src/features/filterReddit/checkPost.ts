@@ -1,20 +1,22 @@
-import type { PostsByIdsQuery_postsInfoByIds, PostsByIdsQuery_postsInfoByIds_SubredditPost, SubredditFeedElementsQuery, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection, SubredditFeedElementsQuery_postFeed_Subreddit_elements_SearchPostsConnection_edges_PostInfoEdge_node_SubredditPost } from "../../api/types/gql";
 import type { GqlPostNonDeleted } from "../../apiMigrate/gateway/mappers/gql/posts";
-import type { SubredditAboutInfo } from "../../apiMigrate/gateway/types/subreddit";
+import { getLogger } from "../../logging";
 import { clientConfig } from "../settings";
 import { checkSubreddit, type SubredditFilterVars } from "./checkSubreddit";
 import { addFilterHit } from "./filterLog";
 import { checkKeywordsNoRegex, getCachedRegex } from "./match";
+import richtextToText from "./richtextToText";
 import type { PostFilter, PostPage } from "./types";
 
 type PostFilterVars = {
 	title: string;
-	body: string;
-	galleryCaption: string;
+	body: string | undefined;
+	galleryCaption: string | undefined;
 	postFlair?: string;
 	userFlair?: string;
 	isNsfw: boolean;
 };
+
+const logger = getLogger('filterReddit:check');
 
 export function checkPost(cond: PostFilter, postData: PostFilterVars, srData: SubredditFilterVars, currPage: PostPage): boolean {
 	if (!cond.enabled || cond.keywords.length === 0) return false;
@@ -53,39 +55,49 @@ export function checkPost(cond: PostFilter, postData: PostFilterVars, srData: Su
 
 
 export function checkR2PostFiltered(post: any, sub: SubredditFilterVars, currPage: PostPage): boolean {
+	if (!clientConfig.filter.posts.length && !clientConfig.filter.subreddits.length) return false;
+
 	const postData: PostFilterVars = {
 		title: post.title,
-		body: post.selftext,
-		galleryCaption: post.gallery_data?.items?.map((item: any) => item.caption).filter((c: any) => c).join(" ") || "",
+		body: post.selftext ?? post.rtjson ? richtextToText(post.rtjson) : undefined,
+		galleryCaption: post.gallery_data?.items?.map((item: any) => item.caption).filter((c: any) => c).join(" "),
 		postFlair: post.link_flair_text,
 		userFlair: post.author_flair_text,
 		isNsfw: post.over_18,
 	};
-
 	return runPostFilters(postData, sub, currPage);
 }
 
 export function checkGqlPostFiltered(post: GqlPostNonDeleted, sub: SubredditFilterVars, currPage: PostPage): boolean {
+	if (!clientConfig.filter.posts.length && !clientConfig.filter.subreddits.length) return false;
+
 	const postData: PostFilterVars = {
 		title: post.title ?? '',
 		body: post.content?.markdown,
-		galleryCaption: post.gallery?.items?.map(item => item.caption).filter((c: any) => c).join(" ") || "",
+		galleryCaption: post.gallery?.items?.map(item => item.caption).filter((c: any) => c).join(" "),
 		postFlair: post.flair?.text,
 		userFlair: post.authorFlair?.text,
 		isNsfw: post.isNsfw,
 	};
-
 	return runPostFilters(postData, sub, currPage);
 }
 
-
+/** @returns {boolean} Whether the post is filtered or not */
 function runPostFilters(post: PostFilterVars, sub: SubredditFilterVars, currPage: PostPage): boolean {
-	const filterHit = clientConfig.filter.subreddits.find(
-		fil => checkSubreddit(fil, sub, currPage)
-	) ?? clientConfig.filter.posts.find(
-		fil => checkPost(fil, post, sub, currPage)
-	);
+	try {
+		const filterHit = clientConfig.filter.subreddits.find(
+			fil => checkSubreddit(fil, sub, currPage)
+		) ?? clientConfig.filter.posts.find(
+			fil => checkPost(fil, post, sub, currPage)
+		);
 
-	if (clientConfig.filter.showToastOnFilter && filterHit) addFilterHit(filterHit);
-	return Boolean(filterHit);
+		if (clientConfig.filter.showToastOnFilter && filterHit) addFilterHit(filterHit);
+		return Boolean(filterHit);
+
+	} catch (e: any) {
+		clientConfig.filter.posts = [];
+		clientConfig.filter.subreddits = [];
+		logger.crt(`Error running post filters: ${e?.message}. All post filters have been disabled.`);
+		return false;
+	}
 }

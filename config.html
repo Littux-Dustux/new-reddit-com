@@ -333,7 +333,7 @@
 			box-shadow: var(--shadow);
 		}
 
-		#filter-edit-dialog { width: min(760px, calc(100% - 32px)); max-height: calc(100vh - 32px); overflow-y: auto; }
+		#filter-edit-dialog { width: min(960px, calc(100% - 32px)); max-height: calc(100vh - 32px); overflow-y: auto; }
 		#filter-import-dialog, #filter-export-dialog { width: min(600px, calc(100% - 32px)); }
 		dialog::backdrop { background: rgb(0 0 0 / 64%); backdrop-filter: blur(3px); }
 		dialog h2 { margin: 0 0 10px; font-size: 22px; }
@@ -1069,10 +1069,10 @@
 			}
 
 			function validateImportedRule(value, kind) {
-				if (!value || typeof value !== "object" || Array.isArray(value)) {
-					throw new Error("For a single rule, provide one filter JSON object (not an array).");
+				if (!value || typeof value !== "object" || (Array.isArray(value) && value.some(v => typeof v !== "object"))) {
+					throw new Error("Invalid filter JSON");
 				}
-				return validateImportedRules([value], kind)[0];
+				return validateImportedRules(Array.isArray(value) ? value : [value], kind)[0];
 			}
 
 			function filterDuplicateKey(rule) {
