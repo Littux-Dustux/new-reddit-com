@@ -9,6 +9,7 @@ import { processAwards } from "./award";
 import { convertGqlMediaAssets } from "./common";
 import { getAuthorFlairFromGqlThing } from "./flair";
 import { mapModerationInfoCommon } from "./moderationInfo";
+import { MAX_COMMENTS_DEPTH } from "../../../../constants";
 
 
 export function addGqlCommentToState(
@@ -160,9 +161,14 @@ export function addGqlCommentForestToState(
 	currentDepth: number = 0,
 	appliedSort = ''
 ): CommentTreeState {
-	
+
+	let maxDepth: number;
+
 	if (commentTrees[0] && commentTrees[0].depth < 0) {
 		currentDepth = Math.abs(commentTrees[0].depth);
+		maxDepth = MAX_COMMENTS_DEPTH - currentDepth;
+	} else {
+		maxDepth = clientConfig.ui.commentMaxDepth - currentDepth;
 	}
 	const order: CommentPosition[] = [];
 	const additionalInfo = {
@@ -170,7 +176,7 @@ export function addGqlCommentForestToState(
 		subredditId: post.belongsTo.id,
 		postAuthorId: post.authorId,
 		appliedSort,
-		maxDepth: clientConfig.ui.commentMaxDepth - currentDepth,
+		maxDepth,
 	}
 	const subredditId = additionalInfo.subredditId;
 	state.authorFlair[subredditId] ??= { '[deleted]': null };

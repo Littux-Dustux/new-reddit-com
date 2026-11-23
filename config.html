@@ -502,7 +502,7 @@
 					id: "ui", title: "UI", icon: "🖵",
 					fields: [
 						{ path: "ui.forceLightMode", label: "Force light mode", type: "boolean" },
-						{ path: "ui.commentMaxDepth", label: "Maximum comment depth (GQL)", description: "Maximum number of nested comment levels to load.", type: "number", min: 0, step: 1 },
+						{ path: "ui.commentMaxDepth", label: "Maximum comment depth (GQL)", description: "Maximum number of nested comment levels to load.", type: "number", min: 1, max: 16, step: 1 },
 						{ path: "ui.forcePostImgWidth", label: "Post image quality (GQL)", description: "Choose the maximum image size for posts.", type: "select", options: [[0, "Small"], [1, "Medium"], [2, "Large"], [3, "Extra large"], [4, "2× extra large"], [5, "3× extra large"], [6, "Source"], [7, "Source (no WebP)"], [8, "Default"]] },
 						{ path: "ui.disableAutoCollapseComments", label: "Disable automatic comment collapsing (GQL)", description: "Keep comments expanded unless you collapse them yourself.", type: "boolean" }
 					]
@@ -1219,6 +1219,7 @@
 					control = document.createElement("input");
 					control.type = "number";
 					if (field.min !== undefined) control.min = field.min;
+					if (field.max !== undefined) control.max = field.max;
 					if (field.step !== undefined) control.step = field.step;
 				}
 

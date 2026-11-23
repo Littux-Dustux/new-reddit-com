@@ -13,6 +13,7 @@ import type { PostCommentsQuery, CommentSort, PostCommentsQueryVariables, PostsB
 import type { Post } from "./types/post";
 import type { CommentsPageState } from "./types/state";
 import { clientConfig } from "../../features/settings";
+import { MAX_COMMENTS_DEPTH } from "../../constants";
 
 const logger = getLogger('postCommentsGql');
 const fetchedPostIds = new Set<string>();
@@ -89,7 +90,7 @@ export async function postCommentsResponseGql(postId: string, focusedCommentId: 
 			numParents: 0,
 			...(isPreload && {
 				count: 25,
-				truncate: 10,
+				truncate: 25,
 				includeAwards: false
 			}),
 		}
@@ -99,6 +100,8 @@ export async function postCommentsResponseGql(postId: string, focusedCommentId: 
 			if (params.context) {
 				useCommentsChildrenQuery = true;
 				gqlVars.numParents = Number(params.context);
+				gqlVars.maxDepth = Math.min(MAX_COMMENTS_DEPTH - gqlVars.numParents, 10);
+
 			} else {
 				const commentFromState = getState().features.comments.models[focusedCommentId];
 				if (
@@ -174,7 +177,8 @@ export const moreCommentsResponseGql = async (postId: string, payload: string) =
 				id: postId,
 				after: cursor,
 				sortType: sortType as CommentSort || undefined,
-				maxDepth: clientConfig.ui.commentMaxDepth - depth,
+				// Maximum allowed is 10 with after cursor
+				maxDepth: Math.min(clientConfig.ui.commentMaxDepth - depth, 10),
 				count: userPrefs?.num_comments ?? 100,
 				includeIsGildable: true,
 				includeVideoPlaybackInComments: true,

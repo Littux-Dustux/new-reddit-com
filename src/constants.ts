@@ -6,3 +6,5 @@ export const GQL_URL = 'https://cf.gql-fed.reddit.com';
 export const REST_URL = 'https://oauth.reddit.com';
 export const SHREDDIT_GQL_URL = 'https://www.reddit.com/svc/shreddit/graphql';
 export const GQL_REALTIME_URL = 'wss://gql-realtime.reddit.com/query';
+
+export const MAX_COMMENTS_DEPTH = 16;
